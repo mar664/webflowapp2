@@ -1,9 +1,13 @@
-export interface NumberIncrementerOptions {
-  incrementStart: number;
-  incrementEnd: number;
-  percentageVisible: number;
-  duration: number;
-}
+import { z } from "zod";
+
+export const NumberIncrementerOptions = z.object({
+  incrementStart: z.number().min(0),
+  incrementEnd: z.number().min(0),
+  percentageVisible: z.number().min(0).max(100),
+  duration: z.number().min(0),
+});
+
+export type NumberIncrementerOptions = z.infer<typeof NumberIncrementerOptions>;
 
 export class NumberIncrementer {
   // set default values for incrementer
@@ -21,22 +25,23 @@ export class NumberIncrementer {
 
   // apply the number incremeter to a dom element
   static async update(element: AnyElement, options: NumberIncrementerOptions) {
+    const parsedOptions = NumberIncrementerOptions.parse(options);
     if (element.type === "DOM") {
       element.setAttribute(
         NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
-        options.incrementStart.toString(),
+        parsedOptions.incrementStart.toString(),
       );
       element.setAttribute(
         NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
-        options.incrementEnd.toString(),
+        parsedOptions.incrementEnd.toString(),
       );
       element.setAttribute(
         NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-        options.percentageVisible.toString(),
+        parsedOptions.percentageVisible.toString(),
       );
       element.setAttribute(
         NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-        options.duration.toString(),
+        parsedOptions.duration.toString(),
       );
       await element.save();
     }

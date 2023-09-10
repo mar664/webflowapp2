@@ -1,15 +1,12 @@
 import React, { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import { NumberIncrementer } from "../elements/NumberIncrementer";
+import {
+  NumberIncrementer,
+  NumberIncrementerOptions,
+} from "../elements/NumberIncrementer";
 import { useSetPrevElementId } from "../contexts/AppContext";
-
-interface IFormInput {
-  incrementStart: number;
-  incrementEnd: number;
-  percentageVisible: number;
-  duration: number;
-}
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
@@ -69,11 +66,12 @@ function NumberIncrementerForm() {
   const {
     register,
     handleSubmit,
-    formState: { isLoading },
-  } = useForm<IFormInput>({
+    formState: { isLoading, errors },
+  } = useForm<NumberIncrementerOptions>({
     defaultValues: fetchDefaultValues(),
+    resolver: zodResolver(NumberIncrementerOptions),
   });
-  const onSubmit: SubmitHandler<IFormInput> = async (data) => {
+  const onSubmit: SubmitHandler<NumberIncrementerOptions> = async (data) => {
     console.log("Submitting");
     const selectedElement = await webflow.getSelectedElement();
     if (selectedElement) {
@@ -87,16 +85,35 @@ function NumberIncrementerForm() {
     <>
       <form onSubmit={handleSubmit(onSubmit)}>
         <label>Increment Start</label>
-        <input type="number" {...register("incrementStart", { min: 0 })} />
+        <input
+          type="number"
+          {...register("incrementStart", { valueAsNumber: true })}
+        />
+        {errors.incrementStart?.message && (
+          <p>{errors.incrementStart?.message}</p>
+        )}
         <label>Increment End</label>
-        <input type="number" {...register("incrementEnd", { min: 1 })} />
+        <input
+          type="number"
+          {...register("incrementEnd", { valueAsNumber: true })}
+        />
+        {errors.incrementEnd?.message && <p>{errors.incrementEnd?.message}</p>}
         <label>Duration</label>
-        <input type="number" {...register("duration", { min: 0 })} />
+        <input
+          type="number"
+          {...register("duration", { valueAsNumber: true })}
+        />
+        {errors.duration?.message && <p>{errors.duration?.message}</p>}
         <label>Percentage Visible to Start Increment</label>
         <input
           type="number"
-          {...register("percentageVisible", { min: 0, max: 100 })}
+          {...register("percentageVisible", {
+            valueAsNumber: true,
+          })}
         />
+        {errors.percentageVisible?.message && (
+          <p>{errors.percentageVisible?.message}</p>
+        )}
         <input type="submit" />
       </form>
       <button
