@@ -1,11 +1,16 @@
 import { z } from "zod";
 
-export const NumberIncrementerOptions = z.object({
-  incrementStart: z.number().min(0),
-  incrementEnd: z.number().min(0),
-  percentageVisible: z.number().min(0).max(100),
-  duration: z.number().min(0),
-});
+export const NumberIncrementerOptions = z
+  .object({
+    incrementStart: z.number().min(0),
+    incrementEnd: z.number().min(0),
+    percentageVisible: z.number().min(0).max(100),
+    duration: z.number().min(0),
+  })
+  .refine((data) => data.incrementEnd > data.incrementStart, {
+    message: "Increment end must be larger than increment start",
+    path: ["incrementEnd"], // path of error
+  });
 
 export type NumberIncrementerOptions = z.infer<typeof NumberIncrementerOptions>;
 
@@ -23,9 +28,12 @@ export class NumberIncrementer {
   static DEFAULT_UPDATE_INTERVAL = 100; // duration in ms
   static DEFAULT_PERCENTAGE_VISIBLE = 25;
 
+  static SOURCE_URL = "http://localhost:1337/number-incrementer.js";
+
   // apply the number incremeter to a dom element
   static async update(element: AnyElement, options: NumberIncrementerOptions) {
     const parsedOptions = NumberIncrementerOptions.parse(options);
+    console.log(parsedOptions);
     if (element.type === "DOM") {
       element.setAttribute(
         NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
@@ -106,6 +114,40 @@ export class NumberIncrementer {
             ) as string,
           ) || NumberIncrementer.DEFAULT_INCREMENT_DURATION,
       };
+    }
+  }
+
+  static async insertScriptInBody() {
+    const allElements = await webflow.getAllElements();
+    const body = allElements[0];
+
+    const scriptElem = webflow.createDOM("script");
+
+    scriptElem.setAttribute("src", NumberIncrementer.SOURCE_URL);
+
+    if (body.children) {
+      const children = body.getChildren();
+
+      // add script to body at the end
+      body.setChildren(children.concat(scriptElem));
+
+      await body.save();
+    }
+  }
+
+  static async removeScriptFromBody() {
+    const allElements = await webflow.getAllElements();
+    const scriptExisting = allElements.filter(
+      (t) =>
+        t.type === "DOM" &&
+        t.getTag() === "script" &&
+        t.getAttribute("src") === NumberIncrementer.SOURCE_URL,
+    );
+
+    if (scriptExisting.length === 1) {
+      const script = scriptExisting[0];
+      await script.detach();
+      await script.destroy();
     }
   }
 }

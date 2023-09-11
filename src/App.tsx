@@ -6,6 +6,7 @@ import {
   usePrevElementIdValue,
   useSetPrevElementId,
 } from "./contexts/AppContext";
+import { Flex, Heading } from "@chakra-ui/react";
 
 const INIT_COMPATIBLE_COMPONENTS = {
   numberIncrementer: {
@@ -73,22 +74,21 @@ function App() {
   }, [prevElementId]);
 
   return (
-    <div className="container">
-      <div className="row">
-        {Object.entries(compatibleComponents)
-          .filter(([key, value]) => value.applicable)
-          .map(([key, value]) => {
-            switch (key) {
-              case "numberIncrementer":
-                return (
-                  <NumberIncrementerSelection isAlready={value.isAlready} />
-                );
-              default:
-                throw new Error("key not found");
-            }
-          })}
-      </div>
-    </div>
+    <Flex align="center" justify="center" flexDirection={"column"}>
+      <Heading as="h1" size={"md"}>
+        Please select a component
+      </Heading>
+      {Object.entries(compatibleComponents)
+        .filter(([key, value]) => value.applicable)
+        .map(([key, value]) => {
+          switch (key) {
+            case "numberIncrementer":
+              return <NumberIncrementerSelection isAlready={value.isAlready} />;
+            default:
+              throw new Error("key not found");
+          }
+        })}
+    </Flex>
   );
 }
 

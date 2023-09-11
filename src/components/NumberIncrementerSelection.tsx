@@ -1,4 +1,5 @@
 import React from "react";
+import { Button, ButtonGroup, IconButton, useToast } from "@chakra-ui/react";
 import { NumberIncrementer } from "../elements/NumberIncrementer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
@@ -12,32 +13,44 @@ interface Props {
 function NumberIncrementerSelection({ isAlready }: Props) {
   const navigate = useNavigate();
   const setPrevElement = useSetPrevElementId();
-
+  const toast = useToast();
   const removeNumberIncrementer = async () => {
     const selectedElement = await webflow.getSelectedElement();
     if (selectedElement) {
       // reset the prev element value so that selected element callback fires
       setPrevElement(null);
       await NumberIncrementer.remove(selectedElement);
+
+      toast({
+        title: "Number incrementer removed",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   return (
-    <>
-      <button
+    <ButtonGroup variant="outline" spacing="6" margin={4}>
+      <Button
         onClick={() => {
           console.log("redirect to number incrementer form");
           navigate(`/number_incrementer_form/${isAlready}`);
         }}
       >
-        {isAlready ? "Edit NumberIncrementer" : "Convert to NumberIncrementer"}
-      </button>
+        {isAlready
+          ? "Edit Number Incrementer"
+          : "Transform into a Number Incrementer"}
+      </Button>
       {isAlready ? (
-        <button onClick={removeNumberIncrementer}>
-          <FontAwesomeIcon icon={faTrashCan} />
-        </button>
+        <IconButton
+          onClick={removeNumberIncrementer}
+          colorScheme="red"
+          icon={<FontAwesomeIcon icon={faTrashCan} />}
+          aria-label="Remove number incrementer"
+        />
       ) : null}
-    </>
+    </ButtonGroup>
   );
 }
 
