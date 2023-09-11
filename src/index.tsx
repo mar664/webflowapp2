@@ -1,7 +1,11 @@
 import React from "react";
 import "./index.css";
 import { createRoot } from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  createHashRouter,
+  RouterProvider,
+} from "react-router-dom";
 import App from "./App";
 import NumberIncrementerForm, {
   loader as numberIncrementerLoader,
@@ -20,7 +24,7 @@ const colors = {
 
 const theme = extendTheme({ colors });
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <App />,
