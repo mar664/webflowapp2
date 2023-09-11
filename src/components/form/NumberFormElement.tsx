@@ -7,16 +7,22 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  Tooltip,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
 interface FormProps {
-  error: any;
+  error: string | undefined;
   name: string;
   label: string;
+  helpText: string;
+  min?: number;
+  max?: number;
   onValueChange: (value: number) => void;
   initialValue: number;
+  formatter?: (val: number) => string;
+  parser?: (val: string) => number;
 }
 
 function NumberFormElement({
@@ -25,25 +31,36 @@ function NumberFormElement({
   label,
   onValueChange,
   initialValue,
+  helpText,
+  min = Number.MIN_SAFE_INTEGER,
+  max = Number.MAX_SAFE_INTEGER,
+  formatter = (val) => val.toString(),
+  parser = (val) => parseInt(val),
 }: FormProps) {
-  const debounced = useDebouncedCallback(
-    // function
-    (value) => {
-      onValueChange(value);
-    },
-    // delay in ms
-    1000,
-  );
+  const [value, setValue] = useState(initialValue);
+  // use debounced callback to delay calling for onChange so that it doesn't keep triggering save of form data
+  const debounced = useDebouncedCallback((value) => {
+    onValueChange(value);
+  }, 1000);
 
   return (
     <FormControl isInvalid={!!error} padding={"2"}>
-      <FormLabel htmlFor={name}>{label}</FormLabel>
+      <FormLabel htmlFor={name}>
+        <Tooltip label={helpText} fontSize="md">
+          {label}
+        </Tooltip>
+      </FormLabel>
       <NumberInput
-        size="xs"
-        maxW={16}
+        size="sm"
+        maxW={"full"}
         id={name}
-        onChange={(valueAsString, valueAsNumber) => debounced(valueAsNumber)}
-        defaultValue={initialValue}
+        onChange={(valueAsString, valueAsNumber) => {
+          setValue(parser(valueAsString));
+          debounced(parser(valueAsString));
+        }}
+        value={formatter(value)}
+        min={min}
+        max={max}
       >
         <NumberInputField />
         <NumberInputStepper>
@@ -51,7 +68,6 @@ function NumberFormElement({
           <NumberDecrementStepper />
         </NumberInputStepper>
       </NumberInput>
-      <FormErrorMessage>{error}</FormErrorMessage>
     </FormControl>
   );
 }

@@ -14,6 +14,7 @@ function NumberIncrementerSelection({ isAlready }: Props) {
   const navigate = useNavigate();
   const setPrevElement = useSetPrevElementId();
   const toast = useToast();
+
   const removeNumberIncrementer = async () => {
     const selectedElement = await webflow.getSelectedElement();
     if (selectedElement) {
@@ -24,7 +25,7 @@ function NumberIncrementerSelection({ isAlready }: Props) {
       toast({
         title: "Number incrementer removed",
         status: "success",
-        duration: 9000,
+        duration: 4000,
         isClosable: true,
       });
     }

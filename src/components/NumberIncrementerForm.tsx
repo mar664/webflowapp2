@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, get } from "react-hook-form";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import {
   NumberIncrementer,
@@ -8,21 +8,27 @@ import {
 import { useSetPrevElementId } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Box,
   Button,
   ButtonGroup,
   FormControl,
+  FormErrorMessage,
   FormLabel,
+  Grid,
+  GridItem,
   Heading,
+  Tooltip,
 } from "@chakra-ui/react";
 import NumberFormElement from "./form/NumberFormElement";
 import { Switch } from "@chakra-ui/react";
-import { useToast } from "@chakra-ui/react";
-import PercentageSliderThumbWithTooltip from "./form/PercentageSliderThumbWithTooltip";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { IconButton } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheck,
+  faCircleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
@@ -36,16 +42,14 @@ export async function loader() {
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function NumberIncrementerForm() {
-  const toast = useToast();
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const setPrevElement = useSetPrevElementId();
 
   const params = useParams();
-  console.log(params);
+
   const { selectedElement } = useLoaderData() as loaderData;
-  console.log(selectedElement);
 
   useEffect(() => {
     console.log("loaded incrementer");
@@ -88,6 +92,7 @@ function NumberIncrementerForm() {
       }
       return parsedElement;
     }
+
     return {
       incrementStart: NumberIncrementer.DEFAULT_INCREMENT_START,
       incrementEnd: NumberIncrementer.DEFAULT_INCREMENT_END,
@@ -97,7 +102,6 @@ function NumberIncrementerForm() {
   };
 
   const {
-    register,
     handleSubmit,
     setValue,
     getValues,
@@ -124,6 +128,7 @@ function NumberIncrementerForm() {
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setInsertScript(event.target.checked);
+
     if (event.target.checked) {
       await NumberIncrementer.insertScriptInBody();
     } else {
@@ -132,83 +137,133 @@ function NumberIncrementerForm() {
   };
 
   if (isLoading) return null;
-
+  console.log(Object.keys(errors));
   return (
     <>
       <Heading as="h1" size={"md"}>
         Editing Number Incrementer
       </Heading>
+      {
+        <Box textColor={"red"}>
+          <ul>
+            {Object.keys(errors).map((k) => {
+              if (k in errors) {
+                return (
+                  <li key={k}>
+                    <FontAwesomeIcon icon={faCircleExclamation} />{" "}
+                    {get(errors, k)?.message}
+                  </li>
+                );
+              }
+            })}
+          </ul>
+        </Box>
+      }
       <form>
-        <NumberFormElement
-          error={errors.incrementStart?.message}
-          name="incrementStart"
-          label="Increment Start"
-          initialValue={getValues().incrementStart}
-          onValueChange={(value) => setValue("incrementStart", value)}
-        />
-        <NumberFormElement
-          error={errors.incrementEnd?.message}
-          name="incrementEnd"
-          label="Increment End"
-          initialValue={getValues().incrementEnd}
-          onValueChange={(value) => setValue("incrementEnd", value)}
-        />
-        <NumberFormElement
-          error={errors.duration?.message}
-          name="duration"
-          label="Duration"
-          initialValue={getValues().duration}
-          onValueChange={(value) => setValue("duration", value)}
-        />
-        <FormControl padding={"2"}>
-          <FormLabel htmlFor="percentageVisible" mb="0">
-            % Visible to Start Increment
-          </FormLabel>
-          <PercentageSliderThumbWithTooltip
-            onValueChange={(v: number) => setValue("percentageVisible", v)}
-            defaultValue={getValues().percentageVisible}
-          />
-        </FormControl>
-        <FormControl
-          display="flex"
-          alignItems="center"
-          margin={"2"}
-          maxWidth={"full"}
-        >
-          <FormLabel htmlFor="insert-script" mb="0">
-            Insert script in body?
-          </FormLabel>
-          <Switch
-            id="insert-script"
-            onChange={insertingScript}
-            isChecked={insertScript}
-          />
-        </FormControl>
-        <FormControl
-          display="flex"
-          alignItems="center"
-          margin={"2"}
-          maxWidth={"full"}
-        >
-          <FormLabel htmlFor="copy-script" mb="0">
-            Copy script to clipboard
-          </FormLabel>
-          <CopyToClipboard
-            text={`<script src="${NumberIncrementer.SOURCE_URL}"></script>`}
-            onCopy={() => {
-              setCopied(true);
-              setTimeout(() => setCopied(false), 5000);
-            }}
-          >
-            <IconButton
-              id="copy-script"
-              colorScheme="green"
-              aria-label="Copy to clipboard"
-              fontSize="20px"
-              icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
+        <Grid templateColumns="repeat(2, 1fr)" gap={1}>
+          <GridItem w="100%">
+            <NumberFormElement
+              error={errors.incrementStart?.message}
+              name="incrementStart"
+              label="Start Value"
+              initialValue={getValues().incrementStart}
+              onValueChange={(value) => setValue("incrementStart", value)}
+              helpText="Initial value of number incrementer"
             />
-          </CopyToClipboard>
-        </FormControl>
+          </GridItem>
+          <GridItem w="100%">
+            <NumberFormElement
+              error={errors.incrementEnd?.message}
+              name="incrementEnd"
+              label="End value"
+              initialValue={getValues().incrementEnd}
+              onValueChange={(value) => setValue("incrementEnd", value)}
+              helpText="Final value of number incrementer"
+            />
+          </GridItem>
+
+          <GridItem w="100%">
+            <NumberFormElement
+              error={errors.duration?.message}
+              name="duration"
+              label="Duration"
+              initialValue={getValues().duration}
+              onValueChange={(value) => setValue("duration", value)}
+              formatter={(val) => `${val} ms`}
+              parser={(val) => parseInt(val.replace(" ms", ""))}
+              helpText="Duration in milliseconds"
+              min={0}
+            />
+          </GridItem>
+          <GridItem w="100%">
+            <NumberFormElement
+              error={errors.percentageVisible?.message}
+              name="percentageVisible"
+              label="Start trigger"
+              initialValue={getValues().percentageVisible}
+              onValueChange={(value) => setValue("percentageVisible", value)}
+              formatter={(val) => `${val} %`}
+              parser={(val) => parseInt(val.replace(" %", ""))}
+              helpText="Increment will start when this % of element is visible in viewport"
+              min={0}
+              max={100}
+            />
+          </GridItem>
+          <GridItem w="100%" colSpan={2}>
+            <FormControl
+              display="flex"
+              alignItems="center"
+              margin={"2"}
+              maxWidth={"full"}
+            >
+              <FormLabel htmlFor="insert-script" mb="0">
+                <Tooltip
+                  label="Toggles whether to embed the javascript code on the page"
+                  fontSize="md"
+                >
+                  Insert script in body?
+                </Tooltip>
+              </FormLabel>
+              <Switch
+                id="insert-script"
+                onChange={insertingScript}
+                isChecked={insertScript}
+              />
+            </FormControl>
+          </GridItem>
+          <GridItem w="100%" colSpan={2}>
+            <FormControl
+              display="flex"
+              alignItems="center"
+              margin={"2"}
+              maxWidth={"full"}
+            >
+              <FormLabel htmlFor="copy-script" mb="0">
+                <Tooltip
+                  label="Copy the javascript embed code to clipboard so it can be added to webflow"
+                  fontSize="md"
+                >
+                  Copy script to clipboard
+                </Tooltip>
+              </FormLabel>
+              <CopyToClipboard
+                text={`<script src="${NumberIncrementer.SOURCE_URL}"></script>`}
+                onCopy={() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 5000);
+                }}
+              >
+                <IconButton
+                  id="copy-script"
+                  colorScheme="green"
+                  aria-label="Copy to clipboard"
+                  fontSize="20px"
+                  icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
+                />
+              </CopyToClipboard>
+            </FormControl>
+          </GridItem>
+        </Grid>
 
         <ButtonGroup variant="outline" spacing="6" padding={2}>
           <Button

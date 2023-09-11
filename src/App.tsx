@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import NumberIncrementerSelection from "./components/NumberIncrementerSelection";
 import { NumberIncrementer } from "./elements/NumberIncrementer";
-import { useNavigate } from "react-router-dom";
 import {
   usePrevElementIdValue,
   useSetPrevElementId,
@@ -78,16 +77,22 @@ function App() {
       <Heading as="h1" size={"md"}>
         Please select a component
       </Heading>
-      {Object.entries(compatibleComponents)
-        .filter(([key, value]) => value.applicable)
-        .map(([key, value]) => {
-          switch (key) {
-            case "numberIncrementer":
-              return <NumberIncrementerSelection isAlready={value.isAlready} />;
-            default:
-              throw new Error("key not found");
-          }
-        })}
+
+      {
+        // Iterate through all compatible components with the selected element
+        Object.entries(compatibleComponents)
+          .filter(([key, value]) => value.applicable)
+          .map(([key, value]) => {
+            switch (key) {
+              case "numberIncrementer":
+                return (
+                  <NumberIncrementerSelection isAlready={value.isAlready} />
+                );
+              default:
+                throw new Error("key not found");
+            }
+          })
+      }
     </Flex>
   );
 }
