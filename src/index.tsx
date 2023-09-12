@@ -1,11 +1,7 @@
 import React from "react";
 import "./index.css";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  createHashRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import NumberIncrementerForm, {
   loader as numberIncrementerLoader,
@@ -13,6 +9,7 @@ import NumberIncrementerForm, {
 import { AppContextProvider } from "./contexts/AppContext";
 // 1. import `ChakraProvider` component
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
+import ModalForm, { loader as modalLoader } from "./components/ModalForm";
 
 const colors = {
   brand: {
@@ -33,6 +30,11 @@ const router = createHashRouter([
     path: "number_incrementer_form/:exists",
     element: <NumberIncrementerForm />,
     loader: numberIncrementerLoader,
+  },
+  {
+    path: "modal_form/:exists",
+    element: <ModalForm />,
+    loader: modalLoader,
   },
 ]);
 

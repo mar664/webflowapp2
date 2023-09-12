@@ -28,7 +28,8 @@ export class NumberIncrementer {
   static DEFAULT_UPDATE_INTERVAL = 100; // duration in ms
   static DEFAULT_PERCENTAGE_VISIBLE = 25;
 
-  static SOURCE_URL = "http://localhost:1337/number-incrementer.js";
+  static SOURCE_URL =
+    "https://mar664.github.io/scripts/number-incrementer-v1.js";
 
   // apply the number incremeter to a dom element
   static async update(element: AnyElement, options: NumberIncrementerOptions) {

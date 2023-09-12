@@ -6,20 +6,31 @@ import {
   useSetPrevElementId,
 } from "./contexts/AppContext";
 import { Flex, Heading } from "@chakra-ui/react";
-
-const INIT_COMPATIBLE_COMPONENTS = {
-  numberIncrementer: {
-    isAlready: false,
-    applicable: false,
-  },
-};
+import ModalSelection from "./components/ModalSelection";
+import { Modal } from "./elements/Modal";
 
 interface CompatibleComponents {
   numberIncrementer: {
     isAlready: boolean;
     applicable: boolean;
   };
+  modal: {
+    isAlready: boolean;
+    applicable: boolean;
+  };
 }
+
+const INIT_COMPATIBLE_COMPONENTS : CompatibleComponents = {
+  numberIncrementer: {
+    isAlready: false,
+    applicable: false,
+  },
+  modal: {
+    isAlready: false,
+    applicable: false,
+  },
+};
+
 function componentsCompatible(element: AnyElement) {
   // clone initial object
   const compatible = { ...INIT_COMPATIBLE_COMPONENTS };
@@ -27,6 +38,10 @@ function componentsCompatible(element: AnyElement) {
   if (element.type === "DOM") {
     compatible.numberIncrementer = {
       isAlready: NumberIncrementer.isAlready(element),
+      applicable: true,
+    };
+    compatible.modal = {
+      isAlready: Modal.isAlready(element),
       applicable: true,
     };
   }
@@ -88,6 +103,8 @@ function App() {
                 return (
                   <NumberIncrementerSelection isAlready={value.isAlready} />
                 );
+              case "modal":
+                return <ModalSelection isAlready={value.isAlready} />;
               default:
                 throw new Error("key not found");
             }
