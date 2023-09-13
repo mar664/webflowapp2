@@ -40,6 +40,27 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
   >(undefined);
 
   const [selectionFinished, setSelectionFinished] = useState<boolean>(false);
+  const [canConfirmSelection, setCanConfirmSelection] =
+    useState<boolean>(false);
+
+  useEffect(() => {
+    // listens for change in element when selecting the original modal element again
+    if (isSelectingElement && !selectionFinished) {
+      const selectedElementCallback = (element: AnyElement | null) => {
+        setCanConfirmSelection(!!(element && element.id !== modalElement.id));
+      };
+
+      const unsubscribeSelectedElement = webflow.subscribe(
+        "selectedelement",
+        selectedElementCallback,
+      );
+
+      return () => {
+        console.log("unloaded");
+        unsubscribeSelectedElement();
+      };
+    }
+  }, [isSelectingElement, selectionFinished]);
 
   useEffect(() => {
     // listens for change in element when selecting the original modal element again
@@ -129,7 +150,12 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
             <Button ref={cancelRef1} onClick={modal1.onClose}>
               Cancel
             </Button>
-            <Button colorScheme="green" ml={3} onClick={setSelection}>
+            <Button
+              colorScheme="green"
+              ml={3}
+              onClick={setSelection}
+              isDisabled={!canConfirmSelection}
+            >
               Confirm
             </Button>
           </AlertDialogFooter>
@@ -149,7 +175,8 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
           <AlertDialogHeader>Select modal element</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>
-            Please select the original modal element
+            Please select the original modal element or cancel to finish editing
+            model
           </AlertDialogBody>
           <AlertDialogFooter>
             <Button ref={cancelRef2} onClick={modal2.onClose}>

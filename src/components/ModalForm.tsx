@@ -122,8 +122,17 @@ function ModalForm() {
   });
 
   const onSubmit: SubmitHandler<ModalOptions> = async (data) => {
-    console.log("Submitting");
+    console.log("Submitting", data);
+    const selectedElement = await webflow.getSelectedElement();
+    if (selectedElement) {
+      await Modal.update(selectedElement, data);
+    }
   };
+
+  useEffect(() => {
+    const subscription = watch(() => handleSubmit(onSubmit)());
+    return () => subscription.unsubscribe();
+  }, [handleSubmit, watch]);
 
   const insertingScript = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -172,7 +181,10 @@ function ModalForm() {
           </FormLabel>
           <RadioGroup
             id="open-modal-trigger"
-            onChange={(v: TriggerTypesEnum) => setValue("openTriggerType", v)}
+            onChange={(v: TriggerTypesEnum) => {
+              setValue("openTriggerType", v);
+              setValue("openTriggerValue", undefined);
+            }}
             value={getValues().openTriggerType}
           >
             <Stack direction="row">
@@ -183,16 +195,20 @@ function ModalForm() {
               ))}
             </Stack>
           </RadioGroup>
-        </FormControl>{" "}
+        </FormControl>
         <Stack direction="column">
           <ModalTriggerSelection
             modalElement={modalElement}
             trigger={watch("openTriggerType")}
-            setSelectedElement={(value: string) =>
+            defaultValue={getValues().openTriggerValue}
+            setSelectedValue={(value: string) =>
               setValue("openTriggerValue", value)
             }
+            id="open-trigger-value"
           />
-          <a>{watch("openTriggerValue")}</a>
+          {watch("openTriggerType") === "Element" && (
+            <a>{watch("openTriggerValue")}</a>
+          )}
         </Stack>
         <FormControl margin={"2"}>
           <FormLabel htmlFor="display-effect" mb="0">
@@ -239,7 +255,10 @@ function ModalForm() {
           </FormLabel>
           <RadioGroup
             id="close-modal-trigger"
-            onChange={(v: TriggerTypesEnum) => setValue("closeTriggerType", v)}
+            onChange={(v: TriggerTypesEnum) => {
+              setValue("closeTriggerType", v);
+              setValue("closeTriggerValue", undefined);
+            }}
             value={getValues().closeTriggerType}
           >
             <Stack direction="row">
@@ -255,11 +274,15 @@ function ModalForm() {
           <ModalTriggerSelection
             modalElement={modalElement}
             trigger={watch("closeTriggerType")}
-            setSelectedElement={(value: string) =>
+            defaultValue={getValues().closeTriggerValue}
+            setSelectedValue={(value: string) =>
               setValue("closeTriggerValue", value)
             }
+            id="close-trigger-value"
           />
-          <a>{watch("closeTriggerValue")}</a>
+          {watch("closeTriggerType") === "Element" && (
+            <a>{watch("closeTriggerValue")}</a>
+          )}
         </Stack>
         <FormControl margin={"2"}>
           <FormLabel htmlFor="hide-effect" mb="0">
@@ -301,15 +324,19 @@ function ModalForm() {
           margin={"2"}
           maxWidth={"full"}
         >
-          <FormLabel htmlFor="hide-on-click-underlay" mb="0">
+          <FormLabel htmlFor="close-on-click-underlay" mb="0">
             <Tooltip
-              label="Toggles whether to hide the modal when underlay is clicked"
+              label="Toggles whether to close the modal when underlay is clicked"
               fontSize="md"
             >
-              Hides on click underlay
+              Closes modal on click underlay
             </Tooltip>
           </FormLabel>
-          <Switch id="hide-on-click-underlay" />
+          <Switch
+            id="close-on-click-underlay"
+            defaultChecked={getValues().closeOnClickUnderlay}
+            onChange={(e) => setValue("closeOnClickUnderlay", e.target.checked)}
+          />
         </FormControl>
         <FormControl
           display="flex"

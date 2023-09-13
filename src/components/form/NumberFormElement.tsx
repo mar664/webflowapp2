@@ -42,7 +42,7 @@ function NumberFormElement({
   const debounced = useDebouncedCallback((value) => {
     onValueChange(value);
   }, 1000);
-  console.log("inital value is", value);
+
   return (
     <FormControl isInvalid={!!error} padding={"2"}>
       <FormLabel htmlFor={name}>

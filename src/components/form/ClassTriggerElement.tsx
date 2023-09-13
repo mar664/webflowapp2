@@ -1,27 +1,65 @@
-import {
-  FormControl,
-  FormLabel,
-  Select,
-  Spinner,
-  Tooltip,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { FormControl, FormLabel, Spinner, Tooltip } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import * as _ from "lodash";
+import Select from "react-select";
+import { ActionMeta, SingleValue } from "react-select/dist/declarations/src";
 
-function ClassTriggerElement() {
+interface IStyleItem {
+  value: string;
+  label: string;
+}
+
+interface FormProps {
+  setSelectedClass: any;
+  defaultValue: string | undefined;
+  id: string;
+}
+
+function removeChars(str: string) {
+  return str
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9\s]/g, "")
+    .replace(/\s+/g, "-");
+}
+
+function ClassTriggerElement({
+  setSelectedClass,
+  defaultValue,
+  id,
+}: FormProps) {
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [styles, setStyles] = useState<string[]>([]);
+  const [styles, setStyles] = useState<IStyleItem[]>([]);
 
   useEffect(() => {
     (async () => {
-      setStyles((await webflow.getAllStyles()).map((v) => v.getName()).sort());
+      setStyles(
+        _.uniqWith(
+          (await webflow.getAllStyles()).map((v) => ({
+            value: `CLASS-${removeChars(v.getName())}`,
+            label: v.getName(),
+          })),
+          (s1, s2) => s1.label === s2.label,
+        ).sort((s1, s2) => (s1.label > s2.label ? 1 : -1)),
+      );
       setIsLoadingData(false);
     })();
   }, []);
 
+  const handleSelectedItemsChange = (
+    newValue: SingleValue<IStyleItem>,
+    actionMeta: ActionMeta<IStyleItem>,
+  ) => {
+    if (newValue) {
+      console.log(newValue);
+      setSelectedClass(newValue.value);
+    }
+  };
+
   if (isLoadingData) return <Spinner />;
+
   return (
     <FormControl margin={"2"}>
-      <FormLabel htmlFor="trigger-class" mb="0">
+      <FormLabel htmlFor={id} mb="0">
         <Tooltip
           label="The effect to use when displaying the modal"
           fontSize="md"
@@ -29,11 +67,12 @@ function ClassTriggerElement() {
           Select class
         </Tooltip>
       </FormLabel>
-      <Select placeholder="Select class" id="trigger-class">
-        {styles.map((value) => (
-          <option value={value}>{value}</option>
-        ))}
-      </Select>
+      <Select
+        options={styles}
+        onChange={handleSelectedItemsChange}
+        id={id}
+        defaultValue={styles.find((s) => s.value === defaultValue)}
+      />
     </FormControl>
   );
 }

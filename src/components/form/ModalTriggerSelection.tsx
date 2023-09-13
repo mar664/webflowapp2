@@ -4,23 +4,33 @@ import ElementTriggerElement from "./ElementTriggerElement";
 
 interface FormProps {
   trigger: TriggerTypesEnum;
-  setSelectedElement: any;
+  setSelectedValue: any;
   modalElement: any;
+  defaultValue?: string;
+  id: string;
 }
 
 function ModalTriggerSelection({
   trigger,
-  setSelectedElement,
+  setSelectedValue,
   modalElement,
+  defaultValue,
+  id,
 }: FormProps) {
   console.log(trigger);
   switch (trigger) {
     case TriggerTypesEnum.enum.Class:
-      return <ClassTriggerElement />;
+      return (
+        <ClassTriggerElement
+          setSelectedClass={setSelectedValue}
+          defaultValue={defaultValue ? `CLASS-${defaultValue}` : undefined}
+          id={id}
+        />
+      );
     case TriggerTypesEnum.enum.Element:
       return (
         <ElementTriggerElement
-          setSelectedElement={setSelectedElement}
+          setSelectedElement={setSelectedValue}
           modalElement={modalElement}
         />
       );
