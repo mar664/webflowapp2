@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CompatibleElement } from "./CompatibleElement";
 
 export const NumberIncrementerOptions = z
   .object({
@@ -32,90 +33,82 @@ export class NumberIncrementer {
     "https://mar664.github.io/scripts/number-incrementer-v1.js";
 
   // apply the number incremeter to a dom element
-  static async update(element: AnyElement, options: NumberIncrementerOptions) {
+  static async update(
+    element: CompatibleElement,
+    options: NumberIncrementerOptions,
+  ) {
     const parsedOptions = NumberIncrementerOptions.parse(options);
     console.log(parsedOptions);
-    if (element.type === "DOM") {
-      element.setAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
-        parsedOptions.incrementStart.toString(),
-      );
-      element.setAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
-        parsedOptions.incrementEnd.toString(),
-      );
-      element.setAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-        parsedOptions.percentageVisible.toString(),
-      );
-      element.setAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-        parsedOptions.duration.toString(),
-      );
-      await element.save();
-    }
+    element.setAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
+      parsedOptions.incrementStart.toString(),
+    );
+    element.setAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
+      parsedOptions.incrementEnd.toString(),
+    );
+    element.setAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
+      parsedOptions.percentageVisible.toString(),
+    );
+    element.setAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
+      parsedOptions.duration.toString(),
+    );
+    await element.save();
   }
 
   // apply the number incremeter to a dom element
-  static async apply(element: AnyElement) {
-    if (element.type === "DOM") {
-      element.setAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE, "true");
-      await element.save();
-    }
+  static async apply(element: CompatibleElement) {
+    element.setAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE, "true");
+    await element.save();
   }
 
   // remove number incrementer from dom element by removing attributes
-  static async remove(element: AnyElement) {
-    if (element.type === "DOM") {
-      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START);
-      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END);
-      element.removeAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-      );
-      element.removeAttribute(
-        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-      );
-      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
-      await element.save();
-    }
+  static async remove(element: CompatibleElement) {
+    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START);
+    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END);
+    element.removeAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
+    );
+    element.removeAttribute(
+      NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
+    );
+    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
+    await element.save();
   }
 
-  static isAlready(element: AnyElement) {
-    if (element.type === "DOM") {
-      return !!element.getAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
-    }
-    return false;
+  static isAlready(element: CompatibleElement) {
+    return !!element.getAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
   }
 
-  static parse(element: AnyElement) {
-    if (element && element.type === "DOM") {
-      return {
-        incrementStart:
-          parseInt(
-            element.getAttribute(
-              NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
-            ) as string,
-          ) || NumberIncrementer.DEFAULT_INCREMENT_START,
-        incrementEnd:
-          parseInt(
-            element.getAttribute(
-              NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
-            ) as string,
-          ) || NumberIncrementer.DEFAULT_INCREMENT_END,
-        percentageVisible:
-          parseInt(
-            element.getAttribute(
-              NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-            ) as string,
-          ) || NumberIncrementer.DEFAULT_PERCENTAGE_VISIBLE,
-        duration:
-          parseInt(
-            element.getAttribute(
-              NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-            ) as string,
-          ) || NumberIncrementer.DEFAULT_INCREMENT_DURATION,
-      };
-    }
+  static parse(element: CompatibleElement) {
+    return {
+      incrementStart:
+        parseInt(
+          element.getAttribute(
+            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
+          ) as string,
+        ) || NumberIncrementer.DEFAULT_INCREMENT_START,
+      incrementEnd:
+        parseInt(
+          element.getAttribute(
+            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
+          ) as string,
+        ) || NumberIncrementer.DEFAULT_INCREMENT_END,
+      percentageVisible:
+        parseInt(
+          element.getAttribute(
+            NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
+          ) as string,
+        ) || NumberIncrementer.DEFAULT_PERCENTAGE_VISIBLE,
+      duration:
+        parseInt(
+          element.getAttribute(
+            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
+          ) as string,
+        ) || NumberIncrementer.DEFAULT_INCREMENT_DURATION,
+    };
   }
 
   static async insertScriptInBody() {

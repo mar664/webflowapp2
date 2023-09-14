@@ -29,10 +29,12 @@ import {
   faCheck,
   faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
+import { CompatibleElement } from "../elements/CompatibleElement";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
-  const selectedElement = await webflow.getSelectedElement();
+  const selectedElement = await CompatibleElement.getSelected();
+
   if (selectedElement && !NumberIncrementer.isAlready(selectedElement)) {
     await NumberIncrementer.apply(selectedElement);
   }
@@ -113,7 +115,7 @@ function NumberIncrementerForm() {
   });
   const onSubmit: SubmitHandler<NumberIncrementerOptions> = async (data) => {
     console.log("Submitting");
-    const selectedElement = await webflow.getSelectedElement();
+    const selectedElement = await CompatibleElement.getSelected();
     if (selectedElement) {
       await NumberIncrementer.update(selectedElement, data);
     }

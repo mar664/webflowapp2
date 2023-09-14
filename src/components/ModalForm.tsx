@@ -36,11 +36,12 @@ import {
 import { SubmitHandler, useForm, get } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ModalTriggerSelection from "./form/ModalTriggerSelection";
+import { CompatibleElement } from "../elements/CompatibleElement";
 
 // loads data before switching route and sets current element
 // as a modal and applies modal to it if it doesn't already exist
 export async function loader() {
-  const modalElement = await webflow.getSelectedElement();
+  const modalElement = await CompatibleElement.getSelected();
   if (modalElement && !Modal.isAlready(modalElement)) {
     await Modal.apply(modalElement);
   }
@@ -123,7 +124,7 @@ function ModalForm() {
 
   const onSubmit: SubmitHandler<ModalOptions> = async (data) => {
     console.log("Submitting", data);
-    const selectedElement = await webflow.getSelectedElement();
+    const selectedElement = await CompatibleElement.getSelected();
     if (selectedElement) {
       await Modal.update(selectedElement, data);
     }

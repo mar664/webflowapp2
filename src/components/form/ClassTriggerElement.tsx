@@ -1,7 +1,7 @@
 import { FormControl, FormLabel, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import * as _ from "lodash";
-import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 import { ActionMeta, SingleValue } from "react-select/dist/declarations/src";
 
 interface IStyleItem {
@@ -28,19 +28,25 @@ function ClassTriggerElement({
   id,
 }: FormProps) {
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [styles, setStyles] = useState<IStyleItem[]>([]);
+  const [value, setValue] = useState<IStyleItem | null>();
 
   useEffect(() => {
     (async () => {
-      setStyles(
-        _.uniqWith(
-          (await webflow.getAllStyles()).map((v) => ({
-            value: `CLASS-${removeChars(v.getName())}`,
-            label: v.getName(),
-          })),
-          (s1, s2) => s1.label === s2.label,
-        ).sort((s1, s2) => (s1.label > s2.label ? 1 : -1)),
+      const options = _.uniqWith(
+        (await webflow.getAllStyles()).map((v) => ({
+          value: `.${removeChars(v.getName())}`,
+          label: v.getName(),
+        })),
+        (s1, s2) => s1.label === s2.label,
+      ).sort((s1, s2) =>
+        s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1,
       );
+
+      setStyles(options);
+      setValue(options.find((o) => o.value === defaultValue));
       setIsLoadingData(false);
     })();
   }, []);
@@ -55,6 +61,23 @@ function ClassTriggerElement({
     }
   };
 
+  const handleCreate = (inputValue: string) => {
+    setIsLoading(true);
+    (async () => {
+      const newOption = {
+        value: `.${removeChars(inputValue)}`,
+        label: inputValue,
+      };
+      setIsLoading(false);
+      setStyles((prev) =>
+        [...prev, newOption].sort((s1, s2) =>
+          s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1,
+        ),
+      );
+      setValue(newOption);
+    })();
+  };
+
   if (isLoadingData) return <Spinner />;
 
   return (
@@ -67,11 +90,14 @@ function ClassTriggerElement({
           Select class
         </Tooltip>
       </FormLabel>
-      <Select
-        options={styles}
+      <CreatableSelect
+        isDisabled={isLoading}
+        isLoading={isLoading}
         onChange={handleSelectedItemsChange}
+        onCreateOption={handleCreate}
+        options={styles}
+        value={value}
         id={id}
-        defaultValue={styles.find((s) => s.value === defaultValue)}
       />
     </FormControl>
   );

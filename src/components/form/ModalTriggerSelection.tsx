@@ -23,7 +23,7 @@ function ModalTriggerSelection({
       return (
         <ClassTriggerElement
           setSelectedClass={setSelectedValue}
-          defaultValue={defaultValue ? `CLASS-${defaultValue}` : undefined}
+          defaultValue={defaultValue}
           id={id}
         />
       );

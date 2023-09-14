@@ -8,6 +8,7 @@ import {
 import { Flex, Heading } from "@chakra-ui/react";
 import ModalSelection from "./components/ModalSelection";
 import { Modal } from "./elements/Modal";
+import { CompatibleElement } from "./elements/CompatibleElement";
 
 interface CompatibleComponents {
   numberIncrementer: {
@@ -20,7 +21,7 @@ interface CompatibleComponents {
   };
 }
 
-const INIT_COMPATIBLE_COMPONENTS : CompatibleComponents = {
+const INIT_COMPATIBLE_COMPONENTS: CompatibleComponents = {
   numberIncrementer: {
     isAlready: false,
     applicable: false,
@@ -31,20 +32,18 @@ const INIT_COMPATIBLE_COMPONENTS : CompatibleComponents = {
   },
 };
 
-function componentsCompatible(element: AnyElement) {
+function componentsCompatible(element: CompatibleElement) {
   // clone initial object
   const compatible = { ...INIT_COMPATIBLE_COMPONENTS };
 
-  if (element.type === "DOM") {
-    compatible.numberIncrementer = {
-      isAlready: NumberIncrementer.isAlready(element),
-      applicable: true,
-    };
-    compatible.modal = {
-      isAlready: Modal.isAlready(element),
-      applicable: true,
-    };
-  }
+  compatible.numberIncrementer = {
+    isAlready: NumberIncrementer.isAlready(element),
+    applicable: true,
+  };
+  compatible.modal = {
+    isAlready: Modal.isAlready(element),
+    applicable: true,
+  };
   return compatible;
 }
 
@@ -60,14 +59,14 @@ function App() {
     const selectedElementCallback = (element: AnyElement | null) => {
       console.log(element, prevElementId);
       if (element) {
+        const compatibleElement = CompatibleElement.fromElement(element);
         // if element callback triggered by save on element discard
         if (element.id === prevElementId) {
-          console.log("ho");
           return;
         }
-        if (element.type === "DOM") {
+        if (compatibleElement) {
           // get any components which are applicable to the selected element
-          setCompatibleComponents(componentsCompatible(element));
+          setCompatibleComponents(componentsCompatible(compatibleElement));
         } else {
           // reset compatible components state
           setCompatibleComponents(INIT_COMPATIBLE_COMPONENTS);

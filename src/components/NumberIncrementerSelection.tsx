@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useSetPrevElementId } from "../contexts/AppContext";
+import { CompatibleElement } from "../elements/CompatibleElement";
 
 interface Props {
   isAlready: boolean;
@@ -16,7 +17,7 @@ function NumberIncrementerSelection({ isAlready }: Props) {
   const toast = useToast();
 
   const removeNumberIncrementer = async () => {
-    const selectedElement = await webflow.getSelectedElement();
+    const selectedElement = await CompatibleElement.getSelected();
     if (selectedElement) {
       // reset the prev element value so that selected element callback fires
       setPrevElement(null);
