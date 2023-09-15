@@ -30,6 +30,12 @@ function setAttributeFunc(element: CompatibleElement) {
   };
 }
 
+const Boolean = z.preprocess((arg) => {
+  return arg !== undefined && arg !== null && (arg === "false" || !arg)
+    ? false
+    : true;
+}, z.boolean().default(true));
+
 export const ModalOptions = z.object({
   openTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Class),
   openTriggerValue: z.preprocess((arg) => {
@@ -49,11 +55,18 @@ export const ModalOptions = z.object({
   }, z.string().optional()),
   closeEffectType: EffectTypesEnum.default(EffectTypesEnum.enum.Fade),
   closeDuration: z.coerce.number().min(0).default(1000),
-  closeOnClickUnderlay: z.preprocess((arg) => {
-    return arg === "false" || !arg ? false : true;
-  }, z.boolean()),
+  closeOnClickUnderlay: Boolean,
 });
 export type ModalOptions = z.infer<typeof ModalOptions>;
+
+export const NewModalOptions = z.object({
+  createHeader: Boolean,
+  createBody: Boolean,
+  createClose: Boolean,
+  createFooter: Boolean,
+  createClasses: Boolean,
+});
+export type NewModalOptions = z.infer<typeof NewModalOptions>;
 
 export class Modal {
   // set default values for incrementer
@@ -158,6 +171,8 @@ export class Modal {
     element.removeAttribute(Modal.DATA_ATTRIBUTE_BASE);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_EFFECT);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_EFFECT);
+    element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER_TYPE);
+    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER_TYPE);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_DURATION);

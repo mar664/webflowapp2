@@ -42,9 +42,7 @@ import { CompatibleElement } from "../elements/CompatibleElement";
 // as a modal and applies modal to it if it doesn't already exist
 export async function loader() {
   const modalElement = await CompatibleElement.getSelected();
-  if (modalElement && !Modal.isAlready(modalElement)) {
-    await Modal.apply(modalElement);
-  }
+
   return { modalElement };
 }
 
@@ -55,8 +53,6 @@ function ModalForm() {
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
   const setPrevElement = useSetPrevElementId();
-
-  const params = useParams();
 
   const { modalElement } = useLoaderData() as loaderData;
 
@@ -100,7 +96,7 @@ function ModalForm() {
 
     setInsertScript(scriptExisting.length !== 0);
 
-    if (modalElement && params && params.exists) {
+    if (modalElement) {
       const parsedElement = Modal.parse(modalElement);
       if (!parsedElement) {
         throw new Error("Error parsing modal attributes");

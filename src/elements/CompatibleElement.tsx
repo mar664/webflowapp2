@@ -78,12 +78,7 @@ export class CompatibleElement
   }
 
   static fromElement(element: AnyElement) {
-    if (
-      (!element.customAttributes && element.type !== "DOM") ||
-      !element.styles ||
-      !element.configurable ||
-      !element.children
-    ) {
+    if (!CompatibleElement.isCompatible(element)) {
       return null;
     }
     return new CompatibleElement(element);
@@ -95,5 +90,17 @@ export class CompatibleElement
       return CompatibleElement.fromElement(selectedElement);
     }
     return null;
+  }
+
+  static isCompatible(element: AnyElement) {
+    if (
+      (!element.customAttributes && element.type !== "DOM") ||
+      !element.styles ||
+      !element.configurable ||
+      !element.children
+    ) {
+      return false;
+    }
+    return true;
   }
 }

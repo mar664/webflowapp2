@@ -37,7 +37,11 @@ function ModalSelection({ isAlready }: Props) {
       <Button
         onClick={() => {
           console.log("redirect to modal form");
-          navigate(`/modal_form/${isAlready}`);
+          if (!isAlready) {
+            navigate(`/new_modal_form`);
+          } else {
+            navigate(`/modal_form`);
+          }
         }}
       >
         {isAlready ? "Edit Modal" : "Transform into a Modal"}

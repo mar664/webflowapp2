@@ -10,6 +10,7 @@ import { AppContextProvider } from "./contexts/AppContext";
 // 1. import `ChakraProvider` component
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import ModalForm, { loader as modalLoader } from "./components/ModalForm";
+import NewModalForm from "./components/NewModalForm";
 
 const colors = {
   brand: {
@@ -32,7 +33,11 @@ const router = createHashRouter([
     loader: numberIncrementerLoader,
   },
   {
-    path: "modal_form/:exists",
+    path: "new_modal_form",
+    element: <NewModalForm />,
+  },
+  {
+    path: "modal_form",
     element: <ModalForm />,
     loader: modalLoader,
   },
