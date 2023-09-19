@@ -1,13 +1,16 @@
 import { TriggerTypesEnum } from "../../elements/Modal";
+import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import ClassTriggerElement from "./ClassTriggerElement";
 import ElementTriggerElement from "./ElementTriggerElement";
 
 interface FormProps {
   trigger: TriggerTypesEnum;
   setSelectedValue: any;
-  modalElement: any;
+  modalElement: ModalCompatibleElement;
   defaultValue?: string;
   id: string;
+  hideOnModalOpen?: boolean;
+  showOnModalOpen?: boolean;
 }
 
 function ModalTriggerSelection({
@@ -16,6 +19,8 @@ function ModalTriggerSelection({
   modalElement,
   defaultValue,
   id,
+  hideOnModalOpen,
+  showOnModalOpen,
 }: FormProps) {
   console.log(trigger);
   switch (trigger) {
@@ -32,6 +37,8 @@ function ModalTriggerSelection({
         <ElementTriggerElement
           setSelectedElement={setSelectedValue}
           modalElement={modalElement}
+          hideOnModalOpen={hideOnModalOpen}
+          showOnModalOpen={showOnModalOpen}
         />
       );
     case undefined:

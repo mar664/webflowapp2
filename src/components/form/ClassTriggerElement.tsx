@@ -1,13 +1,10 @@
 import { FormControl, FormLabel, Spinner, Tooltip } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
-import * as _ from "lodash";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, SingleValue } from "react-select/dist/declarations/src";
-
-interface IStyleItem {
-  value: string;
-  label: string;
-}
+import { IStyleItem } from "../../hooks/styles";
+import { removeChars } from "../../utils";
+import { useStyles } from "../../contexts/AppContext";
 
 interface FormProps {
   setSelectedClass: any;
@@ -15,41 +12,15 @@ interface FormProps {
   id: string;
 }
 
-function removeChars(str: string) {
-  return str
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9\s]/g, "")
-    .replace(/\s+/g, "-");
-}
-
 function ClassTriggerElement({
   setSelectedClass,
   defaultValue,
   id,
 }: FormProps) {
-  const [isLoadingData, setIsLoadingData] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [styles, setStyles] = useState<IStyleItem[]>([]);
-  const [value, setValue] = useState<IStyleItem | null>();
-
-  useEffect(() => {
-    (async () => {
-      const options = _.uniqWith(
-        (await webflow.getAllStyles()).map((v) => ({
-          value: `.${removeChars(v.getName())}`,
-          label: v.getName(),
-        })),
-        (s1, s2) => s1.label === s2.label,
-      ).sort((s1, s2) =>
-        s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1,
-      );
-
-      setStyles(options);
-      setValue(options.find((o) => o.value === defaultValue));
-      setIsLoadingData(false);
-    })();
-  }, []);
+  const { styles, setStyles, isLoading, setIsLoading, update } = useStyles();
+  const [value, setValue] = useState<IStyleItem | undefined>(
+    styles.find((o) => o.value === defaultValue),
+  );
 
   const handleSelectedItemsChange = (
     newValue: SingleValue<IStyleItem>,
@@ -58,27 +29,33 @@ function ClassTriggerElement({
     if (newValue) {
       console.log(newValue);
       setSelectedClass(newValue.value);
+      setValue(newValue);
     }
   };
 
   const handleCreate = (inputValue: string) => {
     setIsLoading(true);
     (async () => {
+      const newStyle = webflow.createStyle(inputValue);
+      await newStyle.save();
+
       const newOption = {
         value: `.${removeChars(inputValue)}`,
         label: inputValue,
       };
-      setIsLoading(false);
+
       setStyles((prev) =>
         [...prev, newOption].sort((s1, s2) =>
           s1.label.toLowerCase() > s2.label.toLowerCase() ? 1 : -1,
         ),
       );
       setValue(newOption);
+      setSelectedClass(newOption.value);
+      setIsLoading(false);
     })();
   };
 
-  if (isLoadingData) return <Spinner />;
+  if (isLoading) return <Spinner />;
 
   return (
     <FormControl margin={"2"}>

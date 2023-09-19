@@ -1,4 +1,5 @@
 import { CompatibleElement } from "./CompatibleElement";
+import { NumberIncrementer } from "./NumberIncrementer";
 
 export class NumberIncrementerCompatibleElement extends CompatibleElement {
   constructor(element: AnyElement) {
@@ -6,6 +7,10 @@ export class NumberIncrementerCompatibleElement extends CompatibleElement {
   }
 
   static fromElement(element: AnyElement) {
+    const compatibleElement = CompatibleElement.fromElement(element);
+    if (compatibleElement && NumberIncrementer.isAlready(compatibleElement)) {
+      return new NumberIncrementerCompatibleElement(element);
+    }
     if (!NumberIncrementerCompatibleElement.isCompatible(element)) {
       return null;
     }
@@ -20,8 +25,26 @@ export class NumberIncrementerCompatibleElement extends CompatibleElement {
     return null;
   }
 
-  static isCompatible(element: AnyElement) {
-    if (!CompatibleElement.isCompatible(element)) {
+  static isCompatible(element: AnyElement | CompatibleElement) {
+    const compatibleElement =
+      element instanceof CompatibleElement
+        ? element
+        : CompatibleElement.fromElement(element);
+    if (compatibleElement && compatibleElement.element.children) {
+      console.log(
+        "is compatible with number incrementer",
+        compatibleElement.element.getChildren(),
+      );
+    }
+
+    if (compatibleElement === null) {
+      return false;
+      // number incrementer can only be applied to a compatible element with no children
+    } else if (
+      compatibleElement.element.children &&
+      compatibleElement.element.getChildren().length > 0 &&
+      compatibleElement.element.getChildren()[0].type !== "String"
+    ) {
       return false;
     }
     return true;

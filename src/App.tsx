@@ -9,6 +9,8 @@ import { Flex, Heading } from "@chakra-ui/react";
 import ModalSelection from "./components/ModalSelection";
 import { Modal } from "./elements/Modal";
 import { CompatibleElement } from "./elements/CompatibleElement";
+import { ModalCompatibleElement } from "./elements/ModalCompatibleElement";
+import { NumberIncrementerCompatibleElement } from "./elements/NumberIncrementerCompatibleElement";
 
 interface CompatibleComponents {
   numberIncrementer: {
@@ -33,24 +35,38 @@ const INIT_COMPATIBLE_COMPONENTS: CompatibleComponents = {
 };
 
 function componentsCompatible(element: CompatibleElement) {
+  console.log("compatible element", element);
   // clone initial object
   const compatible = { ...INIT_COMPATIBLE_COMPONENTS };
 
+  const isNumberIncrementer = NumberIncrementer.isAlready(element);
+  const isModal = Modal.isAlready(element);
+
   compatible.numberIncrementer = {
-    isAlready: NumberIncrementer.isAlready(element),
-    applicable: true,
+    isAlready: isNumberIncrementer,
+    applicable: isModal
+      ? false
+      : NumberIncrementerCompatibleElement.isCompatible(element), // an element can only be of one type
   };
+
   compatible.modal = {
-    isAlready: Modal.isAlready(element),
-    applicable: true,
+    isAlready: isModal,
+    applicable: isNumberIncrementer
+      ? false
+      : ModalCompatibleElement.isCompatible(element), // an element can only be of one type
   };
+
+  console.log(compatible);
+
   return compatible;
 }
 
 function App() {
   const prevElementId = usePrevElementIdValue();
   const setPrevElementId = useSetPrevElementId();
-
+  const [currentElement, setCurrentElement] = useState<
+    CompatibleElement | undefined
+  >();
   const [compatibleComponents, setCompatibleComponents] =
     useState<CompatibleComponents>(INIT_COMPATIBLE_COMPONENTS);
 
@@ -65,6 +81,7 @@ function App() {
           return;
         }
         if (compatibleElement) {
+          setCurrentElement(compatibleElement);
           // get any components which are applicable to the selected element
           setCompatibleComponents(componentsCompatible(compatibleElement));
         } else {
@@ -95,15 +112,23 @@ function App() {
       {
         // Iterate through all compatible components with the selected element
         Object.entries(compatibleComponents)
-          .filter(([key, value]) => value.applicable)
+          .filter(([key, value]) => value.applicable || value.isAlready)
           .map(([key, value]) => {
             switch (key) {
               case "numberIncrementer":
                 return (
-                  <NumberIncrementerSelection isAlready={value.isAlready} />
+                  <NumberIncrementerSelection
+                    isAlready={value.isAlready}
+                    currentElement={currentElement as CompatibleElement}
+                  />
                 );
               case "modal":
-                return <ModalSelection isAlready={value.isAlready} />;
+                return (
+                  <ModalSelection
+                    isAlready={value.isAlready}
+                    currentElement={currentElement as CompatibleElement}
+                  />
+                );
               default:
                 throw new Error("key not found");
             }

@@ -44,7 +44,7 @@ function NumberFormElement({
   }, 1000);
 
   return (
-    <FormControl isInvalid={!!error} padding={"2"}>
+    <FormControl isInvalid={!!error} margin={"2"}>
       <FormLabel htmlFor={name}>
         <Tooltip label={helpText} fontSize="md">
           {label}

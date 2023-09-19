@@ -11,8 +11,9 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Modal, NewModalOptions } from "../elements/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CompatibleElement } from "../elements/CompatibleElement";
 import { useNavigate } from "react-router-dom";
+import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
+import { uniqueId } from "lodash";
 
 function NewModalForm() {
   const navigate = useNavigate();
@@ -31,11 +32,60 @@ function NewModalForm() {
   const onSubmit: SubmitHandler<NewModalOptions> = async (data) => {
     console.log("Submitting", data);
 
-    const modalElement = await CompatibleElement.getSelected();
+    const modalElement = await ModalCompatibleElement.getSelected();
     if (modalElement) {
+      const id = uniqueId();
       await Modal.apply(modalElement);
 
+      {
+        const modalElementStyle =
+          (await webflow.getStyleByName("MR Modal Container")) ??
+          webflow.createStyle("MR Modal Container");
+
+        const properties: PropertyMap = {
+          position: "fixed",
+          "align-items": "center",
+          "justify-content": "center",
+          "z-index": "1400",
+          left: "0",
+          top: "0",
+          width: "100vw",
+          height: "100vh",
+          "overflow-x": "hidden",
+          "overflow-y": "hidden",
+        };
+        modalElementStyle.setProperties(properties);
+        modalElement.setStyles([modalElementStyle]);
+      }
+
+      const modalOverlay = webflow.createDOM("div");
+      modalOverlay.setAttribute("data-mr-modal-overlay", `true`);
+
+      const modalOverlayStyle =
+        (await webflow.getStyleByName("MR Modal Overlay")) ??
+        webflow.createStyle("MR Modal Overlay");
+
+      const properties: PropertyMap = {
+        position: "fixed",
+        left: "0",
+        top: "0",
+        "background-color": "rgba(0, 0, 0, 0.4)",
+        height: "100vh",
+        width: "100vw",
+        "overflow-x": "auto",
+        "overflow-y": "auto",
+        "z-index": "1400",
+      };
+      modalOverlayStyle.setProperties(properties);
+      modalOverlay.setStyles([modalOverlayStyle]);
+
       const modalContent = webflow.createDOM("section");
+      modalContent.setAttribute("role", "dialog");
+      modalContent.setAttribute("id", `dialog-${id}`);
+      modalContent.setAttribute("aria-labelledby", `dialog-${id}-label`);
+      modalContent.setAttribute("aria-describedby", `dialog-${id}-desc`);
+      modalContent.setAttribute("aria-modal", "true");
+
       if (data.createClasses) {
         const modalStyle =
           (await webflow.getStyleByName("MR Modal Content")) ??
@@ -70,6 +120,7 @@ function NewModalForm() {
           display: "flex",
           "flex-direction": "column",
           position: "relative",
+          "z-index": "1401",
         };
 
         modalStyle.setProperties(properties);
@@ -81,13 +132,14 @@ function NewModalForm() {
       if (data.createHeader) {
         const modalHeader = webflow.createDOM("header");
         modalHeader.setTextContent("Modal Header");
+        modalHeader.setAttribute("id", `dialog-${id}-label`);
         if (data.createClasses) {
           const modalStyle =
             (await webflow.getStyleByName("MR Modal Header")) ??
             webflow.createStyle("MR Modal Header");
           const properties: PropertyMap = {
-            "padding-inline-start": "2rem",
-            "padding-inline-end": "2rem",
+            "padding-left": "2rem",
+            "padding-right": "2rem",
             "padding-top": "1rem",
             "padding-bottom": "1rem",
             "font-size": "1.25rem",
@@ -101,6 +153,8 @@ function NewModalForm() {
       if (data.createClose) {
         const modalClose = webflow.createDOM("button");
         modalClose.setTextContent("X");
+        modalClose.setAttribute("data-mr-modal-close", "true");
+        modalClose.setAttribute("aria-label", "Close");
         if (data.createClasses) {
           const modalStyle =
             (await webflow.getStyleByName("MR Modal Close")) ??
@@ -119,14 +173,15 @@ function NewModalForm() {
       if (data.createBody) {
         const modalBody = webflow.createDOM("div");
         modalBody.setTextContent("this is the modal body content");
+        modalBody.setAttribute("id", `dialog-${id}-desc`);
         if (data.createClasses) {
           const modalStyle =
             (await webflow.getStyleByName("MR Modal Body")) ??
             webflow.createStyle("MR Modal Body");
 
           const properties: PropertyMap = {
-            "padding-inline-start": "2rem",
-            "padding-inline-end": "2rem",
+            "padding-left": "2rem",
+            "padding-right": "2rem",
             "padding-top": "1rem",
             "padding-bottom": "1rem",
             "font-size": "1rem",
@@ -146,8 +201,8 @@ function NewModalForm() {
             webflow.createStyle("MR Modal Footer");
 
           const properties: PropertyMap = {
-            "padding-inline-start": "2rem",
-            "padding-inline-end": "2rem",
+            "padding-left": "2rem",
+            "padding-right": "2rem",
             "padding-top": "1rem",
             "padding-bottom": "1rem",
           };
@@ -157,7 +212,24 @@ function NewModalForm() {
         modalContentChildren.push(modalFooter);
       }
       modalContent.setChildren(modalContentChildren);
-      modalElement?.setChildren([modalContent]);
+
+      const modalStyleElement = webflow.createDOM("style");
+      modalStyleElement.setAttribute("data-mr-modal-visible", "true");
+
+      modalStyleElement.setTextContent(
+        `
+        html.wf-design-mode *[data-mr-modal='${modalElement.id}']{
+          display: flex;
+        }
+        html:not(.wf-design-mode) *[data-mr-modal='${modalElement.id}']{
+          display: none;
+        }`,
+      );
+      modalElement?.setChildren([
+        modalStyleElement,
+        modalOverlay,
+        modalContent,
+      ]);
 
       await modalElement?.save();
 
@@ -188,6 +260,7 @@ function NewModalForm() {
           <Switch
             id="create-header"
             defaultChecked={getValues().createHeader}
+            disabled={true}
             onChange={(e) => setValue("createHeader", e.target.checked)}
           />
         </FormControl>
@@ -208,6 +281,7 @@ function NewModalForm() {
           <Switch
             id="create-close"
             defaultChecked={getValues().createClose}
+            disabled={true}
             onChange={(e) => setValue("createClose", e.target.checked)}
           />
         </FormControl>
@@ -228,6 +302,7 @@ function NewModalForm() {
           <Switch
             id="create-body"
             defaultChecked={getValues().createBody}
+            disabled={true}
             onChange={(e) => setValue("createBody", e.target.checked)}
           />
         </FormControl>

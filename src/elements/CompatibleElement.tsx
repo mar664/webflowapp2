@@ -5,15 +5,12 @@ interface Attributable {
   removeAttribute(name: string): undefined;
 }
 
-export class CompatibleElement
-  implements Attributable, Configurable, Styles, Children
-{
+export class CompatibleElement implements Attributable, Configurable, Styles {
   element;
   readonly id: ElementId;
   readonly configurable = true;
   readonly styles = true;
   readonly attributes = true;
-  readonly children = true;
   constructor(element: AnyElement) {
     this.element = element;
     this.id = this.element.id;
@@ -57,19 +54,6 @@ export class CompatibleElement
     throw new Error("Styles should exist");
   }
 
-  getChildren() {
-    if (this.element.children) {
-      return this.element.getChildren();
-    }
-    throw new Error("Children should exist");
-  }
-  setChildren(children: Array<AnyElement>) {
-    if (this.element.children) {
-      return this.element.setChildren(children);
-    }
-    throw new Error("Children should be settable");
-  }
-
   save() {
     if (this.element.configurable) {
       return this.element.save();
@@ -94,10 +78,11 @@ export class CompatibleElement
 
   static isCompatible(element: AnyElement) {
     if (
-      (!element.customAttributes && element.type !== "DOM") ||
+      (!element.customAttributes &&
+        element.plugin !== "Basic" &&
+        element.plugin !== "Builtin") ||
       !element.styles ||
-      !element.configurable ||
-      !element.children
+      !element.configurable
     ) {
       return false;
     }

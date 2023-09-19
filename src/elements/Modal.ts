@@ -1,18 +1,29 @@
 import { z } from "zod";
 import { CompatibleElement } from "./CompatibleElement";
+
 const TriggerTypes = ["Element", "Class"] as const;
 export const TriggerTypesEnum = z.enum(TriggerTypes);
 export type TriggerTypesEnum = z.infer<typeof TriggerTypesEnum>;
 
-const EffectTypes = [
+const OpenEffectTypes = [
   "Fade",
-  "Slide-Left",
-  "Slide-Right",
-  "Slide-Top",
-  "Slide-Bottom",
+  "Slide From Left",
+  "Slide From Right",
+  "Slide From Top",
+  "Slide From Bottom",
 ] as const;
-export const EffectTypesEnum = z.enum(EffectTypes);
-export type EffectTypesEnum = z.infer<typeof EffectTypesEnum>;
+export const OpenEffectTypesEnum = z.enum(OpenEffectTypes);
+export type OpenEffectTypesEnum = z.infer<typeof OpenEffectTypesEnum>;
+
+const CloseEffectTypes = [
+  "Fade",
+  "Slide To Left",
+  "Slide To Right",
+  "Slide To Top",
+  "Slide To Bottom",
+] as const;
+export const CloseEffectTypesEnum = z.enum(CloseEffectTypes);
+export type CloseEffectTypesEnum = z.infer<typeof CloseEffectTypesEnum>;
 
 function getAttributeFunc(element: CompatibleElement) {
   return (arg: string) => {
@@ -37,25 +48,25 @@ const Boolean = z.preprocess((arg) => {
 }, z.boolean().default(true));
 
 export const ModalOptions = z.object({
-  openTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Class),
+  openTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Element),
   openTriggerValue: z.preprocess((arg) => {
     if (typeof arg === "string") {
       return arg;
     }
     return undefined;
   }, z.string().optional()),
-  openEffectType: EffectTypesEnum.default(EffectTypesEnum.enum.Fade),
+  openEffectType: OpenEffectTypesEnum.default(OpenEffectTypesEnum.enum.Fade),
   openDuration: z.coerce.number().min(0).default(1000),
-  closeTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Class),
+  closeTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Element),
   closeTriggerValue: z.preprocess((arg) => {
     if (typeof arg === "string") {
       return arg;
     }
     return undefined;
   }, z.string().optional()),
-  closeEffectType: EffectTypesEnum.default(EffectTypesEnum.enum.Fade),
+  closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
   closeDuration: z.coerce.number().min(0).default(1000),
-  closeOnClickUnderlay: Boolean,
+  closeOnClickOverlay: Boolean,
 });
 export type ModalOptions = z.infer<typeof ModalOptions>;
 
@@ -82,7 +93,7 @@ export class Modal {
   static DATA_ATTRIBUTE_OPEN_DURATION = `${Modal.DATA_ATTRIBUTE_OPEN}-duration`;
   static DATA_ATTRIBUTE_CLOSE_DURATION = `${Modal.DATA_ATTRIBUTE_CLOSE}-duration`;
 
-  static DATA_ATTRIBUTE_CLOSE_ON_CLICK_UNDERLAY = `${Modal.DATA_ATTRIBUTE_BASE}-close-onclick-underlay`;
+  static DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY = `${Modal.DATA_ATTRIBUTE_BASE}-close-on-click-overlay`;
 
   static SOURCE_URL = "https://mar664.github.io/scripts/modal-v1.js";
 
@@ -132,8 +143,8 @@ export class Modal {
       element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER);
     }
     setAttribute(
-      Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_UNDERLAY,
-      parsedOptions.closeOnClickUnderlay.toString(),
+      Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY,
+      parsedOptions.closeOnClickOverlay.toString(),
     );
     await element.save();
   }
@@ -144,7 +155,7 @@ export class Modal {
 
   // apply the number incremeter to a dom element
   static async apply(element: CompatibleElement) {
-    element.setAttribute(Modal.DATA_ATTRIBUTE_BASE, "true");
+    element.setAttribute(Modal.DATA_ATTRIBUTE_BASE, element.id);
   }
 
   static parse(element: CompatibleElement) {
@@ -160,8 +171,8 @@ export class Modal {
       closeTriggerValue: getAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER),
       openEffectType: getAttribute(Modal.DATA_ATTRIBUTE_OPEN_EFFECT),
       closeEffectType: getAttribute(Modal.DATA_ATTRIBUTE_CLOSE_EFFECT),
-      closeOnClickUnderlay: getAttribute(
-        Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_UNDERLAY,
+      closeOnClickOverlay: getAttribute(
+        Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY,
       ),
     });
   }
@@ -177,7 +188,7 @@ export class Modal {
     element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_DURATION);
     element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_DURATION);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_UNDERLAY);
+    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY);
     await element.save();
   }
 

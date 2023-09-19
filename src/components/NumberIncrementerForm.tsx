@@ -17,6 +17,7 @@ import {
   Grid,
   GridItem,
   Heading,
+  Input,
   Tooltip,
 } from "@chakra-ui/react";
 import NumberFormElement from "./form/NumberFormElement";
@@ -30,6 +31,7 @@ import {
   faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { CompatibleElement } from "../elements/CompatibleElement";
+import Header from "./Header";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
@@ -142,9 +144,7 @@ function NumberIncrementerForm() {
   console.log(Object.keys(errors));
   return (
     <>
-      <Heading as="h1" size={"md"}>
-        Editing Number Incrementer
-      </Heading>
+      <Header heading="Editing Number Incrementer" />
       {
         <Box textColor={"red"}>
           <ul>

@@ -19,25 +19,30 @@ import {
   useIsSelectingElement,
   useSetIsSelectingElement,
 } from "../../contexts/AppContext";
-import e from "express";
+import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
+import { CompatibleElement } from "../../elements/CompatibleElement";
+import { useModalVisibility } from "../../hooks/modal";
 
 interface Props {
   setSelectedElement: any;
-  modalElement: any;
+  modalElement: ModalCompatibleElement;
+  hideOnModalOpen?: boolean;
+  showOnModalOpen?: boolean;
 }
 
-function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
+function ElementTriggerElement({
+  setSelectedElement,
+  modalElement,
+  hideOnModalOpen,
+  showOnModalOpen,
+}: Props) {
+  const modalVisibility = useModalVisibility(modalElement);
+
   const isSelectingElement = useIsSelectingElement();
   const setIsSelectingElement = useSetIsSelectingElement();
-  const modal1 = useDisclosure();
-  const modal2 = useDisclosure();
+  const modal = useDisclosure();
 
-  const cancelRef1 = React.useRef<any>();
-  const cancelRef2 = React.useRef<any>();
-
-  const [selectedModalElement, setSelectedModalElement] = useState<
-    string | undefined
-  >(undefined);
+  const cancelRef = React.useRef<any>();
 
   const [selectionFinished, setSelectionFinished] = useState<boolean>(false);
   const [canConfirmSelection, setCanConfirmSelection] =
@@ -62,80 +67,42 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
     }
   }, [isSelectingElement, selectionFinished]);
 
-  useEffect(() => {
-    // listens for change in element when selecting the original modal element again
-    if (isSelectingElement && selectionFinished) {
-      const selectedElementCallback = (element: AnyElement | null) => {
-        if (element) {
-          setSelectedModalElement(element.id);
-        }
-      };
-
-      const unsubscribeSelectedElement = webflow.subscribe(
-        "selectedelement",
-        selectedElementCallback,
-      );
-
-      return () => {
-        console.log("unloaded");
-        unsubscribeSelectedElement();
-      };
-    }
-  }, [isSelectingElement, selectionFinished]);
-
-  useEffect(() => {
-    console.log(
-      isSelectingElement,
-      selectionFinished,
-      selectedModalElement,
-      modalElement,
-    );
-    // after finished selection, need user to select original modal element
-    if (
-      isSelectingElement &&
-      selectionFinished &&
-      selectedModalElement === modalElement.id
-    ) {
-      setIsSelectingElement(false);
-      setSelectionFinished(false);
-      modal2.onClose();
-    }
-  }, [
-    isSelectingElement,
-    selectionFinished,
-    selectedModalElement,
-    modalElement,
-  ]);
-
-  const selectElement = () => {
+  const selectElement = async () => {
     setIsSelectingElement(true);
-    modal1.onOpen();
+
+    if (hideOnModalOpen) {
+      await modalVisibility?.hideModal();
+    }
+    if (showOnModalOpen) {
+      await modalVisibility?.showModal();
+    }
+    modal.onOpen();
   };
 
   const setSelection = async () => {
-    const selectedElement = await webflow.getSelectedElement();
+    const selectedElement = await CompatibleElement.getSelected();
     console.log("selected element", selectedElement);
     setSelectedElement(selectedElement?.id);
+    selectedElement?.setAttribute("data-mr-modal-id", selectedElement?.id);
+    await selectedElement?.save();
     setSelectionFinished(true);
-    modal1.onClose();
-    modal2.onOpen();
+    modal.onClose();
+    setIsSelectingElement(false);
+    setSelectionFinished(false);
   };
-
-  console.log(modalElement);
-  console.log(selectedModalElement);
 
   return (
     <>
       <Button onClick={selectElement}>
-        {modal1.isOpen ? "Selecting Element" : "Select an element"}
+        {modal.isOpen ? "Selecting Element" : "Select an element"}
       </Button>
 
       <AlertDialog
         motionPreset="slideInBottom"
-        onClose={modal1.onClose}
-        isOpen={modal1.isOpen}
+        onClose={modal.onClose}
+        isOpen={modal.isOpen}
         isCentered
-        leastDestructiveRef={cancelRef1}
+        leastDestructiveRef={cancelRef}
       >
         <AlertDialogOverlay />
 
@@ -147,7 +114,7 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
             selection
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={cancelRef1} onClick={modal1.onClose}>
+            <Button ref={cancelRef} onClick={modal.onClose}>
               Cancel
             </Button>
             <Button
@@ -157,30 +124,6 @@ function ElementTriggerElement({ setSelectedElement, modalElement }: Props) {
               isDisabled={!canConfirmSelection}
             >
               Confirm
-            </Button>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
-      <AlertDialog
-        motionPreset="slideInBottom"
-        onClose={modal2.onClose}
-        isOpen={modal2.isOpen}
-        isCentered
-        leastDestructiveRef={cancelRef2}
-      >
-        <AlertDialogOverlay />
-
-        <AlertDialogContent>
-          <AlertDialogHeader>Select modal element</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody>
-            Please select the original modal element or cancel to finish editing
-            model
-          </AlertDialogBody>
-          <AlertDialogFooter>
-            <Button ref={cancelRef2} onClick={modal2.onClose}>
-              Cancel
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

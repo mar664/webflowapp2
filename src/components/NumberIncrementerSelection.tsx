@@ -9,27 +9,25 @@ import { CompatibleElement } from "../elements/CompatibleElement";
 
 interface Props {
   isAlready: boolean;
+  currentElement: CompatibleElement;
 }
 
-function NumberIncrementerSelection({ isAlready }: Props) {
+function NumberIncrementerSelection({ isAlready, currentElement }: Props) {
   const navigate = useNavigate();
   const setPrevElement = useSetPrevElementId();
   const toast = useToast();
 
   const removeNumberIncrementer = async () => {
-    const selectedElement = await CompatibleElement.getSelected();
-    if (selectedElement) {
-      // reset the prev element value so that selected element callback fires
-      setPrevElement(null);
-      await NumberIncrementer.remove(selectedElement);
+    // reset the prev element value so that selected element callback fires
+    setPrevElement(null);
+    await NumberIncrementer.remove(currentElement);
 
-      toast({
-        title: "Number incrementer removed",
-        status: "success",
-        duration: 4000,
-        isClosable: true,
-      });
-    }
+    toast({
+      title: "Number incrementer removed",
+      status: "success",
+      duration: 4000,
+      isClosable: true,
+    });
   };
 
   return (
