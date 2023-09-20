@@ -5,18 +5,21 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  Input,
   Switch,
-  Tooltip,
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Modal, NewModalOptions } from "../elements/Modal";
+import { Modal, NewModalOptions } from "../models/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "react-router-dom";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import { uniqueId } from "lodash";
+import { Tooltip } from "../components/Tooltip";
+import { useIsPageLoading } from "../contexts/AppContext";
 
 function NewModalForm() {
   const navigate = useNavigate();
+  const { setIsPageLoading } = useIsPageLoading();
   console.log(NewModalOptions.parse({}));
   const {
     handleSubmit,
@@ -30,7 +33,9 @@ function NewModalForm() {
   });
 
   const onSubmit: SubmitHandler<NewModalOptions> = async (data) => {
+    setIsPageLoading(true);
     console.log("Submitting", data);
+    const classPrefix = data.classPrefix;
 
     const modalElement = await ModalCompatibleElement.getSelected();
     if (modalElement) {
@@ -39,8 +44,8 @@ function NewModalForm() {
 
       {
         const modalElementStyle =
-          (await webflow.getStyleByName("MR Modal Container")) ??
-          webflow.createStyle("MR Modal Container");
+          (await webflow.getStyleByName(`${classPrefix} Container`)) ??
+          webflow.createStyle(`${classPrefix} Container`);
 
         const properties: PropertyMap = {
           position: "fixed",
@@ -62,8 +67,8 @@ function NewModalForm() {
       modalOverlay.setAttribute("data-mr-modal-overlay", `true`);
 
       const modalOverlayStyle =
-        (await webflow.getStyleByName("MR Modal Overlay")) ??
-        webflow.createStyle("MR Modal Overlay");
+        (await webflow.getStyleByName(`${classPrefix} Overlay`)) ??
+        webflow.createStyle(`${classPrefix} Overlay`);
 
       const properties: PropertyMap = {
         position: "fixed",
@@ -88,8 +93,8 @@ function NewModalForm() {
 
       if (data.createClasses) {
         const modalStyle =
-          (await webflow.getStyleByName("MR Modal Content")) ??
-          webflow.createStyle("MR Modal Content");
+          (await webflow.getStyleByName(`${classPrefix} Content`)) ??
+          webflow.createStyle(`${classPrefix} Content`);
 
         const properties: PropertyMap = {
           "background-color": "rgb(255, 255, 255)",
@@ -135,8 +140,8 @@ function NewModalForm() {
         modalHeader.setAttribute("id", `dialog-${id}-label`);
         if (data.createClasses) {
           const modalStyle =
-            (await webflow.getStyleByName("MR Modal Header")) ??
-            webflow.createStyle("MR Modal Header");
+            (await webflow.getStyleByName(`${classPrefix} Header`)) ??
+            webflow.createStyle(`${classPrefix} Header`);
           const properties: PropertyMap = {
             "padding-left": "2rem",
             "padding-right": "2rem",
@@ -157,8 +162,8 @@ function NewModalForm() {
         modalClose.setAttribute("aria-label", "Close");
         if (data.createClasses) {
           const modalStyle =
-            (await webflow.getStyleByName("MR Modal Close")) ??
-            webflow.createStyle("MR Modal Close");
+            (await webflow.getStyleByName(`${classPrefix} Close`)) ??
+            webflow.createStyle(`${classPrefix} Close`);
 
           const properties: PropertyMap = {
             position: "absolute",
@@ -176,8 +181,8 @@ function NewModalForm() {
         modalBody.setAttribute("id", `dialog-${id}-desc`);
         if (data.createClasses) {
           const modalStyle =
-            (await webflow.getStyleByName("MR Modal Body")) ??
-            webflow.createStyle("MR Modal Body");
+            (await webflow.getStyleByName(`${classPrefix} Body`)) ??
+            webflow.createStyle(`${classPrefix} Body`);
 
           const properties: PropertyMap = {
             "padding-left": "2rem",
@@ -197,8 +202,8 @@ function NewModalForm() {
         modalFooter.setTextContent("this is the modal footer content");
         if (data.createClasses) {
           const modalStyle =
-            (await webflow.getStyleByName("MR Modal Footer")) ??
-            webflow.createStyle("MR Modal Footer");
+            (await webflow.getStyleByName(`${classPrefix} Footer`)) ??
+            webflow.createStyle(`${classPrefix} Footer`);
 
           const properties: PropertyMap = {
             "padding-left": "2rem",
@@ -234,6 +239,9 @@ function NewModalForm() {
       await modalElement?.save();
 
       navigate(`/modal_form`);
+      setTimeout(() => setIsPageLoading(false), 500);
+    } else {
+      console.log("error");
     }
   };
 
@@ -317,7 +325,7 @@ function NewModalForm() {
               label="Toggles whether to create a footer div element for the modal"
               fontSize="md"
             >
-              Creates footer element
+              Create footer element
             </Tooltip>
           </FormLabel>
           <Switch
@@ -334,7 +342,7 @@ function NewModalForm() {
         >
           <FormLabel htmlFor="create-classes" mb="0">
             <Tooltip
-              label="Toggles whether to create classes for the div elements for the modal"
+              label="Toggles whether to create classes for the elements for the modal e.g MR Modal Container, MR Modal Overlay etc"
               fontSize="md"
             >
               Create classes for each element
@@ -343,9 +351,51 @@ function NewModalForm() {
           <Switch
             id="create-classes"
             defaultChecked={getValues().createClasses}
-            onChange={(e) => setValue("createClasses", e.target.checked)}
+            onChange={(e) => {
+              setValue("createClasses", e.target.checked);
+              !e.target.checked && setValue("useCustomPrefix", false);
+            }}
           />
         </FormControl>
+        {watch("createClasses") && (
+          <FormControl
+            display="flex"
+            alignItems="center"
+            margin={"2"}
+            maxWidth={"full"}
+          >
+            <FormLabel htmlFor="use-custom-class-prefix" mb="0">
+              <Tooltip
+                label="Toggles whether to change the default class prefix 'MR Modal'"
+                fontSize="md"
+              >
+                Use a custom class prefix
+              </Tooltip>
+            </FormLabel>
+            <Switch
+              id="use-custom-class-prefix"
+              defaultChecked={getValues().useCustomPrefix}
+              onChange={(e) => setValue("useCustomPrefix", e.target.checked)}
+            />
+          </FormControl>
+        )}
+        {watch("createClasses") && watch("useCustomPrefix") && (
+          <FormControl margin={"2"}>
+            <FormLabel htmlFor="custom-class-prefix" mb="0">
+              <Tooltip
+                label="You can use a custom class prefix e.g My Custom Class Prefix"
+                fontSize="md"
+              >
+                Custom prefix
+              </Tooltip>
+            </FormLabel>
+            <Input
+              id="custom-class-prefix"
+              onChange={(e) => setValue("classPrefix", e.target.value)}
+              placeholder={getValues().classPrefix}
+            />
+          </FormControl>
+        )}
         <ButtonGroup>
           <Button>Cancel</Button>
           <Button colorScheme="green" ml={3} type="submit">

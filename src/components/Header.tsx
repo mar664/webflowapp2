@@ -8,10 +8,10 @@ import type { RemoveHandler } from "../types";
 
 interface Props {
   heading: string;
-  visibiliyAction?: { isHidden: boolean; toggleVisibility: () => void };
+  visibilityAction?: { isHidden: boolean; toggleVisibility: () => void };
   removeAction?: { remove: RemoveHandler };
 }
-const Header = ({ heading, visibiliyAction, removeAction }: Props) => {
+const Header = ({ heading, visibilityAction, removeAction }: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -20,12 +20,12 @@ const Header = ({ heading, visibiliyAction, removeAction }: Props) => {
         {heading}
       </Heading>
       <Stack flexDirection={"row"}>
-        {visibiliyAction ? (
+        {visibilityAction ? (
           <IconButton
-            onClick={visibiliyAction.toggleVisibility}
+            onClick={visibilityAction.toggleVisibility}
             icon={
               <FontAwesomeIcon
-                icon={visibiliyAction.isHidden ? faEye : faEyeSlash}
+                icon={visibilityAction.isHidden ? faEye : faEyeSlash}
               />
             }
             size={"xs"}

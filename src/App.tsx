@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import NumberIncrementerSelection from "./components/NumberIncrementerSelection";
-import { NumberIncrementer } from "./elements/NumberIncrementer";
 import {
   usePrevElementIdValue,
   useSetPrevElementId,
 } from "./contexts/AppContext";
 import { Flex, Heading } from "@chakra-ui/react";
 import ModalSelection from "./components/ModalSelection";
-import { Modal } from "./elements/Modal";
+import { Modal } from "./models/Modal";
 import { CompatibleElement } from "./elements/CompatibleElement";
 import { ModalCompatibleElement } from "./elements/ModalCompatibleElement";
 import { NumberIncrementerCompatibleElement } from "./elements/NumberIncrementerCompatibleElement";
+import _ from "lodash";
+import { NumberIncrementer } from "./models/NumberIncrementer";
 
 interface CompatibleComponents {
   numberIncrementer: {
@@ -113,13 +114,19 @@ function App() {
     };
   }, []);
 
+  const hasCompatibleElements = _.isEqual(
+    INIT_COMPATIBLE_COMPONENTS,
+    compatibleComponents,
+  );
+
   return (
     <Flex align="center" justify="center" flexDirection={"column"}>
       <Heading as="h1" size={"md"} textAlign={"center"}>
         Please select an element in the webflow designer
       </Heading>
-
-      {
+      {hasCompatibleElements &&
+        "No compatible transformations found. Please select another component in the webflow designer"}
+      {!hasCompatibleElements &&
         // Iterate through all compatible components with the selected element
         Object.entries(compatibleComponents)
           .filter(([key, value]) => value.applicable || value.isAlready)
@@ -142,8 +149,7 @@ function App() {
               default:
                 throw new Error("key not found");
             }
-          })
-      }
+          })}
     </Flex>
   );
 }

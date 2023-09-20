@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { isModalHidden as isModalHiddenFunc } from "../utils";
-import { Modal } from "../elements/Modal";
+import { Modal } from "../models/Modal";
 import { useToast } from "@chakra-ui/react";
 import {
   useIsPageLoading,

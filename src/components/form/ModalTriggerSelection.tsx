@@ -1,4 +1,4 @@
-import { TriggerTypesEnum } from "../../elements/Modal";
+import { TriggerTypesEnum } from "../../models/Modal";
 import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import ClassTriggerElement from "./ClassTriggerElement";
 import ElementTriggerElement from "./ElementTriggerElement";

@@ -1,10 +1,6 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler, get } from "react-hook-form";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import {
-  NumberIncrementer,
-  NumberIncrementerOptions,
-} from "../elements/NumberIncrementer";
 import { useSetPrevElementId } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -33,6 +29,10 @@ import { CompatibleElement } from "../elements/CompatibleElement";
 import { useNumberIncrementerRemoval } from "../hooks/numberIncrementer";
 import Header from "../components/Header";
 import NumberFormElement from "../components/form/NumberFormElement";
+import {
+  NumberIncrementer,
+  NumberIncrementerOptions,
+} from "../models/NumberIncrementer";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {

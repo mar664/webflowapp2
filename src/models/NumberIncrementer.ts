@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CompatibleElement } from "./CompatibleElement";
+import { CompatibleElement } from "../elements/CompatibleElement";
 
 export const NumberIncrementerOptions = z
   .object({

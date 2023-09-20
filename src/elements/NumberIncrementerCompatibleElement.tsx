@@ -1,5 +1,5 @@
+import { NumberIncrementer } from "../models/NumberIncrementer";
 import { CompatibleElement } from "./CompatibleElement";
-import { NumberIncrementer } from "./NumberIncrementer";
 
 export class NumberIncrementerCompatibleElement extends CompatibleElement {
   constructor(element: AnyElement) {

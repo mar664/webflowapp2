@@ -97,7 +97,9 @@ export class CompatibleElement
       (!element.customAttributes && element.plugin === "Basic") ||
       !element.styles ||
       !element.configurable ||
-      (element.plugin !== "Builtin" && element.plugin !== "Basic")
+      (element.plugin !== "Builtin" && element.plugin !== "Basic") ||
+      (element.type === "DOM" &&
+        ["script", "style"].includes(element.getTag() as string))
     ) {
       return false;
     }

@@ -19,7 +19,6 @@ import {
   Select,
   Stack,
   Switch,
-  Tooltip,
 } from "@chakra-ui/react";
 import {
   CloseEffectTypesEnum,
@@ -27,7 +26,7 @@ import {
   ModalOptions,
   OpenEffectTypesEnum,
   TriggerTypesEnum,
-} from "../elements/Modal";
+} from "../models/Modal";
 import NumberFormElement from "../components/form/NumberFormElement";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CopyToClipboard from "react-copy-to-clipboard";
@@ -43,6 +42,7 @@ import ModalTriggerSelection from "../components/form/ModalTriggerSelection";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import Header from "../components/Header";
 import { useModalRemoval, useModalVisibility } from "../hooks/modal";
+import { Tooltip } from "../components/Tooltip";
 
 // loads data before switching route and sets current element
 // as a modal and applies modal to it if it doesn't already exist

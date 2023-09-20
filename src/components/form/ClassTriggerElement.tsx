@@ -1,10 +1,11 @@
-import { FormControl, FormLabel, Spinner, Tooltip } from "@chakra-ui/react";
+import { FormControl, FormLabel, Spinner } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, SingleValue } from "react-select/dist/declarations/src";
 import { IStyleItem } from "../../hooks/styles";
 import { removeChars } from "../../utils";
 import { useStyles } from "../../contexts/AppContext";
+import { Tooltip } from "../Tooltip";
 
 interface FormProps {
   setSelectedClass: any;

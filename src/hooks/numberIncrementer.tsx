@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from "react";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import { isModalHidden as isModalHiddenFunc } from "../utils";
-import { Modal } from "../elements/Modal";
 import { useToast } from "@chakra-ui/react";
-import { useModalHidden, useSetPrevElementId } from "../contexts/AppContext";
+import { useSetPrevElementId } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
-import { NumberIncrementer } from "../elements/NumberIncrementer";
+import { NumberIncrementer } from "../models/NumberIncrementer";
 
 export type RemoveHandler = (removeElement?: boolean) => Promise<boolean>;
 

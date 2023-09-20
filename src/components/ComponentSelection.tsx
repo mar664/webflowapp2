@@ -1,9 +1,10 @@
-import { Button, ButtonGroup, IconButton, Tooltip } from "@chakra-ui/react";
+import { Button, ButtonGroup, IconButton } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { type RemoveHandler, VisibilityHandler } from "../types";
 import { RemoveButton } from "./RemoveButton";
+import { Tooltip } from "./Tooltip";
 
 interface Props {
   elementType: string;

@@ -10,6 +10,7 @@ import {
   UseDisclosureReturn,
 } from "@chakra-ui/react";
 import React from "react";
+import { Tooltip } from "./Tooltip";
 interface Props {
   removeHandler: ((removeElement?: boolean) => Promise<boolean>) | undefined;
   disclosure: UseDisclosureReturn;
@@ -43,17 +44,20 @@ export function RemoveDialog({
 
           <AlertDialogFooter justifyContent={"center"}>
             <Stack flexDir={"column"} gap={"2"}>
-              <Button ref={cancelRef} onClick={disclosure.onClose} size={"sm"}>
+              <Button ref={cancelRef} onClick={disclosure.onClose} size={"md"}>
                 Cancel
               </Button>
               <Button
                 colorScheme="red"
+                variant={"outline"}
                 onClick={async () => {
                   (await removeHandler(false)) && disclosure.onClose();
                 }}
-                size={"sm"}
+                size={"md"}
               >
-                Delete Settings
+                <Tooltip label="Delete the attributes set" fontSize="md">
+                  Delete Settings
+                </Tooltip>
               </Button>
               <Button
                 colorScheme="red"
@@ -61,9 +65,14 @@ export function RemoveDialog({
                 onClick={async () => {
                   (await removeHandler(true)) && disclosure.onClose();
                 }}
-                size={"sm"}
+                size={"md"}
               >
-                Delete Settings & Element
+                <Tooltip
+                  label="Delete the attributes set and the element from the webflow designer"
+                  fontSize="md"
+                >
+                  Delete Settings & Element
+                </Tooltip>
               </Button>
             </Stack>
           </AlertDialogFooter>

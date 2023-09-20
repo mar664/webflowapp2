@@ -1,5 +1,5 @@
 import { CompatibleElement } from "./CompatibleElement";
-import { Modal } from "./Modal";
+import { Modal } from "../models/Modal";
 
 export class ModalCompatibleElement
   extends CompatibleElement

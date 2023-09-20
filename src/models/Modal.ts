@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CompatibleElement } from "./CompatibleElement";
+import { CompatibleElement } from "../elements/CompatibleElement";
 
 const TriggerTypes = ["Element", "Class"] as const;
 export const TriggerTypesEnum = z.enum(TriggerTypes);
@@ -76,6 +76,8 @@ export const NewModalOptions = z.object({
   createClose: Boolean,
   createFooter: Boolean,
   createClasses: Boolean,
+  useCustomPrefix: Boolean.default(false),
+  classPrefix: z.string().default("MR Modal"),
 });
 export type NewModalOptions = z.infer<typeof NewModalOptions>;
 
