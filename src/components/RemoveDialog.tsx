@@ -6,15 +6,23 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  Stack,
   UseDisclosureReturn,
-  useDisclosure,
 } from "@chakra-ui/react";
 import React from "react";
 interface Props {
-  removeHandler: (() => void) | undefined;
+  removeHandler: ((removeElement?: boolean) => Promise<boolean>) | undefined;
   disclosure: UseDisclosureReturn;
+  elementType: string;
 }
-export function RemoveDialog({ removeHandler, disclosure }: Props) {
+export function RemoveDialog({
+  elementType,
+  removeHandler,
+  disclosure,
+}: Props) {
+  if (removeHandler === undefined) {
+    throw new Error("Remove handler must be defined");
+  }
   const cancelRef = React.useRef<any>();
 
   return (
@@ -24,25 +32,40 @@ export function RemoveDialog({ removeHandler, disclosure }: Props) {
       onClose={disclosure.onClose}
     >
       <AlertDialogOverlay>
-        <AlertDialogContent>
+        <AlertDialogContent margin={"2"}>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Delete Modal
+            Delete {elementType}
           </AlertDialogHeader>
 
           <AlertDialogBody>
             Are you sure? You can't undo this action afterwards.
           </AlertDialogBody>
 
-          <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={disclosure.onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme="red" onClick={disclosure.onClose} ml={3}>
-              Delete Settings
-            </Button>
-            <Button colorScheme="red" onClick={disclosure.onClose} ml={3}>
-              Delete Element
-            </Button>
+          <AlertDialogFooter justifyContent={"center"}>
+            <Stack flexDir={"column"} gap={"2"}>
+              <Button ref={cancelRef} onClick={disclosure.onClose} size={"sm"}>
+                Cancel
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={async () => {
+                  (await removeHandler(false)) && disclosure.onClose();
+                }}
+                size={"sm"}
+              >
+                Delete Settings
+              </Button>
+              <Button
+                colorScheme="red"
+                variant="solid"
+                onClick={async () => {
+                  (await removeHandler(true)) && disclosure.onClose();
+                }}
+                size={"sm"}
+              >
+                Delete Settings & Element
+              </Button>
+            </Stack>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

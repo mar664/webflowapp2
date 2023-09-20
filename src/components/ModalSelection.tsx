@@ -4,6 +4,7 @@ import {
   ButtonGroup,
   IconButton,
   Tooltip,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,10 +15,13 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { useSetPrevElementId } from "../contexts/AppContext";
-import { Modal } from "../elements/Modal";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import { useModalRemoval, useModalVisibility } from "../hooks/modal";
+import {
+  type RemoveHandler,
+  useModalRemoval,
+  useModalVisibility,
+} from "../hooks/modal";
+import { RemoveButton } from "./RemoveButton";
 
 interface Props {
   isAlready: boolean;
@@ -33,18 +37,18 @@ function ModalSelection({ isAlready, currentElement }: Props) {
   return (
     <ButtonGroup variant="outline" spacing="6" margin={4}>
       {!isAlready ? (
-        <Button onClick={() => navigate(`/new_modal_form`)}>
+        <Button onClick={() => navigate(`/new_modal_form`, { replace: true })}>
           Transform into a Modal
         </Button>
       ) : (
         <Tooltip label="Edit modal settings" fontSize="md">
           <Button
-            onClick={() => navigate(`/modal_form`)}
+            onClick={() => navigate(`/modal_form`, { replace: true })}
             rightIcon={<FontAwesomeIcon icon={faCog} />}
             variant="outline"
             aria-label="Modal settings"
           >
-            Modal
+            Edit Modal
           </Button>
         </Tooltip>
       )}
@@ -73,11 +77,13 @@ function ModalSelection({ isAlready, currentElement }: Props) {
             label="Removes the modal attributes and settings"
             fontSize="md"
           >
-            <IconButton
-              onClick={modalRemoval?.removeModal}
-              colorScheme="red"
-              icon={<FontAwesomeIcon icon={faTrashCan} />}
-              aria-label="Remove modal"
+            <RemoveButton
+              elementType={"Modal"}
+              removeHandler={modalRemoval?.remove as RemoveHandler}
+              buttonProps={{
+                "aria-label": "Remove Modal",
+                colorScheme: "red",
+              }}
             />
           </Tooltip>
         </>

@@ -52,7 +52,10 @@ export class ModalCompatibleElement
 
     if (compatibleElement === null) {
       return false;
-      // number incrementer can only be applied to a compatible element with no children
+      // modal can only be applied to a compatible element that can have children
+    } else if (!compatibleElement.element.children) {
+      return false;
+      // modal can only be applied to a compatible element with no existing children
     } else if (
       compatibleElement.element.children &&
       compatibleElement.element.getChildren().length > 0

@@ -17,6 +17,10 @@ interface IAppContext {
     isModalHidden: boolean;
     setIsModalHidden: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  useIsPageLoading: {
+    isPageLoading: boolean;
+    setIsPageLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }
 
 export interface IUseAppContext {
@@ -37,6 +41,10 @@ export interface IUseAppContext {
     isModalHidden: boolean;
     setIsModalHidden: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  useIsPageLoading: {
+    isPageLoading: boolean;
+    setIsPageLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  };
 }
 
 interface AppContextProviderProps {
@@ -51,6 +59,7 @@ export const AppContextProvider = (props: AppContextProviderProps) => {
   const { styles, setStyles, isLoading, setIsLoading, update } =
     useStylesHook();
   const [isModalHidden, setIsModalHidden] = useState<boolean>(false);
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   return (
     <AppContext.Provider
@@ -61,6 +70,7 @@ export const AppContextProvider = (props: AppContextProviderProps) => {
         setIsSelectingElement,
         useStyles: { styles, setStyles, isLoading, setIsLoading, update },
         useModalHidden: { isModalHidden, setIsModalHidden },
+        useIsPageLoading: { isPageLoading, setIsPageLoading },
       }}
     >
       {props.children}
@@ -96,6 +106,11 @@ export const useStyles = () => {
 export const useModalHidden = () => {
   const context = useContext(AppContext);
   return context.useModalHidden;
+};
+
+export const useIsPageLoading = () => {
+  const context = useContext(AppContext);
+  return context.useIsPageLoading;
 };
 
 export default AppContext;

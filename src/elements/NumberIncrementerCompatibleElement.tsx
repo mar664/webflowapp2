@@ -30,16 +30,10 @@ export class NumberIncrementerCompatibleElement extends CompatibleElement {
       element instanceof CompatibleElement
         ? element
         : CompatibleElement.fromElement(element);
-    if (compatibleElement && compatibleElement.element.children) {
-      console.log(
-        "is compatible with number incrementer",
-        compatibleElement.element.getChildren(),
-      );
-    }
 
     if (compatibleElement === null) {
       return false;
-      // number incrementer can only be applied to a compatible element with no children
+      // number incrementer can only be applied to a compatible element with no existing children
     } else if (
       compatibleElement.element.children &&
       compatibleElement.element.getChildren().length > 0 &&

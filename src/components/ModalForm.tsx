@@ -79,8 +79,7 @@ function ModalForm() {
           modalElement &&
           element.id !== modalElement.id
         ) {
-          setPrevElement(null);
-          navigate("/", { replace: true });
+          navigate("/app", { replace: true });
         }
       }
 
@@ -171,6 +170,12 @@ function ModalForm() {
       {
         <Box textColor={"red"}>
           <ul>
+            {watch("openTriggerValue") === undefined ? (
+              <li>
+                <FontAwesomeIcon icon={faCircleExclamation} />
+                {" Please select a valid open trigger"}
+              </li>
+            ) : null}
             {Object.keys(errors).map((k) => {
               if (k in errors) {
                 return (
@@ -184,6 +189,7 @@ function ModalForm() {
           </ul>
         </Box>
       }
+
       <form>
         <Grid templateColumns="repeat(2, 1fr)" gap={1}>
           <GridItem w="100%" colSpan={2}>

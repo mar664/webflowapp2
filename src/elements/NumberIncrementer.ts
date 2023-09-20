@@ -65,17 +65,22 @@ export class NumberIncrementer {
   }
 
   // remove number incrementer from dom element by removing attributes
-  static async remove(element: CompatibleElement) {
-    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START);
-    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END);
-    element.removeAttribute(
-      NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-    );
-    element.removeAttribute(
-      NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-    );
-    element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
-    await element.save();
+  static async remove(element: CompatibleElement, removeElement = false) {
+    if (removeElement) {
+      await element.detach();
+      await element.destroy();
+    } else {
+      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START);
+      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END);
+      element.removeAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
+      );
+      element.removeAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
+      );
+      element.removeAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE);
+      await element.save();
+    }
   }
 
   static isAlready(element: CompatibleElement) {

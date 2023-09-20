@@ -5,7 +5,14 @@ interface Attributable {
   removeAttribute(name: string): undefined;
 }
 
-export class CompatibleElement implements Attributable, Configurable, Styles {
+interface WebflowElement {
+  detach(): Promise<undefined>;
+  destroy(): Promise<undefined>;
+}
+
+export class CompatibleElement
+  implements Attributable, Configurable, Styles, WebflowElement
+{
   element;
   readonly id: ElementId;
   readonly configurable = true;
@@ -47,6 +54,7 @@ export class CompatibleElement implements Attributable, Configurable, Styles {
     }
     throw new Error("Styles should exist");
   }
+
   setStyles(styles: Array<Style>) {
     if (this.element.styles) {
       return this.element.setStyles(styles);
@@ -54,11 +62,19 @@ export class CompatibleElement implements Attributable, Configurable, Styles {
     throw new Error("Styles should exist");
   }
 
-  save() {
+  async save() {
     if (this.element.configurable) {
       return this.element.save();
     }
     throw new Error("Should be able to save");
+  }
+
+  async detach() {
+    return this.element.detach();
+  }
+
+  async destroy() {
+    return this.element.destroy();
   }
 
   static fromElement(element: AnyElement) {
@@ -78,11 +94,10 @@ export class CompatibleElement implements Attributable, Configurable, Styles {
 
   static isCompatible(element: AnyElement) {
     if (
-      (!element.customAttributes &&
-        element.plugin !== "Basic" &&
-        element.plugin !== "Builtin") ||
+      (!element.customAttributes && element.plugin === "Basic") ||
       !element.styles ||
-      !element.configurable
+      !element.configurable ||
+      (element.plugin !== "Builtin" && element.plugin !== "Basic")
     ) {
       return false;
     }

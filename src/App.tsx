@@ -63,7 +63,8 @@ function componentsCompatible(element: CompatibleElement) {
 
 function App() {
   const prevElementId = usePrevElementIdValue();
-  const setPrevElementId = useSetPrevElementId();
+  // #todo: change this callback
+  const resetSelectedElementCallback = useSetPrevElementId();
   const [currentElement, setCurrentElement] = useState<
     CompatibleElement | undefined
   >();
@@ -71,12 +72,21 @@ function App() {
     useState<CompatibleComponents>(INIT_COMPATIBLE_COMPONENTS);
 
   useEffect(() => {
-    console.log("loaded");
+    console.log("load selected element callback");
+    let prevElementId: string | null = null;
     const selectedElementCallback = (element: AnyElement | null) => {
-      console.log(element, prevElementId);
       if (element) {
         const compatibleElement = CompatibleElement.fromElement(element);
-        // if element callback triggered by save on element discard
+        console.log(
+          "selected element:",
+          element,
+          "previous id",
+          prevElementId,
+          "is a compatible element",
+          compatibleElement !== null,
+        );
+
+        // if element callback triggered by save on element discard or duplicate event
         if (element.id === prevElementId) {
           return;
         }
@@ -88,7 +98,7 @@ function App() {
           // reset compatible components state
           setCompatibleComponents(INIT_COMPATIBLE_COMPONENTS);
         }
-        setPrevElementId(element.id);
+        prevElementId = element.id;
       }
     };
 
@@ -98,15 +108,15 @@ function App() {
     );
 
     return () => {
-      console.log("unloaded");
+      console.log("unload selected element callback");
       unsubscribeSelectedElement();
     };
-  }, [prevElementId]);
+  }, []);
 
   return (
     <Flex align="center" justify="center" flexDirection={"column"}>
-      <Heading as="h1" size={"md"}>
-        Please select a component
+      <Heading as="h1" size={"md"} textAlign={"center"}>
+        Please select an element in the webflow designer
       </Heading>
 
       {

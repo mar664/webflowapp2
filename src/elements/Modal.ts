@@ -177,19 +177,24 @@ export class Modal {
     });
   }
 
-  // remove modal from dom element by removing attributes
-  static async remove(element: CompatibleElement) {
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_BASE);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_EFFECT);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_EFFECT);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER_TYPE);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER_TYPE);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_DURATION);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_DURATION);
-    element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY);
-    await element.save();
+  // remove modal from dom element by removing attributes or the complete element and children
+  static async remove(element: CompatibleElement, removeElement = false) {
+    if (removeElement) {
+      await element.detach();
+      await element.destroy();
+    } else {
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_BASE);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_EFFECT);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_EFFECT);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER_TYPE);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER_TYPE);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_TRIGGER);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_TRIGGER);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_OPEN_DURATION);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_DURATION);
+      element.removeAttribute(Modal.DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY);
+      await element.save();
+    }
   }
 
   static async insertScriptInBody() {

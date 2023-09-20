@@ -3,11 +3,18 @@ import { CompatibleElement } from "../elements/CompatibleElement";
 import { isModalHidden as isModalHiddenFunc } from "../utils";
 import { Modal } from "../elements/Modal";
 import { useToast } from "@chakra-ui/react";
-import { useModalHidden, useSetPrevElementId } from "../contexts/AppContext";
+import {
+  useIsPageLoading,
+  useModalHidden,
+  useSetPrevElementId,
+} from "../contexts/AppContext";
+import { useNavigate } from "react-router-dom";
 
 export const useModalVisibility = (
   currentElement: CompatibleElement | null,
 ) => {
+  const { setIsPageLoading } = useIsPageLoading();
+
   const _isModalHidden = React.useMemo(
     () => isModalHiddenFunc(currentElement),
     [currentElement],
@@ -107,22 +114,24 @@ export const useModalVisibility = (
     }
   };
 
-  
-
   return { toggleVisibility, isHidden: isModalHidden, hideModal, showModal };
 };
+
+export type RemoveHandler = (removeElement?: boolean) => Promise<boolean>;
 
 export const useModalRemoval = (currentElement: CompatibleElement | null) => {
   const setPrevElement = useSetPrevElementId();
   const toast = useToast();
+  const navigate = useNavigate();
+
   if (!currentElement) {
     return;
   }
 
-  const removeModal = async () => {
+  const remove: RemoveHandler = async (removeElement = false) => {
     // reset the prev element value so that selected element callback fires
     setPrevElement(null);
-    await Modal.remove(currentElement);
+    await Modal.remove(currentElement, removeElement);
 
     toast({
       title: "Modal removed",
@@ -130,6 +139,8 @@ export const useModalRemoval = (currentElement: CompatibleElement | null) => {
       duration: 4000,
       isClosable: true,
     });
+    navigate("/app", { replace: true });
+    return true;
   };
-  return { removeModal };
+  return { remove };
 };

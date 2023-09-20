@@ -106,7 +106,7 @@ function ElementTriggerElement({
       >
         <AlertDialogOverlay />
 
-        <AlertDialogContent>
+        <AlertDialogContent margin={"2"}>
           <AlertDialogHeader>Select element</AlertDialogHeader>
           <AlertDialogCloseButton />
           <AlertDialogBody>

@@ -11,6 +11,7 @@ import { AppContextProvider } from "./contexts/AppContext";
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import ModalForm, { loader as modalLoader } from "./components/ModalForm";
 import NewModalForm from "./components/NewModalForm";
+import { Root } from "./routes/Root";
 
 const colors = {
   brand: {
@@ -25,28 +26,35 @@ const theme = extendTheme({ colors });
 const router = createHashRouter([
   {
     path: "/",
-    element: <App />,
-  },
-  {
-    path: "number_incrementer_form/:exists",
-    element: <NumberIncrementerForm />,
-    loader: numberIncrementerLoader,
-  },
-  {
-    path: "new_modal_form",
-    element: <NewModalForm />,
-  },
-  {
-    path: "modal_form",
-    element: <ModalForm />,
-    loader: modalLoader,
+    element: <Root />,
+
+    children: [
+      {
+        path: "app",
+        element: <App />,
+      },
+      {
+        path: "number_incrementer_form/:exists",
+        element: <NumberIncrementerForm />,
+        loader: numberIncrementerLoader,
+      },
+      {
+        path: "new_modal_form",
+        element: <NewModalForm />,
+      },
+      {
+        path: "modal_form",
+        element: <ModalForm />,
+        loader: modalLoader,
+      },
+    ],
   },
 ]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider theme={theme}>
-      <Box m={2}>
+      <Box>
         <AppContextProvider>
           <RouterProvider router={router} />
         </AppContextProvider>

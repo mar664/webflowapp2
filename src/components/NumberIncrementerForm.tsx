@@ -32,6 +32,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import Header from "./Header";
+import { useNumberIncrementerRemoval } from "../hooks/numberIncrementer";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
@@ -54,6 +55,7 @@ function NumberIncrementerForm() {
   const params = useParams();
 
   const { selectedElement } = useLoaderData() as loaderData;
+  const numberIncrementerRemoval = useNumberIncrementerRemoval(selectedElement);
 
   useEffect(() => {
     console.log("loaded incrementer");
@@ -144,7 +146,10 @@ function NumberIncrementerForm() {
   console.log(Object.keys(errors));
   return (
     <>
-      <Header heading="Editing Number Incrementer" />
+      <Header
+        heading="Editing Number Incrementer"
+        removeAction={numberIncrementerRemoval}
+      />
       {
         <Box textColor={"red"}>
           <ul>
@@ -266,17 +271,6 @@ function NumberIncrementerForm() {
             </FormControl>
           </GridItem>
         </Grid>
-
-        <ButtonGroup variant="outline" spacing="6" padding={2}>
-          <Button
-            onClick={(event) => {
-              setPrevElement(null);
-              navigate("/", { replace: true });
-            }}
-          >
-            Back
-          </Button>
-        </ButtonGroup>
       </form>
     </>
   );
