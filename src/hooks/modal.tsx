@@ -9,10 +9,12 @@ import {
   useSetPrevElementId,
 } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
+import { VisibilityHandler } from "../types";
+import { RemoveHandler } from "./numberIncrementer";
 
 export const useModalVisibility = (
   currentElement: CompatibleElement | null,
-) => {
+): VisibilityHandler | undefined => {
   const { setIsPageLoading } = useIsPageLoading();
 
   const _isModalHidden = React.useMemo(
@@ -27,7 +29,7 @@ export const useModalVisibility = (
     setIsModalHidden(_isModalHidden);
   }, [currentElement]);
 
-  const hideModal = async () => {
+  const hide = async () => {
     const modalStyleElement =
       currentElement.element.children &&
       currentElement.element.getChildren()[0];
@@ -51,7 +53,7 @@ export const useModalVisibility = (
     }
   };
 
-  const showModal = async () => {
+  const show = async () => {
     const modalStyleElement =
       currentElement.element.children &&
       currentElement.element.getChildren()[0];
@@ -114,10 +116,8 @@ export const useModalVisibility = (
     }
   };
 
-  return { toggleVisibility, isHidden: isModalHidden, hideModal, showModal };
+  return { toggleVisibility, isHidden: isModalHidden, hide, show };
 };
-
-export type RemoveHandler = (removeElement?: boolean) => Promise<boolean>;
 
 export const useModalRemoval = (currentElement: CompatibleElement | null) => {
   const setPrevElement = useSetPrevElementId();

@@ -28,7 +28,7 @@ import {
   OpenEffectTypesEnum,
   TriggerTypesEnum,
 } from "../elements/Modal";
-import NumberFormElement from "./form/NumberFormElement";
+import NumberFormElement from "../components/form/NumberFormElement";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { faCopy } from "@fortawesome/free-regular-svg-icons";
@@ -39,9 +39,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { SubmitHandler, useForm, get } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ModalTriggerSelection from "./form/ModalTriggerSelection";
+import ModalTriggerSelection from "../components/form/ModalTriggerSelection";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
-import Header from "./Header";
+import Header from "../components/Header";
 import { useModalRemoval, useModalVisibility } from "../hooks/modal";
 
 // loads data before switching route and sets current element

@@ -18,6 +18,7 @@ import {
 } from "../hooks/numberIncrementer";
 import { RemoveButton } from "./RemoveButton";
 import { faCog } from "@fortawesome/free-solid-svg-icons";
+import ComponentSelection from "./ComponentSelection";
 
 interface Props {
   isAlready: boolean;
@@ -30,42 +31,17 @@ function NumberIncrementerSelection({ isAlready, currentElement }: Props) {
   const numberIncrementerRemoval = useNumberIncrementerRemoval(currentElement);
 
   return (
-    <ButtonGroup variant="outline" spacing="6" margin={4}>
-      {!isAlready ? (
-        <Button
-          onClick={() =>
-            navigate(`/number_incrementer_form/${isAlready}`, { replace: true })
-          }
-        >
-          Transform into a Number Incrementer
-        </Button>
-      ) : (
-        <Tooltip label="Edit number incrementer settings" fontSize="md">
-          <Button
-            onClick={() =>
-              navigate(`/number_incrementer_form/${isAlready}`, {
-                replace: true,
-              })
-            }
-            rightIcon={<FontAwesomeIcon icon={faCog} />}
-            variant="outline"
-            aria-label="Number incrementer settings"
-          >
-            Edit Number Incrementer
-          </Button>
-        </Tooltip>
-      )}
-      {isAlready ? (
-        <RemoveButton
-          elementType={"Modal"}
-          removeHandler={numberIncrementerRemoval?.remove as RemoveHandler}
-          buttonProps={{
-            "aria-label": "Remove number incrementer",
-            colorScheme: "red",
-          }}
-        />
-      ) : null}
-    </ButtonGroup>
+    <ComponentSelection
+      elementType={"Number Incrementer"}
+      isAlready={isAlready}
+      removeHandler={numberIncrementerRemoval?.remove as RemoveHandler}
+      newHandler={() =>
+        navigate(`/number_incrementer_form/${isAlready}`, { replace: true })
+      }
+      existingHandler={() =>
+        navigate(`/number_incrementer_form/${isAlready}`, { replace: true })
+      }
+    />
   );
 }
 

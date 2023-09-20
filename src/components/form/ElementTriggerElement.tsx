@@ -7,11 +7,6 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
-  FormControl,
-  FormLabel,
-  Select,
-  Spinner,
-  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -71,10 +66,10 @@ function ElementTriggerElement({
     setIsSelectingElement(true);
 
     if (hideOnModalOpen) {
-      await modalVisibility?.hideModal();
+      await modalVisibility?.hide();
     }
     if (showOnModalOpen) {
-      await modalVisibility?.showModal();
+      await modalVisibility?.show();
     }
     modal.onOpen();
   };

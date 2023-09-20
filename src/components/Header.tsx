@@ -1,11 +1,10 @@
 import { Heading, IconButton, Stack } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { useSetPrevElementId } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { RemoveButton } from "./RemoveButton";
-import type { RemoveHandler } from "../hooks/modal";
+import type { RemoveHandler } from "../types";
 
 interface Props {
   heading: string;
@@ -13,7 +12,6 @@ interface Props {
   removeAction?: { remove: RemoveHandler };
 }
 const Header = ({ heading, visibiliyAction, removeAction }: Props) => {
-  const setPrevElement = useSetPrevElementId();
   const navigate = useNavigate();
 
   return (

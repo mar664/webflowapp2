@@ -20,7 +20,6 @@ import {
   Input,
   Tooltip,
 } from "@chakra-ui/react";
-import NumberFormElement from "./form/NumberFormElement";
 import { Switch } from "@chakra-ui/react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { IconButton } from "@chakra-ui/react";
@@ -31,8 +30,9 @@ import {
   faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import Header from "./Header";
 import { useNumberIncrementerRemoval } from "../hooks/numberIncrementer";
+import Header from "../components/Header";
+import NumberFormElement from "../components/form/NumberFormElement";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {

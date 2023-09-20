@@ -5,12 +5,12 @@ import { createHashRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import NumberIncrementerForm, {
   loader as numberIncrementerLoader,
-} from "./components/NumberIncrementerForm";
+} from "./routes/NumberIncrementerForm";
 import { AppContextProvider } from "./contexts/AppContext";
 // 1. import `ChakraProvider` component
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
-import ModalForm, { loader as modalLoader } from "./components/ModalForm";
-import NewModalForm from "./components/NewModalForm";
+import ModalForm, { loader as modalLoader } from "./routes/ModalForm";
+import NewModalForm from "./routes/NewModalForm";
 import { Root } from "./routes/Root";
 
 const colors = {
