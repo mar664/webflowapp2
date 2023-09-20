@@ -23,6 +23,7 @@ interface FormProps {
   initialValue: number;
   formatter?: (val: number) => string;
   parser?: (val: string) => number;
+  disabled?: boolean;
 }
 
 function NumberFormElement({
@@ -36,6 +37,7 @@ function NumberFormElement({
   max = Number.MAX_SAFE_INTEGER,
   formatter = (val) => val.toString(),
   parser = (val) => parseInt(val),
+  disabled,
 }: FormProps) {
   const [value, setValue] = useState(initialValue);
   // use debounced callback to delay calling for onChange so that it doesn't keep triggering save of form data
@@ -61,6 +63,7 @@ function NumberFormElement({
         value={formatter(value)}
         min={min}
         max={max}
+        isDisabled={disabled}
       >
         <NumberInputField />
         <NumberInputStepper>

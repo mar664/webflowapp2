@@ -164,7 +164,7 @@ function ModalForm() {
     <>
       <Header
         heading="Editing Modal"
-        visibiliyAction={modalVisibility}
+        visibilityAction={modalVisibility}
         removeAction={modalRemoval}
       />
       {
@@ -232,7 +232,7 @@ function ModalForm() {
                 id="open-trigger-value"
                 hideOnModalOpen={true}
               />
-              {watch("openTriggerType") === "Element" && (
+              {watch("openTriggerType") === TriggerTypesEnum.Enum.Element && (
                 <a>{watch("openTriggerValue")}</a>
               )}
             </Stack>
@@ -274,6 +274,9 @@ function ModalForm() {
               helpText="Duration to show the modal"
               formatter={(val) => `${val} ms`}
               parser={(val) => parseInt(val.replace(" ms", ""))}
+              disabled={
+                watch("openEffectType") === OpenEffectTypesEnum.enum.None
+              }
             />
           </GridItem>
           <GridItem w="100%" colSpan={2}>
@@ -316,7 +319,7 @@ function ModalForm() {
                 id="close-trigger-value"
                 showOnModalOpen={true}
               />
-              {watch("closeTriggerType") === "Element" && (
+              {watch("closeTriggerType") === TriggerTypesEnum.Enum.Element && (
                 <a>{watch("closeTriggerValue")}</a>
               )}
             </Stack>
@@ -358,6 +361,9 @@ function ModalForm() {
               formatter={(val) => `${val} ms`}
               parser={(val) => parseInt(val.replace(" ms", ""))}
               helpText="Duration to hide the modal"
+              disabled={
+                watch("closeEffectType") === OpenEffectTypesEnum.enum.None
+              }
             />
           </GridItem>
           <GridItem w="100%" colSpan={2}>

@@ -6,6 +6,7 @@ export const TriggerTypesEnum = z.enum(TriggerTypes);
 export type TriggerTypesEnum = z.infer<typeof TriggerTypesEnum>;
 
 const OpenEffectTypes = [
+  "None",
   "Fade",
   "Slide From Left",
   "Slide From Right",
@@ -16,6 +17,7 @@ export const OpenEffectTypesEnum = z.enum(OpenEffectTypes);
 export type OpenEffectTypesEnum = z.infer<typeof OpenEffectTypesEnum>;
 
 const CloseEffectTypes = [
+  "None",
   "Fade",
   "Slide To Left",
   "Slide To Right",
