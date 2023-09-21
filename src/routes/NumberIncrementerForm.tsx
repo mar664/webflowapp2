@@ -14,7 +14,6 @@ import {
   GridItem,
   Heading,
   Input,
-  Tooltip,
 } from "@chakra-ui/react";
 import { Switch } from "@chakra-ui/react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -33,6 +32,7 @@ import {
   NumberIncrementer,
   NumberIncrementerOptions,
 } from "../models/NumberIncrementer";
+import { Tooltip } from "../components/Tooltip";
 
 // loads data before switching route and sets current element as a number incrementer if not already
 export async function loader() {
