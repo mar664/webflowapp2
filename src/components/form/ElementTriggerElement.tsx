@@ -16,7 +16,8 @@ import {
 } from "../../contexts/AppContext";
 import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import { CompatibleElement } from "../../elements/CompatibleElement";
-import { useModalVisibility } from "../../hooks/modal";
+import { useElementVisibility } from "../../hooks/element";
+import { Modal } from "../../models/Modal";
 
 interface Props {
   setSelectedElement: any;
@@ -31,7 +32,7 @@ function ElementTriggerElement({
   hideOnModalOpen,
   showOnModalOpen,
 }: Props) {
-  const modalVisibility = useModalVisibility(modalElement);
+  const visibility = useElementVisibility(modalElement, Modal);
 
   const isSelectingElement = useIsSelectingElement();
   const setIsSelectingElement = useSetIsSelectingElement();
@@ -66,10 +67,10 @@ function ElementTriggerElement({
     setIsSelectingElement(true);
 
     if (hideOnModalOpen) {
-      await modalVisibility?.hide();
+      await visibility?.hide();
     }
     if (showOnModalOpen) {
-      await modalVisibility?.show();
+      await visibility?.show();
     }
     modal.onOpen();
   };

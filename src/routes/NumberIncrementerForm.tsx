@@ -25,7 +25,7 @@ import {
   faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import { useNumberIncrementerRemoval } from "../hooks/numberIncrementer";
+import { useElementRemoval } from "../hooks/element";
 import Header from "../components/Header";
 import NumberFormElement from "../components/form/NumberFormElement";
 import {
@@ -55,7 +55,7 @@ function NumberIncrementerForm() {
   const params = useParams();
 
   const { selectedElement } = useLoaderData() as loaderData;
-  const numberIncrementerRemoval = useNumberIncrementerRemoval(selectedElement);
+  const removal = useElementRemoval(selectedElement, NumberIncrementer);
 
   useEffect(() => {
     console.log("loaded incrementer");
@@ -146,10 +146,7 @@ function NumberIncrementerForm() {
   console.log(Object.keys(errors));
   return (
     <>
-      <Header
-        heading="Editing Number Incrementer"
-        removeAction={numberIncrementerRemoval}
-      />
+      <Header heading="Editing Number Incrementer" removeAction={removal} />
       {
         <Box textColor={"red"}>
           <ul>

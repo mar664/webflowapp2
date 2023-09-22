@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import { useModalRemoval, useModalVisibility } from "../hooks/modal";
+import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import ComponentSelection from "./ComponentSelection";
 import { RemoveHandler } from "../types";
+import { Modal } from "../models/Modal";
 
 interface Props {
   isAlready: boolean;
@@ -12,15 +13,15 @@ interface Props {
 function ModalSelection({ isAlready, currentElement }: Props) {
   const navigate = useNavigate();
 
-  const modalVisibility = useModalVisibility(currentElement);
-  const modalRemoval = useModalRemoval(currentElement);
+  const visibility = useElementVisibility(currentElement, Modal);
+  const removal = useElementRemoval(currentElement, Modal);
 
   return (
     <ComponentSelection
-      elementType={"Modal"}
+      elementType={Modal.name}
       isAlready={isAlready}
-      visibility={modalVisibility}
-      removeHandler={modalRemoval?.remove as RemoveHandler}
+      visibility={visibility}
+      removeHandler={removal?.remove as RemoveHandler}
       newHandler={() => navigate(`/new_modal_form`, { replace: true })}
       existingHandler={() => navigate(`/modal_form`, { replace: true })}
     />

@@ -1,4 +1,5 @@
 import { CompatibleElement } from "../elements/CompatibleElement";
+import { ElementModel } from "../models/ElementModel";
 
 export function removeChars(str: string) {
   return str
@@ -16,7 +17,10 @@ export function toAllStartUppercase(str: string) {
     .join(" ");
 }
 
-export const isModalHidden = (currentElement: CompatibleElement | null) => {
+export const isElementHidden = (
+  currentElement: CompatibleElement | null,
+  ElementType: typeof ElementModel,
+) => {
   if (currentElement) {
     const modalStyleElement =
       currentElement.element.children &&
@@ -26,7 +30,10 @@ export const isModalHidden = (currentElement: CompatibleElement | null) => {
       modalStyleElement.type == "DOM" &&
       modalStyleElement.getTag() === "style"
     ) {
-      return modalStyleElement.getAttribute("data-mr-modal-visible") === null;
+      return (
+        modalStyleElement.getAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE) ===
+        null
+      );
     }
   }
   return false;

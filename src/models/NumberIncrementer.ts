@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CompatibleElement } from "../elements/CompatibleElement";
+import { ElementModel } from "./ElementModel";
 
 export const NumberIncrementerOptions = z
   .object({
@@ -15,7 +16,7 @@ export const NumberIncrementerOptions = z
 
 export type NumberIncrementerOptions = z.infer<typeof NumberIncrementerOptions>;
 
-export class NumberIncrementer {
+export class NumberIncrementer extends ElementModel {
   // set default values for incrementer
   static DATA_ATTRIBUTE_BASE = "data-mr-number-incrementer";
   static DATA_ATTRIBUTE_INCREMENT_START = `${NumberIncrementer.DATA_ATTRIBUTE_BASE}-start`;

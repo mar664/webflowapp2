@@ -41,7 +41,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ModalTriggerSelection from "../components/form/ModalTriggerSelection";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import Header from "../components/Header";
-import { useModalRemoval, useModalVisibility } from "../hooks/modal";
+import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import { Tooltip } from "../components/Tooltip";
 
 // loads data before switching route and sets current element
@@ -62,8 +62,8 @@ function ModalForm() {
   const [copied, setCopied] = useState(false);
 
   const { modalElement } = useLoaderData() as loaderData;
-  const modalVisibility = useModalVisibility(modalElement);
-  const modalRemoval = useModalRemoval(modalElement);
+  const visibility = useElementVisibility(modalElement, Modal);
+  const removal = useElementRemoval(modalElement, Modal);
 
   const isSelectingElement = useIsSelectingElement();
 
@@ -164,8 +164,8 @@ function ModalForm() {
     <>
       <Header
         heading="Editing Modal"
-        visibilityAction={modalVisibility}
-        removeAction={modalRemoval}
+        visibilityAction={visibility}
+        removeAction={removal}
       />
       {
         <Box textColor={"red"}>

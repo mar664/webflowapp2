@@ -1,10 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { CompatibleElement } from "../elements/CompatibleElement";
-import {
-  RemoveHandler,
-  useNumberIncrementerRemoval,
-} from "../hooks/numberIncrementer";
+import { useElementRemoval } from "../hooks/element";
 import ComponentSelection from "./ComponentSelection";
+import { NumberIncrementer } from "../models/NumberIncrementer";
+import { RemoveHandler } from "../types";
 
 interface Props {
   isAlready: boolean;
@@ -14,7 +13,10 @@ interface Props {
 function NumberIncrementerSelection({ isAlready, currentElement }: Props) {
   const navigate = useNavigate();
 
-  const numberIncrementerRemoval = useNumberIncrementerRemoval(currentElement);
+  const numberIncrementerRemoval = useElementRemoval(
+    currentElement,
+    NumberIncrementer,
+  );
 
   return (
     <ComponentSelection

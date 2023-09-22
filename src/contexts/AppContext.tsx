@@ -13,9 +13,11 @@ interface IAppContext {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     update: () => void;
   };
-  useModalHidden: {
-    isModalHidden: boolean;
-    setIsModalHidden: React.Dispatch<React.SetStateAction<boolean>>;
+  useIsElementHidden: {
+    isElementHidden: Record<string, boolean>;
+    setIsElementHidden: React.Dispatch<
+      React.SetStateAction<Record<string, boolean>>
+    >;
   };
   useIsPageLoading: {
     isPageLoading: boolean;
@@ -37,9 +39,11 @@ export interface IUseAppContext {
     setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
     update: () => void;
   };
-  useModalHidden: {
-    isModalHidden: boolean;
-    setIsModalHidden: React.Dispatch<React.SetStateAction<boolean>>;
+  useIsElementHidden: {
+    isElementHidden: Record<string, boolean>;
+    setIsElementHidden: React.Dispatch<
+      React.SetStateAction<Record<string, boolean>>
+    >;
   };
   useIsPageLoading: {
     isPageLoading: boolean;
@@ -58,7 +62,9 @@ export const AppContextProvider = (props: AppContextProviderProps) => {
   const [isSelectingElement, setIsSelectingElement] = useState<boolean>(false);
   const { styles, setStyles, isLoading, setIsLoading, update } =
     useStylesHook();
-  const [isModalHidden, setIsModalHidden] = useState<boolean>(false);
+  const [isElementHidden, setIsElementHidden] = useState<
+    Record<string, boolean>
+  >({});
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
 
   return (
@@ -69,7 +75,7 @@ export const AppContextProvider = (props: AppContextProviderProps) => {
         isSelectingElement,
         setIsSelectingElement,
         useStyles: { styles, setStyles, isLoading, setIsLoading, update },
-        useModalHidden: { isModalHidden, setIsModalHidden },
+        useIsElementHidden: { isElementHidden, setIsElementHidden },
         useIsPageLoading: { isPageLoading, setIsPageLoading },
       }}
     >
@@ -103,9 +109,9 @@ export const useStyles = () => {
   return context.useStyles;
 };
 
-export const useModalHidden = () => {
+export const useIsElementHidden = () => {
   const context = useContext(AppContext);
-  return context.useModalHidden;
+  return context.useIsElementHidden;
 };
 
 export const useIsPageLoading = () => {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CompatibleElement } from "../elements/CompatibleElement";
+import { ElementModel } from "./ElementModel";
 
 const TriggerTypes = ["Element", "Class"] as const;
 export const TriggerTypesEnum = z.enum(TriggerTypes);
@@ -83,7 +84,7 @@ export const NewModalOptions = z.object({
 });
 export type NewModalOptions = z.infer<typeof NewModalOptions>;
 
-export class Modal {
+export class Modal extends ElementModel {
   // set default values for incrementer
   static DATA_ATTRIBUTE_BASE = "data-mr-modal";
   static DATA_ATTRIBUTE_OPEN = `${Modal.DATA_ATTRIBUTE_BASE}-open`;
