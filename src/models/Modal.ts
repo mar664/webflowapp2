@@ -86,6 +86,8 @@ export type NewModalOptions = z.infer<typeof NewModalOptions>;
 
 export class Modal extends ElementModel {
   // set default values for incrementer
+  static readonly NAME = "Modal";
+  static DISPLAY_TYPE = "flex";
   static DATA_ATTRIBUTE_BASE = "data-mr-modal";
   static DATA_ATTRIBUTE_OPEN = `${Modal.DATA_ATTRIBUTE_BASE}-open`;
   static DATA_ATTRIBUTE_CLOSE = `${Modal.DATA_ATTRIBUTE_BASE}-close`;

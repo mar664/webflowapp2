@@ -12,6 +12,10 @@ import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import ModalForm, { loader as modalLoader } from "./routes/ModalForm";
 import NewModalForm from "./routes/NewModalForm";
 import { Root } from "./routes/Root";
+import NewCookieConsentForm from "./routes/NewCookieConsentForm";
+import CookieConsentForm, {
+  loader as cookieConsentLoader,
+} from "./routes/CookieConsentForm";
 
 const colors = {
   brand: {
@@ -46,6 +50,15 @@ const router = createHashRouter([
         path: "modal_form",
         element: <ModalForm />,
         loader: modalLoader,
+      },
+      {
+        path: "new_cookie_consent_form",
+        element: <NewCookieConsentForm />,
+      },
+      {
+        path: "cookie_consent_form",
+        element: <CookieConsentForm />,
+        loader: cookieConsentLoader,
       },
     ],
   },

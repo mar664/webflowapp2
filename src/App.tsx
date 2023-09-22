@@ -12,6 +12,9 @@ import { ModalCompatibleElement } from "./elements/ModalCompatibleElement";
 import { NumberIncrementerCompatibleElement } from "./elements/NumberIncrementerCompatibleElement";
 import _ from "lodash";
 import { NumberIncrementer } from "./models/NumberIncrementer";
+import { CookieConsent } from "./models/CookieConsent";
+import { CookieConsentCompatibleElement } from "./elements/CookieConsentCompatibleElement";
+import CookieConsentSelection from "./components/CookieConsentSelection";
 
 interface CompatibleComponents {
   numberIncrementer: {
@@ -19,6 +22,10 @@ interface CompatibleComponents {
     applicable: boolean;
   };
   modal: {
+    isAlready: boolean;
+    applicable: boolean;
+  };
+  cookieConsent: {
     isAlready: boolean;
     applicable: boolean;
   };
@@ -33,6 +40,10 @@ const INIT_COMPATIBLE_COMPONENTS: CompatibleComponents = {
     isAlready: false,
     applicable: false,
   },
+  cookieConsent: {
+    isAlready: false,
+    applicable: false,
+  },
 };
 
 function componentsCompatible(element: CompatibleElement) {
@@ -42,19 +53,30 @@ function componentsCompatible(element: CompatibleElement) {
 
   const isNumberIncrementer = NumberIncrementer.isAlready(element);
   const isModal = Modal.isAlready(element);
+  const isCookieConsent = CookieConsent.isAlready(element);
 
   compatible.numberIncrementer = {
     isAlready: isNumberIncrementer,
-    applicable: isModal
-      ? false
-      : NumberIncrementerCompatibleElement.isCompatible(element), // an element can only be of one type
+    applicable:
+      isModal || isCookieConsent
+        ? false
+        : NumberIncrementerCompatibleElement.isCompatible(element), // an element can only be of one type
   };
 
   compatible.modal = {
     isAlready: isModal,
-    applicable: isNumberIncrementer
-      ? false
-      : ModalCompatibleElement.isCompatible(element), // an element can only be of one type
+    applicable:
+      isNumberIncrementer || isCookieConsent
+        ? false
+        : ModalCompatibleElement.isCompatible(element), // an element can only be of one type
+  };
+
+  compatible.cookieConsent = {
+    isAlready: isCookieConsent,
+    applicable:
+      isNumberIncrementer || isModal
+        ? false
+        : CookieConsentCompatibleElement.isCompatible(element), // an element can only be of one type
   };
 
   console.log(compatible);
@@ -142,6 +164,13 @@ function App() {
               case "modal":
                 return (
                   <ModalSelection
+                    isAlready={value.isAlready}
+                    currentElement={currentElement as CompatibleElement}
+                  />
+                );
+              case "cookieConsent":
+                return (
+                  <CookieConsentSelection
                     isAlready={value.isAlready}
                     currentElement={currentElement as CompatibleElement}
                   />

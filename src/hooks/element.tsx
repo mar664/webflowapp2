@@ -75,7 +75,7 @@ export const useElementVisibility = (
         styleElement.setTextContent(
           `
           html.wf-design-mode *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
-            display: flex;
+            display: ${ElementType.DISPLAY_TYPE};
           }
           html:not(.wf-design-mode) *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: none;
@@ -104,7 +104,7 @@ export const useElementVisibility = (
         styleElement.setTextContent(
           `
           html.wf-design-mode *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
-            display: flex;
+            display: ${ElementType.DISPLAY_TYPE};
           }
           html:not(.wf-design-mode) *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: none;

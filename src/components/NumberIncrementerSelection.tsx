@@ -13,16 +13,13 @@ interface Props {
 function NumberIncrementerSelection({ isAlready, currentElement }: Props) {
   const navigate = useNavigate();
 
-  const numberIncrementerRemoval = useElementRemoval(
-    currentElement,
-    NumberIncrementer,
-  );
+  const removal = useElementRemoval(currentElement, NumberIncrementer);
 
   return (
     <ComponentSelection
-      elementType={"Number Incrementer"}
+      elementType={NumberIncrementer.NAME}
       isAlready={isAlready}
-      removeHandler={numberIncrementerRemoval?.remove as RemoveHandler}
+      removeHandler={removal?.remove as RemoveHandler}
       newHandler={() =>
         navigate(`/number_incrementer_form/${isAlready}`, { replace: true })
       }

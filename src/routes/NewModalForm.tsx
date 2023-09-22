@@ -219,14 +219,14 @@ function NewModalForm() {
       modalContent.setChildren(modalContentChildren);
 
       const modalStyleElement = webflow.createDOM("style");
-      modalStyleElement.setAttribute("data-mr-modal-visible", "true");
+      modalStyleElement.setAttribute(Modal.DATA_ATTRIBUTE_VISIBLE, "true");
 
       modalStyleElement.setTextContent(
         `
-        html.wf-design-mode *[data-mr-modal='${modalElement.id}']{
-          display: flex;
+        html.wf-design-mode *[${Modal.DATA_ATTRIBUTE_BASE}='${modalElement.id}']{
+          display: ${Modal.DISPLAY_TYPE};
         }
-        html:not(.wf-design-mode) *[data-mr-modal='${modalElement.id}']{
+        html:not(.wf-design-mode) *[${Modal.DATA_ATTRIBUTE_BASE}='${modalElement.id}']{
           display: none;
         }`,
       );
