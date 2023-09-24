@@ -2,6 +2,7 @@ import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { useIsPageLoading } from "../contexts/AppContext";
+import { Paths } from "../paths";
 
 export function Root() {
   const navigation = useNavigation();
@@ -9,11 +10,11 @@ export function Root() {
   const { isPageLoading, setIsPageLoading } = useIsPageLoading();
 
   useEffect(() => {
-    navigate("/app", { replace: true });
+    navigate(Paths.app, { replace: true });
   }, []);
 
   return (
-    <Box>
+    <Box margin={0} overflow={"hidden"}>
       {navigation.state === "loading" || isPageLoading ? (
         <Flex
           position={"absolute"}
@@ -22,13 +23,19 @@ export function Root() {
           alignItems={"center"}
           justifyContent={"center"}
           zIndex={"overlay"}
+          margin={0}
           backgroundColor={"rgba(0, 0, 0, 0.4)"}
         >
           {window.matchMedia("(prefers-reduced-motion: reduce)").matches ===
           true ? (
             <Heading>Loading...</Heading>
           ) : (
-            <Spinner thickness="6px" speed="0.65s" color={"green"} size="xl" />
+            <Spinner
+              thickness="6px"
+              speed="0.65s"
+              color={"#0073E6"}
+              size="xl"
+            />
           )}
         </Flex>
       ) : (
@@ -36,7 +43,7 @@ export function Root() {
       )}
 
       <Box
-        m={2}
+        m={0}
         overflow={
           navigation.state === "loading" || isPageLoading ? "hidden" : "inherit"
         }

@@ -99,6 +99,7 @@ export class Modal extends ElementModel {
   static DATA_ATTRIBUTE_CLOSE_EFFECT = `${Modal.DATA_ATTRIBUTE_CLOSE}-effect`;
   static DATA_ATTRIBUTE_OPEN_DURATION = `${Modal.DATA_ATTRIBUTE_OPEN}-duration`;
   static DATA_ATTRIBUTE_CLOSE_DURATION = `${Modal.DATA_ATTRIBUTE_CLOSE}-duration`;
+  static DATA_ATTRIBUTE_OVERLAY = `${Modal.DATA_ATTRIBUTE_BASE}-overlay`;
 
   static DATA_ATTRIBUTE_CLOSE_ON_CLICK_OVERLAY = `${Modal.DATA_ATTRIBUTE_BASE}-close-on-click-overlay`;
 
@@ -161,7 +162,7 @@ export class Modal extends ElementModel {
   }
 
   // apply the number incremeter to a dom element
-  static async apply(element: CompatibleElement) {
+  static apply(element: DOMElement) {
     element.setAttribute(Modal.DATA_ATTRIBUTE_BASE, element.id);
   }
 

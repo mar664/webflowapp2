@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  ParamParseKey,
+  Params,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   useIsSelectingElement,
   useSetPrevElementId,
@@ -43,13 +50,27 @@ import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import Header from "../components/Header";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import { Tooltip } from "../components/Tooltip";
+import { Paths } from "../paths";
+
+interface LoaderArgs extends LoaderFunctionArgs {
+  params: Params<ParamParseKey<typeof Paths.modalForm>>;
+}
 
 // loads data before switching route and sets current element
 // as a modal and applies modal to it if it doesn't already exist
-export async function loader() {
-  const modalElement = await ModalCompatibleElement.getSelected();
-  console.log(modalElement);
-  return { modalElement };
+export async function loader({ params: { elementId } }: LoaderArgs) {
+  const modalElement = (await webflow.getAllElements()).find(
+    (e) => e.id === elementId,
+  );
+  if (!modalElement) {
+    throw new Error("Modal element not found");
+  }
+  const compatibleModalElement =
+    ModalCompatibleElement.fromElement(modalElement);
+  if (compatibleModalElement !== null) {
+    return { modalElement: compatibleModalElement };
+  }
+  throw new Error("Compatible modal element not found");
 }
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
@@ -62,6 +83,7 @@ function ModalForm() {
   const [copied, setCopied] = useState(false);
 
   const { modalElement } = useLoaderData() as loaderData;
+
   const visibility = useElementVisibility(modalElement, Modal);
   const removal = useElementRemoval(modalElement, Modal);
 
@@ -79,7 +101,7 @@ function ModalForm() {
           modalElement &&
           element.id !== modalElement.id
         ) {
-          navigate("/app", { replace: true });
+          navigate(Paths.app, { replace: true });
         }
       }
 

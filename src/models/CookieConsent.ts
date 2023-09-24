@@ -63,7 +63,7 @@ export type NewCookieConsentOptions = z.infer<typeof NewCookieConsentOptions>;
 
 export class CookieConsent extends ElementModel {
   // set default values for incrementer
-  static readonly NAME = "Cookie Consent";
+  static readonly NAME = "Cookies";
   static DATA_ATTRIBUTE_BASE = "data-mr-cookie-consent";
   static DATA_ATTRIBUTE_OPEN = `${CookieConsent.DATA_ATTRIBUTE_BASE}-open`;
   static DATA_ATTRIBUTE_CLOSE = `${CookieConsent.DATA_ATTRIBUTE_BASE}-close`;
@@ -123,7 +123,7 @@ export class CookieConsent extends ElementModel {
   }
 
   // apply the number incremeter to a dom element
-  static async apply(element: CompatibleElement) {
+  static apply(element: DOMElement) {
     element.setAttribute(CookieConsent.DATA_ATTRIBUTE_BASE, element.id);
   }
 

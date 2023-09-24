@@ -1,85 +1,72 @@
-import { Button, ButtonGroup, IconButton } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import { type RemoveHandler } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
-import { faCog } from "@fortawesome/free-solid-svg-icons";
-import { type RemoveHandler, VisibilityHandler } from "../types";
-import { RemoveButton } from "./RemoveButton";
-import { Tooltip } from "./Tooltip";
 
 interface Props {
   elementType: string;
-  isAlready: boolean;
-  existingHandler: () => void;
   newHandler: () => void;
-  visibility?: VisibilityHandler;
-  removeHandler: RemoveHandler;
+  icon: any;
+  index: number;
+  disabled: boolean;
 }
 
 function ComponentSelection({
   elementType,
-  isAlready,
-  visibility,
   newHandler,
-  existingHandler,
-  removeHandler,
+  icon,
+  index,
+  disabled,
 }: Props) {
   return (
-    <ButtonGroup variant="outline" spacing="6" margin={4}>
-      {!isAlready ? (
-        <Button onClick={newHandler}>Transform into a {elementType}</Button>
-      ) : (
-        <Tooltip label={`Edit ${elementType} settings`} fontSize="md">
-          <Button
-            onClick={existingHandler}
-            rightIcon={<FontAwesomeIcon icon={faCog} />}
-            variant="outline"
-            aria-label={`${elementType} settings`}
-          >
-            Edit {elementType}
-          </Button>
-        </Tooltip>
-      )}
-      {isAlready && visibility ? (
-        <>
-          <Tooltip
-            label="Toggle the modal visibility in webflow designer"
-            fontSize="md"
-          >
-            <IconButton
-              onClick={visibility?.toggleVisibility}
-              colorScheme={visibility?.isHidden ? "green" : "red"}
-              icon={
-                <FontAwesomeIcon
-                  icon={visibility?.isHidden ? faEye : faEyeSlash}
-                />
-              }
-              aria-label={
-                visibility?.isHidden
-                  ? `Show ${elementType} in designer`
-                  : `Hide ${elementType} in designer`
-              }
-            />
-          </Tooltip>
-        </>
-      ) : null}
-      {isAlready ? (
-        <>
-          <Tooltip
-            label={`Removes the ${elementType} attributes and settings`}
-            fontSize="md"
-          >
-            <RemoveButton
-              elementType={elementType}
-              removeHandler={removeHandler as RemoveHandler}
-              buttonProps={{
-                "aria-label": `Remove ${elementType}`,
-                colorScheme: "red",
-              }}
-            />
-          </Tooltip>
-        </>
-      ) : null}
-    </ButtonGroup>
+    <Flex
+      aria-disabled={disabled}
+      position={"relative"}
+      flexDir={"column"}
+      onClick={newHandler}
+      flexBasis={"33.3333%"}
+      alignItems={"center"}
+      flexGrow={0}
+      flexShrink={1}
+      paddingBottom={"2"}
+      paddingTop={"1"}
+      gap={"0.5rem"}
+      borderLeftWidth={index % 3 === 0 ? "1px" : 0}
+      borderLeftStyle={"solid"}
+      borderRightWidth={"1px"}
+      borderRightStyle={"solid"}
+      borderBottomWidth={"1px"}
+      borderBottomStyle={"solid"}
+      borderColor={"border.panelColor"}
+      color={"rgb(235, 235, 235)"}
+      opacity={disabled ? "0.5" : "1"}
+      _hover={{
+        backgroundColor: "rgb(77, 77, 77)",
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+    >
+      <Button
+        position={"absolute"}
+        right={"0.25rem"}
+        top={"0.25rem"}
+        size={"xs"}
+        color={"white"}
+        opacity={"0.6"}
+        backgroundColor={"rgb(43, 43, 43)"}
+        _hover={{ opacity: 1 }}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+      >
+        ?
+      </Button>
+      <Box margin={"auto"} fontSize={"2rem"} padding={"0.5rem"}>
+        <FontAwesomeIcon icon={icon} fontSize={"2rem"} />
+      </Box>
+      <Box textAlign={"center"} fontFamily={"0.8rem"}>
+        {elementType}
+      </Box>
+    </Flex>
   );
 }
 

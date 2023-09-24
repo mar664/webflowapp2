@@ -53,15 +53,9 @@ export class CookieConsentCompatibleElement
     if (compatibleElement === null) {
       return false;
       // modal can only be applied to a compatible element that can have children
-    } else if (!compatibleElement.element.children) {
-      return false;
-      // modal can only be applied to a compatible element with no existing children
-    } else if (
-      compatibleElement.element.children &&
-      compatibleElement.element.getChildren().length > 0
-    ) {
-      return false;
+    } else if (compatibleElement.element.children) {
+      return true;
     }
-    return true;
+    return false;
   }
 }

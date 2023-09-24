@@ -18,7 +18,7 @@ export type NumberIncrementerOptions = z.infer<typeof NumberIncrementerOptions>;
 
 export class NumberIncrementer extends ElementModel {
   // set default values for incrementer
-  static readonly NAME = "Number Incrementer";
+  static readonly NAME = "Incrementer";
   static DATA_ATTRIBUTE_BASE = "data-mr-number-incrementer";
   static DATA_ATTRIBUTE_INCREMENT_START = `${NumberIncrementer.DATA_ATTRIBUTE_BASE}-start`;
   static DATA_ATTRIBUTE_INCREMENT_END = `${NumberIncrementer.DATA_ATTRIBUTE_BASE}-end`;
@@ -61,9 +61,8 @@ export class NumberIncrementer extends ElementModel {
   }
 
   // apply the number incremeter to a dom element
-  static async apply(element: CompatibleElement) {
+  static apply(element: DOMElement) {
     element.setAttribute(NumberIncrementer.DATA_ATTRIBUTE_BASE, "true");
-    await element.save();
   }
 
   // remove number incrementer from dom element by removing attributes

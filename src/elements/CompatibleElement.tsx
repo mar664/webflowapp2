@@ -94,15 +94,15 @@ export class CompatibleElement
 
   static isCompatible(element: AnyElement) {
     if (
-      (!element.customAttributes && element.plugin === "Basic") ||
-      !element.styles ||
-      !element.configurable ||
-      (element.plugin !== "Builtin" && element.plugin !== "Basic") ||
-      (element.type === "DOM" &&
-        ["script", "style"].includes(element.getTag() as string))
+      element.configurable &&
+      (element.customAttributes || element.type === "DOM") &&
+      !(
+        element.type === "DOM" &&
+        ["script", "style"].includes(element.getTag() as string)
+      )
     ) {
-      return false;
+      return true;
     }
-    return true;
+    return false;
   }
 }

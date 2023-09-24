@@ -1,31 +1,31 @@
-import { useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import ComponentSelection from "./ComponentSelection";
 import { RemoveHandler } from "../types";
 import { CookieConsent } from "../models/CookieConsent";
+import { Paths } from "../paths";
+import { faCookie } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
-  isAlready: boolean;
-  currentElement: CompatibleElement;
+  index: number;
+  disabled: boolean;
 }
 
-function CookieConsentSelection({ isAlready, currentElement }: Props) {
+function CookieConsentSelection({ index, disabled }: Props) {
   const navigate = useNavigate();
-
-  const visibility = useElementVisibility(currentElement, CookieConsent);
-  const removal = useElementRemoval(currentElement, CookieConsent);
 
   return (
     <ComponentSelection
       elementType={CookieConsent.NAME}
-      isAlready={isAlready}
-      visibility={visibility}
-      removeHandler={removal?.remove as RemoveHandler}
-      newHandler={() => navigate(`/new_cookie_consent_form`, { replace: true })}
-      existingHandler={() =>
-        navigate(`/cookie_consent_form`, { replace: true })
+      newHandler={() =>
+        navigate(Paths.newCookieConsentForm, {
+          replace: true,
+        })
       }
+      index={index}
+      icon={faCookie}
+      disabled={disabled}
     />
   );
 }

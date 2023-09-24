@@ -10,20 +10,30 @@ import {
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
 import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
-import { uniqueId } from "lodash";
 import { Tooltip } from "../components/Tooltip";
 import { useIsPageLoading } from "../contexts/AppContext";
 import {
   CookieConsent,
   NewCookieConsentOptions,
 } from "../models/CookieConsent";
+import { uuidv4 } from "../utils";
+import { Paths } from "../paths";
+
+export async function loader() {
+  const selectedElement = await CookieConsentCompatibleElement.getSelected();
+  return { selectedElement };
+}
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function NewCookieConsentForm() {
   const navigate = useNavigate();
   const { setIsPageLoading } = useIsPageLoading();
-  console.log(NewCookieConsentOptions.parse({}));
+
+  const { selectedElement } = useLoaderData() as loaderData;
+
   const {
     handleSubmit,
     setValue,
@@ -40,10 +50,11 @@ function NewCookieConsentForm() {
     console.log("Submitting", data);
     const classPrefix = data.classPrefix;
 
-    const element = await CookieConsentCompatibleElement.getSelected();
-    if (element) {
-      const id = uniqueId();
-      await CookieConsent.apply(element);
+    if (selectedElement) {
+      const id = uuidv4();
+      const cookieConsentElement = webflow.createDOM("div");
+
+      await CookieConsent.apply(cookieConsentElement);
 
       {
         const elementStyle =
@@ -51,6 +62,7 @@ function NewCookieConsentForm() {
           webflow.createStyle(`${classPrefix} Container`);
 
         const properties: PropertyMap = {
+          display: "none",
           position: "fixed",
           "z-index": "1400",
           left: "0",
@@ -58,7 +70,7 @@ function NewCookieConsentForm() {
           width: "100vw",
         };
         elementStyle.setProperties(properties);
-        element.setStyles([elementStyle]);
+        cookieConsentElement.setStyles([elementStyle]);
       }
 
       const contentElement = webflow.createDOM("section");
@@ -108,7 +120,7 @@ function NewCookieConsentForm() {
       if (data.createClose) {
         const closeElement = webflow.createDOM("button");
         closeElement.setTextContent("X");
-        closeElement.setAttribute("data-mr-cookie-consent-close", "true");
+        closeElement.setAttribute(CookieConsent.DATA_ATTRIBUTE_CLOSE, "true");
         closeElement.setAttribute("aria-label", "Close");
         if (data.createClasses) {
           const closeElementStyle =
@@ -179,7 +191,7 @@ function NewCookieConsentForm() {
           if (data.createClasses) {
             const aboutCookiesElementStyle =
               (await webflow.getStyleByName(`${classPrefix} About Cookies`)) ??
-              webflow.createStyle(`${classPrefix} About Cookiesl`);
+              webflow.createStyle(`${classPrefix} About Cookies`);
 
             const properties: PropertyMap = {};
             aboutCookiesElementStyle.setProperties(properties);
@@ -228,23 +240,50 @@ function NewCookieConsentForm() {
       }
       contentElement.setChildren(contentElementChildren);
 
+      const positionStyleElement = webflow.createDOM("style");
+
+      // change from data-w-id to data-cookie-consent-id, fix so that changes in editor
+      positionStyleElement.setTextContent(
+        `
+        *[data-w-id='${selectedElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Top']{
+          top: 0;
+          left: 0;
+        }
+        *[data-w-id='${selectedElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Bottom']{
+          bottom: 0;
+          left: 0;
+        }`,
+      );
+
       const styleElement = webflow.createDOM("style");
       styleElement.setAttribute(CookieConsent.DATA_ATTRIBUTE_VISIBLE, "true");
 
       styleElement.setTextContent(
         `
-        html.wf-design-mode *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${element.id}']{
+        html.wf-design-mode *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${selectedElement.id}']{
           display: ${CookieConsent.DISPLAY_TYPE};
         }
-        html:not(.wf-design-mode) *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${element.id}']{
+        html:not(.wf-design-mode) *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${selectedElement.id}']{
           display: none;
         }`,
       );
-      element?.setChildren([styleElement, contentElement]);
+      cookieConsentElement?.setChildren([
+        styleElement,
+        positionStyleElement,
+        contentElement,
+      ]);
 
-      await element?.save();
+      selectedElement.setChildren(
+        selectedElement.getChildren().concat(cookieConsentElement),
+      );
+      await selectedElement.save();
 
-      navigate(`/cookie_consent_form`);
+      navigate(
+        generatePath(Paths.cookieConsentForm, {
+          elementId: cookieConsentElement.id,
+        }),
+        { replace: true },
+      );
       setTimeout(() => setIsPageLoading(false), 500);
     } else {
       console.log("error");

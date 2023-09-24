@@ -4,7 +4,7 @@ import {
   usePrevElementIdValue,
   useSetPrevElementId,
 } from "./contexts/AppContext";
-import { Flex, Heading } from "@chakra-ui/react";
+import { Flex, Grid, GridItem, Heading } from "@chakra-ui/react";
 import ModalSelection from "./components/ModalSelection";
 import { Modal } from "./models/Modal";
 import { CompatibleElement } from "./elements/CompatibleElement";
@@ -14,35 +14,21 @@ import _ from "lodash";
 import { NumberIncrementer } from "./models/NumberIncrementer";
 import { CookieConsent } from "./models/CookieConsent";
 import { CookieConsentCompatibleElement } from "./elements/CookieConsentCompatibleElement";
-import CookieConsentSelection from "./components/CookieConsentSelection";
-
-interface CompatibleComponents {
-  numberIncrementer: {
-    isAlready: boolean;
-    applicable: boolean;
-  };
-  modal: {
-    isAlready: boolean;
-    applicable: boolean;
-  };
-  cookieConsent: {
-    isAlready: boolean;
-    applicable: boolean;
-  };
-}
+import { CompatibleComponents } from "./types";
+import ElementSelections from "./components/ElementSelections";
 
 const INIT_COMPATIBLE_COMPONENTS: CompatibleComponents = {
   numberIncrementer: {
     isAlready: false,
-    applicable: false,
+    isApplicable: false,
   },
   modal: {
     isAlready: false,
-    applicable: false,
+    isApplicable: false,
   },
   cookieConsent: {
     isAlready: false,
-    applicable: false,
+    isApplicable: false,
   },
 };
 
@@ -57,7 +43,7 @@ function componentsCompatible(element: CompatibleElement) {
 
   compatible.numberIncrementer = {
     isAlready: isNumberIncrementer,
-    applicable:
+    isApplicable:
       isModal || isCookieConsent
         ? false
         : NumberIncrementerCompatibleElement.isCompatible(element), // an element can only be of one type
@@ -65,7 +51,7 @@ function componentsCompatible(element: CompatibleElement) {
 
   compatible.modal = {
     isAlready: isModal,
-    applicable:
+    isApplicable:
       isNumberIncrementer || isCookieConsent
         ? false
         : ModalCompatibleElement.isCompatible(element), // an element can only be of one type
@@ -73,7 +59,7 @@ function componentsCompatible(element: CompatibleElement) {
 
   compatible.cookieConsent = {
     isAlready: isCookieConsent,
-    applicable:
+    isApplicable:
       isNumberIncrementer || isModal
         ? false
         : CookieConsentCompatibleElement.isCompatible(element), // an element can only be of one type
@@ -136,49 +122,17 @@ function App() {
     };
   }, []);
 
-  const hasCompatibleElements = _.isEqual(
-    INIT_COMPATIBLE_COMPONENTS,
-    compatibleComponents,
-  );
-
   return (
-    <Flex align="center" justify="center" flexDirection={"column"}>
-      <Heading as="h1" size={"md"} textAlign={"center"}>
-        Please select an element in the webflow designer
+    <Flex alignItems="stretch" justify="center" flexDirection={"column"}>
+      <Heading
+        as="h1"
+        size={"md"}
+        backgroundColor={"rgb(43, 43, 43)"}
+        padding={"0.3rem"}
+      >
+        Elements
       </Heading>
-      {hasCompatibleElements &&
-        "No compatible transformations found. Please select another component in the webflow designer"}
-      {!hasCompatibleElements &&
-        // Iterate through all compatible components with the selected element
-        Object.entries(compatibleComponents)
-          .filter(([key, value]) => value.applicable || value.isAlready)
-          .map(([key, value]) => {
-            switch (key) {
-              case "numberIncrementer":
-                return (
-                  <NumberIncrementerSelection
-                    isAlready={value.isAlready}
-                    currentElement={currentElement as CompatibleElement}
-                  />
-                );
-              case "modal":
-                return (
-                  <ModalSelection
-                    isAlready={value.isAlready}
-                    currentElement={currentElement as CompatibleElement}
-                  />
-                );
-              case "cookieConsent":
-                return (
-                  <CookieConsentSelection
-                    isAlready={value.isAlready}
-                    currentElement={currentElement as CompatibleElement}
-                  />
-                );
-              default:
-                throw new Error("key not found");
-            }
-          })}
+      <ElementSelections elements={compatibleComponents} />
     </Flex>
   );
 }

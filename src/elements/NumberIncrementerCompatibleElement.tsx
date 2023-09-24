@@ -1,9 +1,28 @@
 import { NumberIncrementer } from "../models/NumberIncrementer";
 import { CompatibleElement } from "./CompatibleElement";
 
-export class NumberIncrementerCompatibleElement extends CompatibleElement {
+export class NumberIncrementerCompatibleElement
+  extends CompatibleElement
+  implements Children
+{
+  readonly children = true;
+
   constructor(element: AnyElement) {
     super(element);
+  }
+
+  getChildren() {
+    if (this.element.children) {
+      return this.element.getChildren();
+    }
+    throw new Error("Children should exist");
+  }
+
+  setChildren(children: Array<AnyElement>) {
+    if (this.element.children) {
+      return this.element.setChildren(children);
+    }
+    throw new Error("Children should be settable");
   }
 
   static fromElement(element: AnyElement) {
@@ -33,14 +52,10 @@ export class NumberIncrementerCompatibleElement extends CompatibleElement {
 
     if (compatibleElement === null) {
       return false;
-      // number incrementer can only be applied to a compatible element with no existing children
-    } else if (
-      compatibleElement.element.children &&
-      compatibleElement.element.getChildren().length > 0 &&
-      compatibleElement.element.getChildren()[0].type !== "String"
-    ) {
-      return false;
+      // modal can only be applied to a compatible element that can have children
+    } else if (compatibleElement.element.children) {
+      return true;
     }
-    return true;
+    return false;
   }
 }

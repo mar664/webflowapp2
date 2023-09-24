@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  ParamParseKey,
+  Params,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   useIsSelectingElement,
   useSetPrevElementId,
@@ -43,14 +50,25 @@ import {
   OpenEffectTypesEnum,
   PositionEnum,
 } from "../models/CookieConsent";
+import { Paths } from "../paths";
 
-// loads data before switching route and sets current element
-// as a modal and applies modal to it if it doesn't already exist
-export async function loader() {
-  const cookieConsentElement =
-    await CookieConsentCompatibleElement.getSelected();
-  console.log(cookieConsentElement);
-  return { cookieConsentElement };
+interface LoaderArgs extends LoaderFunctionArgs {
+  params: Params<ParamParseKey<typeof Paths.cookieConsentForm>>;
+}
+
+export async function loader({ params: { elementId } }: LoaderArgs) {
+  const cookieConsentElement = (await webflow.getAllElements()).find(
+    (e) => e.id === elementId,
+  );
+  if (!cookieConsentElement) {
+    throw new Error("Cookie consent element not found");
+  }
+  const compatibleCookieConsentElement =
+    CookieConsentCompatibleElement.fromElement(cookieConsentElement);
+  if (compatibleCookieConsentElement !== null) {
+    return { cookieConsentElement: compatibleCookieConsentElement };
+  }
+  throw new Error("Compatible cookie consent element not found");
 }
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
@@ -80,7 +98,7 @@ function CookieConsentForm() {
           cookieConsentElement &&
           element.id !== cookieConsentElement.id
         ) {
-          navigate("/app", { replace: true });
+          navigate(Paths.app, { replace: true });
         }
       }
 

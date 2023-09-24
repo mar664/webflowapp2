@@ -24,113 +24,86 @@ export const useElementVisibility = (
 
   const { isElementHidden, setIsElementHidden } = useIsElementHidden();
 
+  useEffect(() => {
+    if (currentElement) {
+      setIsElementHidden({
+        ...isElementHidden,
+        [`${currentElement.id}`]: _isElementHidden,
+      });
+    }
+  }, [currentElement]);
+
   if (!currentElement) {
     return;
   }
 
-  useEffect(() => {
-    setIsElementHidden({
-      ...isElementHidden,
-      [`${currentElement.id}`]: _isElementHidden,
-    });
-  }, [currentElement]);
+  const styleElement =
+    currentElement.element.children && currentElement.element.getChildren()[0];
 
   const hide = async () => {
-    const styleElement =
-      currentElement.element.children &&
-      currentElement.element.getChildren()[0];
     if (
-      styleElement &&
-      styleElement.type == "DOM" &&
-      styleElement.getTag() === "style"
+      !styleElement ||
+      styleElement.type !== "DOM" ||
+      styleElement.getTag() !== "style"
     ) {
-      if (!isElementHidden[`${currentElement.id}`]) {
-        styleElement.setTextContent(
-          `*[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement.id}']{
+      throw new Error("Style element missing");
+    }
+    if (!isElementHidden[`${currentElement.id}`]) {
+      styleElement.setTextContent(
+        `*[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement.id}']{
               display: none;
             }`,
-        );
-        styleElement.removeAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE);
+      );
+      styleElement.removeAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE);
 
-        await styleElement.save();
+      await styleElement.save();
 
-        setIsElementHidden({
-          ...isElementHidden,
-          [`${currentElement.id}`]: true,
-        });
-      }
+      setIsElementHidden({
+        ...isElementHidden,
+        [`${currentElement.id}`]: true,
+      });
     }
   };
 
   const show = async () => {
-    const styleElement =
-      currentElement.element.children &&
-      currentElement.element.getChildren()[0];
     if (
-      styleElement &&
-      styleElement.type == "DOM" &&
-      styleElement.getTag() === "style"
+      !styleElement ||
+      styleElement.type !== "DOM" ||
+      styleElement.getTag() !== "style"
     ) {
-      if (isElementHidden[`${currentElement.id}`]) {
-        styleElement.setTextContent(
-          `
+      throw new Error("Style element missing");
+    }
+    if (isElementHidden[`${currentElement.id}`]) {
+      styleElement.setTextContent(
+        `
           html.wf-design-mode *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: ${ElementType.DISPLAY_TYPE};
           }
           html:not(.wf-design-mode) *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: none;
           }`,
-        );
-        styleElement.setAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE, "true");
-        await styleElement.save();
-        setIsElementHidden({
-          ...isElementHidden,
-          [`${currentElement.id}`]: false,
-        });
-      }
+      );
+      styleElement.setAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE, "true");
+      await styleElement.save();
+      setIsElementHidden({
+        ...isElementHidden,
+        [`${currentElement.id}`]: false,
+      });
     }
   };
 
   const toggleVisibility = async () => {
-    const styleElement =
-      currentElement.element.children &&
-      currentElement.element.getChildren()[0];
     if (
-      styleElement &&
-      styleElement.type == "DOM" &&
-      styleElement.getTag() === "style"
+      !styleElement ||
+      styleElement.type !== "DOM" ||
+      styleElement.getTag() !== "style"
     ) {
-      if (isElementHidden[`${currentElement.id}`]) {
-        styleElement.setTextContent(
-          `
-          html.wf-design-mode *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
-            display: ${ElementType.DISPLAY_TYPE};
-          }
-          html:not(.wf-design-mode) *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
-            display: none;
-          }`,
-        );
-        styleElement.setAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE, "true");
-        await styleElement.save();
-        setIsElementHidden({
-          ...isElementHidden,
-          [`${currentElement.id}`]: false,
-        });
-      } else {
-        styleElement.setTextContent(
-          `*[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement.id}']{
-              display: none;
-            }`,
-        );
-        styleElement.removeAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE);
-
-        await styleElement.save();
-
-        setIsElementHidden({
-          ...isElementHidden,
-          [`${currentElement.id}`]: true,
-        });
-      }
+      throw new Error("Style element missing");
+    }
+    if (isElementHidden[`${currentElement.id}`]) {
+      await show();
+    } else {
+      await hide();
     }
   };
 
@@ -160,12 +133,12 @@ export const useElementRemoval = (
     await ElementType.remove(currentElement, removeElement);
 
     toast({
-      title: `${ElementType.name} removed`,
+      title: `${ElementType.NAME} removed`,
       status: "success",
       duration: 4000,
       isClosable: true,
     });
-    navigate("/app", { replace: true });
+    navigate(0);
     return true;
   };
   return { remove };

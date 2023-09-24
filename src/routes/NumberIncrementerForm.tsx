@@ -1,6 +1,13 @@
 import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useForm, SubmitHandler, get } from "react-hook-form";
-import { useLoaderData, useNavigate, useParams } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  ParamParseKey,
+  Params,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { useSetPrevElementId } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -33,15 +40,28 @@ import {
   NumberIncrementerOptions,
 } from "../models/NumberIncrementer";
 import { Tooltip } from "../components/Tooltip";
+import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
+import { Paths } from "../paths";
 
-// loads data before switching route and sets current element as a number incrementer if not already
-export async function loader() {
-  const selectedElement = await CompatibleElement.getSelected();
+interface LoaderArgs extends LoaderFunctionArgs {
+  params: Params<ParamParseKey<typeof Paths.numberIncrementerForm>>;
+}
 
-  if (selectedElement && !NumberIncrementer.isAlready(selectedElement)) {
-    await NumberIncrementer.apply(selectedElement);
+// loads data before switching route and sets current element
+// as a modal and applies modal to it if it doesn't already exist
+export async function loader({ params: { elementId } }: LoaderArgs) {
+  const numberIncrementerElement = (await webflow.getAllElements()).find(
+    (e) => e.id === elementId,
+  );
+  if (!numberIncrementerElement) {
+    throw new Error("Number incrementer element not found");
   }
-  return { selectedElement };
+  const compatibleNumberIncrementerElement =
+    NumberIncrementerCompatibleElement.fromElement(numberIncrementerElement);
+  if (compatibleNumberIncrementerElement !== null) {
+    return { numberIncrementerElement: compatibleNumberIncrementerElement };
+  }
+  throw new Error("Compatible number incrementer element element not found");
 }
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
@@ -54,17 +74,31 @@ function NumberIncrementerForm() {
 
   const params = useParams();
 
-  const { selectedElement } = useLoaderData() as loaderData;
-  const removal = useElementRemoval(selectedElement, NumberIncrementer);
+  const { numberIncrementerElement } = useLoaderData() as loaderData;
+  const removal = useElementRemoval(
+    numberIncrementerElement,
+    NumberIncrementer,
+  );
 
   useEffect(() => {
+    let firstRunElement: string | null = null;
     console.log("loaded incrementer");
     const selectedElementCallback = (element: AnyElement | null) => {
       if (element) {
+        // since webflow doesn't allow selecting element the element in the first run
+        // may not be that of the number incrementer element
+        if (firstRunElement === null) {
+          firstRunElement = element.id;
+          return;
+        }
         // if another element is clicked redirect to root
-        if (selectedElement && element.id !== selectedElement.id) {
+        if (
+          numberIncrementerElement &&
+          element.id !== numberIncrementerElement.id &&
+          element.id !== firstRunElement
+        ) {
           setPrevElement(null);
-          navigate("/", { replace: true });
+          navigate(Paths.root, { replace: true });
         }
       }
     };
@@ -91,8 +125,8 @@ function NumberIncrementerForm() {
 
     setInsertScript(scriptExisting.length !== 0);
 
-    if (selectedElement && params && params.exists) {
-      const parsedElement = NumberIncrementer.parse(selectedElement);
+    if (numberIncrementerElement && params && params.exists) {
+      const parsedElement = NumberIncrementer.parse(numberIncrementerElement);
       if (!parsedElement) {
         throw new Error("Error parsing number incrementer attributes");
       }
@@ -119,10 +153,7 @@ function NumberIncrementerForm() {
   });
   const onSubmit: SubmitHandler<NumberIncrementerOptions> = async (data) => {
     console.log("Submitting");
-    const selectedElement = await CompatibleElement.getSelected();
-    if (selectedElement) {
-      await NumberIncrementer.update(selectedElement, data);
-    }
+    await NumberIncrementer.update(numberIncrementerElement, data);
   };
 
   useEffect(() => {
@@ -143,10 +174,9 @@ function NumberIncrementerForm() {
   };
 
   if (isLoading) return null;
-  console.log(Object.keys(errors));
   return (
     <>
-      <Header heading="Editing Number Incrementer" removeAction={removal} />
+      <Header heading="Incrementer Settings" removeAction={removal} />
       {
         <Box textColor={"red"}>
           <ul>
@@ -164,63 +194,57 @@ function NumberIncrementerForm() {
         </Box>
       }
       <form>
-        <Grid templateColumns="repeat(2, 1fr)" gap={1}>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.incrementStart?.message}
-              name="incrementStart"
-              label="Start Value"
-              initialValue={getValues().incrementStart}
-              onValueChange={(value) => setValue("incrementStart", value)}
-              helpText="Initial value of number incrementer"
-            />
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.incrementEnd?.message}
-              name="incrementEnd"
-              label="End value"
-              initialValue={getValues().incrementEnd}
-              onValueChange={(value) => setValue("incrementEnd", value)}
-              helpText="Final value of number incrementer"
-            />
-          </GridItem>
-
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.duration?.message}
-              name="duration"
-              label="Duration"
-              initialValue={getValues().duration}
-              onValueChange={(value) => setValue("duration", value)}
-              formatter={(val) => `${val} ms`}
-              parser={(val) => parseInt(val.replace(" ms", ""))}
-              helpText="Duration in milliseconds"
-              min={0}
-            />
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.percentageVisible?.message}
-              name="percentageVisible"
-              label="Start trigger"
-              initialValue={getValues().percentageVisible}
-              onValueChange={(value) => setValue("percentageVisible", value)}
-              formatter={(val) => `${val} %`}
-              parser={(val) => parseInt(val.replace(" %", ""))}
-              helpText="Increment will start when this % of element is visible in viewport"
-              min={0}
-              max={100}
-            />
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="insert-script" mb="0">
+        <Grid
+          templateColumns="44px, 1fr, 44px, 1fr"
+          gap={"8px"}
+          padding={"8px"}
+        >
+          <NumberFormElement
+            error={errors.incrementStart?.message}
+            name="incrementStart"
+            label="Initial"
+            initialValue={getValues().incrementStart}
+            onValueChange={(value) => setValue("incrementStart", value)}
+            helpText="Initial value of number incrementer"
+          />
+          <NumberFormElement
+            error={errors.incrementEnd?.message}
+            name="incrementEnd"
+            label="Final"
+            initialValue={getValues().incrementEnd}
+            onValueChange={(value) => setValue("incrementEnd", value)}
+            helpText="Final value of number incrementer"
+          />
+          <NumberFormElement
+            error={errors.duration?.message}
+            name="duration"
+            label="Duration"
+            initialValue={getValues().duration}
+            onValueChange={(value) => setValue("duration", value)}
+            formatter={(val) => `${val} ms`}
+            parser={(val) => parseInt(val.replace(" ms", ""))}
+            helpText="Duration in milliseconds"
+            min={0}
+          />
+          <NumberFormElement
+            error={errors.percentageVisible?.message}
+            name="percentageVisible"
+            label="Trigger"
+            initialValue={getValues().percentageVisible}
+            onValueChange={(value) => setValue("percentageVisible", value)}
+            formatter={(val) => `${val} %`}
+            parser={(val) => parseInt(val.replace(" %", ""))}
+            helpText="Increment will start when this % of element is visible in viewport"
+            min={0}
+            max={100}
+          />
+          <GridItem w="100%" colSpan={4}>
+            <FormControl display="flex" alignItems="center" maxWidth={"full"}>
+              <FormLabel
+                htmlFor="insert-script"
+                mb="0"
+                fontSize={"label.fontSize"}
+              >
                 <Tooltip
                   label="Toggles whether to embed the javascript code on the page"
                   fontSize="md"
@@ -232,17 +256,17 @@ function NumberIncrementerForm() {
                 id="insert-script"
                 onChange={insertingScript}
                 isChecked={insertScript}
+                backgroundColor={"switch.background"}
               />
             </FormControl>
           </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="copy-script" mb="0">
+          <GridItem w="100%" colSpan={4}>
+            <FormControl display="flex" alignItems="center" maxWidth={"full"}>
+              <FormLabel
+                htmlFor="copy-script"
+                mb="0"
+                fontSize={"label.fontSize"}
+              >
                 <Tooltip
                   label="Copy the javascript embed code to clipboard so it can be added to webflow"
                   fontSize="md"
@@ -259,9 +283,17 @@ function NumberIncrementerForm() {
               >
                 <IconButton
                   id="copy-script"
-                  colorScheme="green"
                   aria-label="Copy to clipboard"
-                  fontSize="20px"
+                  fontSize={"copyToClipboard.fontSize"}
+                  backgroundColor={"button.background"}
+                  borderWidth={"button.borderWidth"}
+                  borderColor={"button.borderColor"}
+                  borderRadius={"button.borderRadius"}
+                  color={"button.color"}
+                  _hover={{
+                    backgroundColor: "button._hover.background",
+                  }}
+                  size={"sm"}
                   icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
                 />
               </CopyToClipboard>

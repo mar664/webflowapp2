@@ -11,15 +11,25 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Modal, NewModalOptions } from "../models/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "react-router-dom";
+import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
-import { uniqueId } from "lodash";
 import { Tooltip } from "../components/Tooltip";
 import { useIsPageLoading } from "../contexts/AppContext";
+import { uuidv4 } from "../utils";
+import { Paths } from "../paths";
+
+export async function loader() {
+  const selectedElement = await ModalCompatibleElement.getSelected();
+  return { selectedElement };
+}
+
+type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function NewModalForm() {
   const navigate = useNavigate();
   const { setIsPageLoading } = useIsPageLoading();
+  const { selectedElement } = useLoaderData() as loaderData;
+
   console.log(NewModalOptions.parse({}));
   const {
     handleSubmit,
@@ -37,13 +47,14 @@ function NewModalForm() {
     console.log("Submitting", data);
     const classPrefix = data.classPrefix;
 
-    const modalElement = await ModalCompatibleElement.getSelected();
-    if (modalElement) {
-      const id = uniqueId();
+    if (selectedElement) {
+      const id = uuidv4();
+      const modalElement = webflow.createDOM("div");
+
       await Modal.apply(modalElement);
 
       {
-        const modalElementStyle =
+        const elementStyle =
           (await webflow.getStyleByName(`${classPrefix} Container`)) ??
           webflow.createStyle(`${classPrefix} Container`);
 
@@ -59,14 +70,14 @@ function NewModalForm() {
           "overflow-x": "hidden",
           "overflow-y": "hidden",
         };
-        modalElementStyle.setProperties(properties);
-        modalElement.setStyles([modalElementStyle]);
+        elementStyle.setProperties(properties);
+        modalElement.setStyles([elementStyle]);
       }
 
-      const modalOverlay = webflow.createDOM("div");
-      modalOverlay.setAttribute("data-mr-modal-overlay", `true`);
+      const overlayElement = webflow.createDOM("div");
+      overlayElement.setAttribute(Modal.DATA_ATTRIBUTE_OVERLAY, `true`);
 
-      const modalOverlayStyle =
+      const overlayStyle =
         (await webflow.getStyleByName(`${classPrefix} Overlay`)) ??
         webflow.createStyle(`${classPrefix} Overlay`);
 
@@ -81,18 +92,18 @@ function NewModalForm() {
         "overflow-y": "auto",
         "z-index": "1400",
       };
-      modalOverlayStyle.setProperties(properties);
-      modalOverlay.setStyles([modalOverlayStyle]);
+      overlayStyle.setProperties(properties);
+      overlayElement.setStyles([overlayStyle]);
 
-      const modalContent = webflow.createDOM("section");
-      modalContent.setAttribute("role", "dialog");
-      modalContent.setAttribute("id", `dialog-${id}`);
-      modalContent.setAttribute("aria-labelledby", `dialog-${id}-label`);
-      modalContent.setAttribute("aria-describedby", `dialog-${id}-desc`);
-      modalContent.setAttribute("aria-modal", "true");
+      const contentElement = webflow.createDOM("section");
+      contentElement.setAttribute("role", "dialog");
+      contentElement.setAttribute("id", `dialog-${id}`);
+      contentElement.setAttribute("aria-labelledby", `dialog-${id}-label`);
+      contentElement.setAttribute("aria-describedby", `dialog-${id}-desc`);
+      contentElement.setAttribute("aria-modal", "true");
 
       if (data.createClasses) {
-        const modalStyle =
+        const contentElementStyle =
           (await webflow.getStyleByName(`${classPrefix} Content`)) ??
           webflow.createStyle(`${classPrefix} Content`);
 
@@ -128,18 +139,18 @@ function NewModalForm() {
           "z-index": "1401",
         };
 
-        modalStyle.setProperties(properties);
+        contentElementStyle.setProperties(properties);
 
-        modalContent.setStyles([modalStyle]);
+        contentElement.setStyles([contentElementStyle]);
       }
-      const modalContentChildren = [];
+      const contentElementChildren = [];
 
       if (data.createHeader) {
-        const modalHeader = webflow.createDOM("header");
-        modalHeader.setTextContent("Modal Header");
-        modalHeader.setAttribute("id", `dialog-${id}-label`);
+        const headerElement = webflow.createDOM("header");
+        headerElement.setTextContent("Modal Header");
+        headerElement.setAttribute("id", `dialog-${id}-label`);
         if (data.createClasses) {
-          const modalStyle =
+          const headerElementStyle =
             (await webflow.getStyleByName(`${classPrefix} Header`)) ??
             webflow.createStyle(`${classPrefix} Header`);
           const properties: PropertyMap = {
@@ -150,18 +161,18 @@ function NewModalForm() {
             "font-size": "1.25rem",
             "font-weight": "600",
           };
-          modalStyle.setProperties(properties);
-          modalHeader.setStyles([modalStyle]);
+          headerElementStyle.setProperties(properties);
+          headerElement.setStyles([headerElementStyle]);
         }
-        modalContentChildren.push(modalHeader);
+        contentElementChildren.push(headerElement);
       }
       if (data.createClose) {
-        const modalClose = webflow.createDOM("button");
-        modalClose.setTextContent("X");
-        modalClose.setAttribute("data-mr-modal-close", "true");
-        modalClose.setAttribute("aria-label", "Close");
+        const closeElement = webflow.createDOM("button");
+        closeElement.setTextContent("X");
+        closeElement.setAttribute(Modal.DATA_ATTRIBUTE_CLOSE, "true");
+        closeElement.setAttribute("aria-label", "Close");
         if (data.createClasses) {
-          const modalStyle =
+          const closeElementStyle =
             (await webflow.getStyleByName(`${classPrefix} Close`)) ??
             webflow.createStyle(`${classPrefix} Close`);
 
@@ -170,17 +181,17 @@ function NewModalForm() {
             top: "1rem",
             right: "1rem",
           };
-          modalStyle.setProperties(properties);
-          modalClose.setStyles([modalStyle]);
+          closeElementStyle.setProperties(properties);
+          closeElement.setStyles([closeElementStyle]);
         }
-        modalContentChildren.push(modalClose);
+        contentElementChildren.push(closeElement);
       }
       if (data.createBody) {
-        const modalBody = webflow.createDOM("div");
-        modalBody.setTextContent("this is the modal body content");
-        modalBody.setAttribute("id", `dialog-${id}-desc`);
+        const bodyElement = webflow.createDOM("div");
+        bodyElement.setTextContent("this is the modal body content");
+        bodyElement.setAttribute("id", `dialog-${id}-desc`);
         if (data.createClasses) {
-          const modalStyle =
+          const bodyElementStyle =
             (await webflow.getStyleByName(`${classPrefix} Body`)) ??
             webflow.createStyle(`${classPrefix} Body`);
 
@@ -192,16 +203,16 @@ function NewModalForm() {
             "font-size": "1rem",
             "font-weight": "400",
           };
-          modalStyle.setProperties(properties);
-          modalBody.setStyles([modalStyle]);
+          bodyElementStyle.setProperties(properties);
+          bodyElement.setStyles([bodyElementStyle]);
         }
-        modalContentChildren.push(modalBody);
+        contentElementChildren.push(bodyElement);
       }
       if (data.createFooter) {
-        const modalFooter = webflow.createDOM("footer");
-        modalFooter.setTextContent("this is the modal footer content");
+        const footerElement = webflow.createDOM("footer");
+        footerElement.setTextContent("this is the modal footer content");
         if (data.createClasses) {
-          const modalStyle =
+          const footerElementStyle =
             (await webflow.getStyleByName(`${classPrefix} Footer`)) ??
             webflow.createStyle(`${classPrefix} Footer`);
 
@@ -211,12 +222,12 @@ function NewModalForm() {
             "padding-top": "1rem",
             "padding-bottom": "1rem",
           };
-          modalStyle.setProperties(properties);
-          modalFooter.setStyles([modalStyle]);
+          footerElementStyle.setProperties(properties);
+          footerElement.setStyles([footerElementStyle]);
         }
-        modalContentChildren.push(modalFooter);
+        contentElementChildren.push(footerElement);
       }
-      modalContent.setChildren(modalContentChildren);
+      contentElement.setChildren(contentElementChildren);
 
       const modalStyleElement = webflow.createDOM("style");
       modalStyleElement.setAttribute(Modal.DATA_ATTRIBUTE_VISIBLE, "true");
@@ -232,13 +243,21 @@ function NewModalForm() {
       );
       modalElement?.setChildren([
         modalStyleElement,
-        modalOverlay,
-        modalContent,
+        overlayElement,
+        contentElement,
       ]);
 
-      await modalElement?.save();
+      selectedElement.setChildren(
+        selectedElement.getChildren().concat(modalElement),
+      );
+      await selectedElement.save();
 
-      navigate(`/modal_form`);
+      navigate(
+        generatePath(Paths.modalForm, {
+          elementId: modalElement.id,
+        }),
+        { replace: true },
+      );
       setTimeout(() => setIsPageLoading(false), 500);
     } else {
       console.log("error");

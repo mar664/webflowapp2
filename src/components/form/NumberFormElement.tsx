@@ -1,16 +1,20 @@
 import {
+  Box,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  GridItem,
+  InputGroup,
+  InputRightElement,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Tooltip,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { Tooltip } from "../Tooltip";
 
 interface FormProps {
   error: string | undefined;
@@ -46,32 +50,41 @@ function NumberFormElement({
   }, 1000);
 
   return (
-    <FormControl isInvalid={!!error} margin={"2"}>
-      <FormLabel htmlFor={name}>
-        <Tooltip label={helpText} fontSize="md">
-          {label}
-        </Tooltip>
-      </FormLabel>
-      <NumberInput
-        size="sm"
-        maxW={"full"}
-        id={name}
-        onChange={(valueAsString, valueAsNumber) => {
-          setValue(parser(valueAsString));
-          debounced(parser(valueAsString));
-        }}
-        value={formatter(value)}
-        min={min}
-        max={max}
-        isDisabled={disabled}
-      >
-        <NumberInputField />
-        <NumberInputStepper>
-          <NumberIncrementStepper />
-          <NumberDecrementStepper />
-        </NumberInputStepper>
-      </NumberInput>
-    </FormControl>
+    <>
+      <GridItem display={"flex"} alignItems={"center"}>
+        <FormLabel htmlFor={name} fontSize={"label.fontSize"} mb={0}>
+          <Tooltip label={helpText} fontSize="md">
+            {label}
+          </Tooltip>
+        </FormLabel>
+      </GridItem>
+      <GridItem>
+        <InputGroup>
+          <NumberInput
+            size="sm"
+            maxW={"full"}
+            id={name}
+            onChange={(valueAsString, valueAsNumber) => {
+              setValue(parser(valueAsString));
+              debounced(parser(valueAsString));
+            }}
+            value={formatter(value)}
+            min={min}
+            max={max}
+            isDisabled={disabled}
+          >
+            <NumberInputField
+              backgroundColor={"input.background"}
+              borderColor={"input.borderColor"}
+              borderRadius={"input.borderRadius"}
+              color={"input.color"}
+              fontSize={"input.fontSize"}
+              _hover={{ borderColor: "input.borderColor" }}
+            />
+          </NumberInput>
+        </InputGroup>
+      </GridItem>
+    </>
   );
 }
 

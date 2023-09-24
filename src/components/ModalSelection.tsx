@@ -1,29 +1,24 @@
 import { useNavigate } from "react-router-dom";
-import { CompatibleElement } from "../elements/CompatibleElement";
-import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import ComponentSelection from "./ComponentSelection";
-import { RemoveHandler } from "../types";
 import { Modal } from "../models/Modal";
+import { Paths } from "../paths";
+import { faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
-  isAlready: boolean;
-  currentElement: CompatibleElement;
+  index: number;
+  disabled: boolean;
 }
 
-function ModalSelection({ isAlready, currentElement }: Props) {
+function ModalSelection({ index, disabled }: Props) {
   const navigate = useNavigate();
-
-  const visibility = useElementVisibility(currentElement, Modal);
-  const removal = useElementRemoval(currentElement, Modal);
 
   return (
     <ComponentSelection
       elementType={Modal.NAME}
-      isAlready={isAlready}
-      visibility={visibility}
-      removeHandler={removal?.remove as RemoveHandler}
-      newHandler={() => navigate(`/new_modal_form`, { replace: true })}
-      existingHandler={() => navigate(`/modal_form`, { replace: true })}
+      newHandler={() => navigate(Paths.newModalForm, { replace: true })}
+      icon={faUpRightFromSquare}
+      index={index}
+      disabled={disabled}
     />
   );
 }
