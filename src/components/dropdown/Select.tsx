@@ -21,6 +21,7 @@ export default function Select({ options, defaultValue, onChange, id }: Props) {
         aria-haspopup="listbox"
         size={"sm"}
         rightIcon={<UpDownIcon />}
+        variant={"select"}
       >
         {selection.label}
       </MenuButton>

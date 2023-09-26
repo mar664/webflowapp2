@@ -26,6 +26,9 @@ import {
   RadioGroup,
   Stack,
   Switch,
+  Tag,
+  TagCloseButton,
+  TagLabel,
 } from "@chakra-ui/react";
 import {
   CloseEffectTypesEnum,
@@ -227,7 +230,7 @@ function ModalForm() {
             <AccordionHeading headingText="Opening Modal" />
             <AccordionPanel>
               <Grid
-                templateColumns="44px 1fr 44px 1fr"
+                templateColumns="60px 1fr 60px 1fr"
                 gap={"8px"}
                 padding={"8px"}
               >
@@ -237,11 +240,11 @@ function ModalForm() {
                       label="Element or class to trigger the modal opening"
                       fontSize="md"
                     >
-                      Open trigger
+                      Trigger
                     </Tooltip>
                   </FormLabel>
                 </GridItem>
-                <GridItem colSpan={3}>
+                <GridItem colSpan={3} display="flex" alignItems="center">
                   <RadioGroup
                     id="open-modal-trigger"
                     onChange={(v: TriggerTypesEnum) => {
@@ -252,15 +255,20 @@ function ModalForm() {
                   >
                     <Stack direction="row">
                       {TriggerTypesEnum.options.map((value) => (
-                        <Radio key={value} value={value}>
+                        <Radio key={value} value={value} fontSize={"12px"}>
                           {value}
                         </Radio>
                       ))}
                     </Stack>
                   </RadioGroup>
                 </GridItem>
-                <GridItem w="100%" colSpan={4}>
-                  <Stack direction="row" alignItems={"flex-start"}>
+                <GridItem
+                  w="100%"
+                  colSpan={4}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Stack direction="row" alignItems={"center"} width={"100%"}>
                     <ModalTriggerSelection
                       modalElement={modalElement}
                       trigger={watch("openTriggerType")}
@@ -272,12 +280,20 @@ function ModalForm() {
                       hideOnModalOpen={true}
                     />
                     {watch("openTriggerType") ===
-                      TriggerTypesEnum.Enum.Element && (
-                      <a>{watch("openTriggerValue")}</a>
-                    )}
+                      TriggerTypesEnum.Enum.Element &&
+                      watch("openTriggerValue") !== undefined && (
+                        <Tag>
+                          <TagLabel>#{watch("openTriggerValue")}</TagLabel>
+                          <TagCloseButton
+                            onClick={() =>
+                              setValue("openTriggerValue", undefined)
+                            }
+                          />
+                        </Tag>
+                      )}
                   </Stack>
                 </GridItem>
-                <GridItem>
+                <GridItem display="flex" alignItems="center">
                   <FormLabel htmlFor="display-effect">
                     <Tooltip
                       label="The effect to use when displaying the modal"
@@ -287,7 +303,7 @@ function ModalForm() {
                     </Tooltip>
                   </FormLabel>{" "}
                 </GridItem>
-                <GridItem colSpan={3}>
+                <GridItem colSpan={3} display="flex" alignItems="center">
                   <Select
                     id="display-effect"
                     defaultValue={{
@@ -323,20 +339,24 @@ function ModalForm() {
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>
-            <AccordionHeading headingText="Scripts" />
+            <AccordionHeading headingText="Closing Modal" />
             <AccordionPanel>
-              <Grid gap={"8px"} padding={"8px"}>
-                <GridItem>
+              <Grid
+                gap={"8px"}
+                padding={"8px"}
+                templateColumns="60px 1fr 60px 1fr"
+              >
+                <GridItem display="flex" alignItems="center">
                   <FormLabel htmlFor="close-modal-trigger" mb="0">
                     <Tooltip
                       label="Element or class to trigger the modal closing"
                       fontSize="md"
                     >
-                      Secondary trigger
+                      Trigger
                     </Tooltip>
                   </FormLabel>
                 </GridItem>
-                <GridItem colSpan={3}>
+                <GridItem colSpan={3} display="flex" alignItems="center">
                   <RadioGroup
                     id="close-modal-trigger"
                     onChange={(v: TriggerTypesEnum) => {
@@ -354,8 +374,13 @@ function ModalForm() {
                     </Stack>
                   </RadioGroup>
                 </GridItem>
-                <GridItem w="100%" colSpan={4}>
-                  <Stack direction="column">
+                <GridItem
+                  w="100%"
+                  colSpan={4}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <Stack direction="row" width={"100%"} alignItems="center">
                     <ModalTriggerSelection
                       modalElement={modalElement}
                       trigger={watch("closeTriggerType")}
@@ -367,22 +392,30 @@ function ModalForm() {
                       showOnModalOpen={true}
                     />
                     {watch("closeTriggerType") ===
-                      TriggerTypesEnum.Enum.Element && (
-                      <a>{watch("closeTriggerValue")}</a>
-                    )}
+                      TriggerTypesEnum.Enum.Element &&
+                      watch("closeTriggerValue") !== undefined && (
+                        <Tag>
+                          <TagLabel>#{watch("closeTriggerValue")}</TagLabel>
+                          <TagCloseButton
+                            onClick={() =>
+                              setValue("closeTriggerValue", undefined)
+                            }
+                          />
+                        </Tag>
+                      )}
                   </Stack>
                 </GridItem>
-                <GridItem>
+                <GridItem display="flex" alignItems="center">
                   <FormLabel htmlFor="hide-effect">
                     <Tooltip
                       label="The effect to use when hiding the modal"
                       fontSize="md"
                     >
-                      Hide effect
+                      Effect
                     </Tooltip>
                   </FormLabel>
                 </GridItem>
-                <GridItem colSpan={3}>
+                <GridItem colSpan={3} display="flex" alignItems="center">
                   <Select
                     id="hide-effect"
                     defaultValue={{
@@ -404,7 +437,7 @@ function ModalForm() {
                 <NumberFormElement
                   error={errors.closeDuration?.message}
                   name="closeDuration"
-                  label="Close Duration"
+                  label="Duration"
                   initialValue={getValues().closeDuration}
                   onValueChange={(value) => setValue("closeDuration", value)}
                   formatter={(val) => `${val} ms`}
@@ -420,16 +453,16 @@ function ModalForm() {
                   display="flex"
                   alignItems="center"
                 >
-                  <FormLabel htmlFor="close-on-click-underlay" mb="0">
+                  <FormLabel htmlFor="close-on-click-overlay" mb="0">
                     <Tooltip
-                      label="Toggles whether to close the modal when underlay is clicked"
+                      label="Toggles whether to close the modal when overlay is clicked"
                       fontSize="md"
                     >
-                      Closes modal on click underlay
+                      Close modal on click overlay
                     </Tooltip>
                   </FormLabel>
                   <Switch
-                    id="close-on-click-underlay"
+                    id="close-on-click-overlay"
                     defaultChecked={getValues().closeOnClickOverlay}
                     onChange={(e) =>
                       setValue("closeOnClickOverlay", e.target.checked)
@@ -447,7 +480,6 @@ function ModalForm() {
                   <FormControl
                     display="flex"
                     alignItems="center"
-                    margin={"2"}
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="insert-script" mb="0">
@@ -469,7 +501,6 @@ function ModalForm() {
                   <FormControl
                     display="flex"
                     alignItems="center"
-                    margin={"2"}
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="copy-script" mb="0">

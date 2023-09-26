@@ -19,6 +19,7 @@ import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import { CompatibleElement } from "../../elements/CompatibleElement";
 import { useElementVisibility } from "../../hooks/element";
 import { Modal } from "../../models/Modal";
+import { AddIcon } from "@chakra-ui/icons";
 
 interface Props {
   setSelectedElement: any;
@@ -79,8 +80,10 @@ function ElementTriggerElement({
   const setSelection = async () => {
     const selectedElement = await CompatibleElement.getSelected();
     console.log("selected element", selectedElement);
-    setSelectedElement(selectedElement?.id);
-    selectedElement?.setAttribute("data-mr-modal-id", selectedElement?.id);
+    const id = selectedElement?.id.replace("-", "").substring(0, 8) as string;
+    setSelectedElement(id);
+
+    selectedElement?.setAttribute("data-mr-modal-id", id);
     await selectedElement?.save();
     setSelectionFinished(true);
     modal.onClose();
@@ -90,8 +93,13 @@ function ElementTriggerElement({
 
   return (
     <>
-      <Button onClick={selectElement} size={"sm"}>
-        {modal.isOpen ? "Selecting Element" : "Select an element"}
+      <Button
+        onClick={selectElement}
+        size={"sm"}
+        variant={"enable"}
+        leftIcon={<AddIcon />}
+      >
+        Target element
       </Button>
 
       <AlertDialog
@@ -125,7 +133,7 @@ function ElementTriggerElement({
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            Select element
+            Select target element
           </AlertDialogHeader>
           <AlertDialogCloseButton size={"sm"} variant={"headerIcon"} />
           <AlertDialogBody fontSize={"alertDialog.body.fontSize"}>

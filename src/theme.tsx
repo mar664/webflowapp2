@@ -3,7 +3,9 @@ import { formLabelTheme } from "./themes/FormLabel";
 import { inputTheme } from "./themes/Input";
 import { menuTheme } from "./themes/Menu";
 import { numberInputTheme } from "./themes/NumberInput";
+import { radioTheme } from "./themes/Radio";
 import { switchTheme } from "./themes/Switch";
+import { tagTheme } from "./themes/Tag";
 
 const colors = {
   header: {
@@ -52,7 +54,7 @@ const colors = {
   switch: {
     track: {
       background: "rgb(159, 156, 156)",
-      checked: { background: "rgb(94, 94, 94)" },
+      checked: { background: "rgb(0, 115, 230)" },
     },
   },
   accordion: {
@@ -215,6 +217,7 @@ const radii = {
 const shadows = {
   dropdown: { boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 10px" },
   alertDialog: { boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 15px 0px" },
+  inputField: { _focus: { boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px" } },
 };
 
 const styles = {
@@ -251,5 +254,7 @@ export default {
     FormLabel: formLabelTheme,
     Input: inputTheme,
     Menu: menuTheme,
+    Radio: radioTheme,
+    Tag: tagTheme,
   },
 };

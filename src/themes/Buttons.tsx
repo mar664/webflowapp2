@@ -61,6 +61,20 @@ const iconButtonHeader = defineStyle({
   },
 });
 
+const selectButton = defineStyle({
+  borderWidth: "button.borderWidth",
+  borderColor: "button.borderColor",
+  borderRadius: "button.borderRadius",
+  backgroundColor: "button.background",
+  color: "button.color",
+  _hover: {
+    backgroundColor: "button._hover.background",
+  },
+  fontSize: "11px",
+  width: "100%",
+  textAlign: "left",
+});
+
 export const buttonTheme = defineStyleConfig({
   baseStyle: buttonBase,
   variants: {
@@ -69,6 +83,7 @@ export const buttonTheme = defineStyleConfig({
     warning: buttonWarning,
     icon: iconButtonDefault,
     headerIcon: iconButtonHeader,
+    select: selectButton,
   },
   defaultProps: {
     size: "md",

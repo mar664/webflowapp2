@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import * as _ from "lodash";
 import { removeChars } from "../utils";
+import { OptionBase } from "chakra-react-select";
 
-export interface IStyleItem {
+export interface IStyleItem extends OptionBase {
   value: string;
   label: string;
 }

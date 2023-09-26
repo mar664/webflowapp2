@@ -9,6 +9,7 @@ export default function AccordionItem({ children }: Props) {
     <_AccordionItem
       borderTopColor={"accordion.borderTopColor"}
       borderBottomColor={"accordion.borderBottomColor"}
+      transition={"none"}
     >
       {children}
     </_AccordionItem>
