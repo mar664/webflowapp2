@@ -11,6 +11,7 @@ import {
 import { useSetPrevElementId } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Accordion,
   Box,
   Button,
   ButtonGroup,
@@ -22,6 +23,7 @@ import {
   Heading,
   Input,
 } from "@chakra-ui/react";
+import { TriangleDownIcon } from "@chakra-ui/icons";
 import { Switch } from "@chakra-ui/react";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { IconButton } from "@chakra-ui/react";
@@ -42,6 +44,9 @@ import {
 import { Tooltip } from "../components/Tooltip";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
 import { Paths } from "../paths";
+import AccordionHeading from "../components/accordion/AccordionHeading";
+import AccordionItem from "../components/accordion/AccordionItem";
+import AccordionPanel from "../components/accordion/AccordionPanel";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.numberIncrementerForm>>;
@@ -194,112 +199,124 @@ function NumberIncrementerForm() {
         </Box>
       }
       <form>
-        <Grid
-          templateColumns="44px, 1fr, 44px, 1fr"
-          gap={"8px"}
-          padding={"8px"}
-        >
-          <NumberFormElement
-            error={errors.incrementStart?.message}
-            name="incrementStart"
-            label="Initial"
-            initialValue={getValues().incrementStart}
-            onValueChange={(value) => setValue("incrementStart", value)}
-            helpText="Initial value of number incrementer"
-          />
-          <NumberFormElement
-            error={errors.incrementEnd?.message}
-            name="incrementEnd"
-            label="Final"
-            initialValue={getValues().incrementEnd}
-            onValueChange={(value) => setValue("incrementEnd", value)}
-            helpText="Final value of number incrementer"
-          />
-          <NumberFormElement
-            error={errors.duration?.message}
-            name="duration"
-            label="Duration"
-            initialValue={getValues().duration}
-            onValueChange={(value) => setValue("duration", value)}
-            formatter={(val) => `${val} ms`}
-            parser={(val) => parseInt(val.replace(" ms", ""))}
-            helpText="Duration in milliseconds"
-            min={0}
-          />
-          <NumberFormElement
-            error={errors.percentageVisible?.message}
-            name="percentageVisible"
-            label="Trigger"
-            initialValue={getValues().percentageVisible}
-            onValueChange={(value) => setValue("percentageVisible", value)}
-            formatter={(val) => `${val} %`}
-            parser={(val) => parseInt(val.replace(" %", ""))}
-            helpText="Increment will start when this % of element is visible in viewport"
-            min={0}
-            max={100}
-          />
-          <GridItem w="100%" colSpan={4}>
-            <FormControl display="flex" alignItems="center" maxWidth={"full"}>
-              <FormLabel
-                htmlFor="insert-script"
-                mb="0"
-                fontSize={"label.fontSize"}
+        <Accordion defaultIndex={[0, 1]} allowMultiple>
+          <AccordionItem>
+            <AccordionHeading headingText="Values" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="44px 1fr 44px 1fr"
+                gap={"8px"}
+                padding={"8px"}
               >
-                <Tooltip
-                  label="Toggles whether to embed the javascript code on the page"
-                  fontSize="md"
-                >
-                  Insert script in body?
-                </Tooltip>
-              </FormLabel>
-              <Switch
-                id="insert-script"
-                onChange={insertingScript}
-                isChecked={insertScript}
-                backgroundColor={"switch.background"}
-              />
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={4}>
-            <FormControl display="flex" alignItems="center" maxWidth={"full"}>
-              <FormLabel
-                htmlFor="copy-script"
-                mb="0"
-                fontSize={"label.fontSize"}
-              >
-                <Tooltip
-                  label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                  fontSize="md"
-                >
-                  Copy script to clipboard
-                </Tooltip>
-              </FormLabel>
-              <CopyToClipboard
-                text={`<script src="${NumberIncrementer.SOURCE_URL}"></script>`}
-                onCopy={() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 5000);
-                }}
-              >
-                <IconButton
-                  id="copy-script"
-                  aria-label="Copy to clipboard"
-                  fontSize={"copyToClipboard.fontSize"}
-                  backgroundColor={"button.background"}
-                  borderWidth={"button.borderWidth"}
-                  borderColor={"button.borderColor"}
-                  borderRadius={"button.borderRadius"}
-                  color={"button.color"}
-                  _hover={{
-                    backgroundColor: "button._hover.background",
-                  }}
-                  size={"sm"}
-                  icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
+                <NumberFormElement
+                  error={errors.incrementStart?.message}
+                  name="incrementStart"
+                  label="Initial"
+                  initialValue={getValues().incrementStart}
+                  onValueChange={(value) => setValue("incrementStart", value)}
+                  helpText="Initial value of number incrementer"
                 />
-              </CopyToClipboard>
-            </FormControl>
-          </GridItem>
-        </Grid>
+                <NumberFormElement
+                  error={errors.incrementEnd?.message}
+                  name="incrementEnd"
+                  label="Final"
+                  initialValue={getValues().incrementEnd}
+                  onValueChange={(value) => setValue("incrementEnd", value)}
+                  helpText="Final value of number incrementer"
+                />
+                <NumberFormElement
+                  error={errors.duration?.message}
+                  name="duration"
+                  label="Duration"
+                  initialValue={getValues().duration}
+                  onValueChange={(value) => setValue("duration", value)}
+                  formatter={(val) => `${val} ms`}
+                  parser={(val) => parseInt(val.replace(" ms", ""))}
+                  helpText="Duration in milliseconds"
+                  min={0}
+                />
+                <NumberFormElement
+                  error={errors.percentageVisible?.message}
+                  name="percentageVisible"
+                  label="Trigger"
+                  initialValue={getValues().percentageVisible}
+                  onValueChange={(value) =>
+                    setValue("percentageVisible", value)
+                  }
+                  formatter={(val) => `${val} %`}
+                  parser={(val) => parseInt(val.replace(" %", ""))}
+                  helpText="Increment will start when this % of element is visible in viewport"
+                  min={0}
+                  max={100}
+                />
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Scripts" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="44px, 1fr, 44px, 1fr"
+                gap={"8px"}
+                padding={"8px"}
+              >
+                <GridItem w="100%" colSpan={4}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="insert-script">
+                      <Tooltip
+                        label="Toggles whether to embed the javascript code on the page"
+                        fontSize="md"
+                      >
+                        Insert script in body?
+                      </Tooltip>
+                    </FormLabel>
+                    <Switch
+                      id="insert-script"
+                      onChange={insertingScript}
+                      isChecked={insertScript}
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem w="100%" colSpan={4}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="copy-script">
+                      <Tooltip
+                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
+                        fontSize="md"
+                      >
+                        Copy script to clipboard
+                      </Tooltip>
+                    </FormLabel>
+                    <CopyToClipboard
+                      text={`<script src="${NumberIncrementer.SOURCE_URL}"></script>`}
+                      onCopy={() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 5000);
+                      }}
+                    >
+                      <IconButton
+                        id="copy-script"
+                        aria-label="Copy to clipboard"
+                        size={"sm"}
+                        icon={
+                          <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
+                        }
+                      />
+                    </CopyToClipboard>
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </form>
     </>
   );

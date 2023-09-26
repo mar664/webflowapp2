@@ -20,6 +20,7 @@ import {
 } from "../models/CookieConsent";
 import { uuidv4 } from "../utils";
 import { Paths } from "../paths";
+import Header from "../components/Header";
 
 export async function loader() {
   const selectedElement = await CookieConsentCompatibleElement.getSelected();
@@ -292,9 +293,8 @@ function NewCookieConsentForm() {
 
   return (
     <>
-      <Heading as="h1" size={"md"}>
-        Create New Cookie Consent
-      </Heading>
+      <Header heading="New Cookie Consent" />
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl
           display="flex"
@@ -507,9 +507,9 @@ function NewCookieConsentForm() {
             />
           </FormControl>
         )}
-        <ButtonGroup>
-          <Button>Cancel</Button>
-          <Button colorScheme="green" ml={3} type="submit">
+        <ButtonGroup spacing="4" float={"right"} m={4}>
+          <Button size={"sm"}>Cancel</Button>
+          <Button variant={"enable"} type="submit" size={"sm"}>
             Create
           </Button>
         </ButtonGroup>

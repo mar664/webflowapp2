@@ -17,6 +17,7 @@ import { Tooltip } from "../components/Tooltip";
 import { useIsPageLoading } from "../contexts/AppContext";
 import { uuidv4 } from "../utils";
 import { Paths } from "../paths";
+import Header from "../components/Header";
 
 export async function loader() {
   const selectedElement = await ModalCompatibleElement.getSelected();
@@ -266,9 +267,8 @@ function NewModalForm() {
 
   return (
     <>
-      <Heading as="h1" size={"md"}>
-        Create New Modal
-      </Heading>
+      <Header heading="New Modal" />
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl
           display="flex"
@@ -415,9 +415,9 @@ function NewModalForm() {
             />
           </FormControl>
         )}
-        <ButtonGroup>
-          <Button>Cancel</Button>
-          <Button colorScheme="green" ml={3} type="submit">
+        <ButtonGroup spacing="4" float={"right"} m={4}>
+          <Button size={"sm"}>Cancel</Button>
+          <Button variant="enable" type="submit" size={"sm"}>
             Create
           </Button>
         </ButtonGroup>

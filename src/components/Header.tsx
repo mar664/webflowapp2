@@ -33,24 +33,15 @@ const Header = ({ heading, visibilityAction, removeAction }: Props) => {
       <Stack flexDirection={"row"}>
         {visibilityAction ? (
           <IconButton
+            variant={"headerIcon"}
             onClick={visibilityAction.toggleVisibility}
             icon={
               <FontAwesomeIcon
                 icon={visibilityAction.isHidden ? faEye : faEyeSlash}
               />
             }
-            size={"xs"}
             aria-label="toggle visibility"
-            margin={"header.button.margin"}
-            padding={"header.button.padding"}
-            backgroundColor={"header.button.background"}
-            color={"header.button.color"}
-            borderRadius={"header.button.borderRadius"}
-            _hover={{
-              backgroundColor: "header.button._hover.background",
-              color: "header.button._hover.color",
-              borderRadius: "header.button._hover.borderRadius",
-            }}
+            size={"xs"}
           />
         ) : null}
         {removeAction ? (
@@ -60,36 +51,17 @@ const Header = ({ heading, visibilityAction, removeAction }: Props) => {
             buttonProps={{
               size: "xs",
               "aria-label": `Remove ${heading}`,
-              margin: "header.button.margin",
-              padding: "header.button.padding",
-              backgroundColor: "header.button.background",
-              color: "header.button.color",
-              borderRadius: "header.button.borderRadius",
-              _hover: {
-                backgroundColor: "header.button._hover.background",
-                color: "header.button._hover.color",
-                borderRadius: "header.button._hover.borderRadius",
-              },
             }}
           />
         ) : null}
         <IconButton
+          variant={"headerIcon"}
           onClick={(event) => {
             navigate(Paths.app, { replace: true });
           }}
           icon={<FontAwesomeIcon icon={faArrowLeft} />}
           size={"xs"}
           aria-label="back button"
-          margin={"header.button.margin"}
-          padding={"header.button.padding"}
-          backgroundColor={"header.button.background"}
-          color={"header.button.color"}
-          borderRadius={"header.button.borderRadius"}
-          _hover={{
-            backgroundColor: "header.button._hover.background",
-            color: "header.button._hover.color",
-            borderRadius: "header.button._hover.borderRadius",
-          }}
         />
       </Stack>
     </Stack>

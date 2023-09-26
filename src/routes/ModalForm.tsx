@@ -12,6 +12,7 @@ import {
   useSetPrevElementId,
 } from "../contexts/AppContext";
 import {
+  Accordion,
   Box,
   Button,
   ButtonGroup,
@@ -23,7 +24,6 @@ import {
   IconButton,
   Radio,
   RadioGroup,
-  Select,
   Stack,
   Switch,
 } from "@chakra-ui/react";
@@ -51,6 +51,10 @@ import Header from "../components/Header";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
 import { Tooltip } from "../components/Tooltip";
 import { Paths } from "../paths";
+import AccordionItem from "../components/accordion/AccordionItem";
+import AccordionHeading from "../components/accordion/AccordionHeading";
+import AccordionPanel from "../components/accordion/AccordionPanel";
+import Select from "../components/dropdown/Select";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.modalForm>>;
@@ -91,21 +95,26 @@ function ModalForm() {
 
   useEffect(() => {
     console.log("loaded modal");
-    let initialRun = true;
+    let firstRunElement: string | null = null;
     const selectedElementCallback = (element: AnyElement | null) => {
       // skip initial run after isSelecting changes
-      if (element && !initialRun) {
+      if (element) {
+        if (firstRunElement === null) {
+          firstRunElement = element.id;
+          return;
+        }
         // if another element is clicked redirect to root unless an element is being selected to choose an element value
         if (
           !isSelectingElement &&
           modalElement &&
-          element.id !== modalElement.id
+          element.id !== modalElement.id &&
+          element.id !== firstRunElement
         ) {
+          setPrevElement(null);
+
           navigate(Paths.app, { replace: true });
         }
       }
-
-      initialRun = false;
     };
 
     const unsubscribeSelectedElement = webflow.subscribe(
@@ -189,7 +198,7 @@ function ModalForm() {
         visibilityAction={visibility}
         removeAction={removal}
       />
-      {
+      {/*
         <Box textColor={"red"}>
           <ul>
             {watch("openTriggerValue") === undefined ? (
@@ -210,263 +219,290 @@ function ModalForm() {
             })}
           </ul>
         </Box>
-      }
+        */}
 
       <form>
-        <Grid templateColumns="repeat(2, 1fr)" gap={1}>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="open-modal-trigger" mb="0">
-                <Tooltip
-                  label="Element or class to trigger the modal opening"
-                  fontSize="md"
-                >
-                  Trigger to open the modal on click
-                </Tooltip>
-              </FormLabel>
-              <RadioGroup
-                id="open-modal-trigger"
-                onChange={(v: TriggerTypesEnum) => {
-                  setValue("openTriggerType", v);
-                  setValue("openTriggerValue", undefined);
-                }}
-                value={getValues().openTriggerType}
+        <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
+          <AccordionItem>
+            <AccordionHeading headingText="Opening Modal" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="44px 1fr 44px 1fr"
+                gap={"8px"}
+                padding={"8px"}
               >
-                <Stack direction="row">
-                  {TriggerTypesEnum.options.map((value) => (
-                    <Radio key={value} value={value}>
-                      {value}
-                    </Radio>
-                  ))}
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <Stack direction="column">
-              <ModalTriggerSelection
-                modalElement={modalElement}
-                trigger={watch("openTriggerType")}
-                defaultValue={getValues().openTriggerValue}
-                setSelectedValue={(value: string) =>
-                  setValue("openTriggerValue", value)
-                }
-                id="open-trigger-value"
-                hideOnModalOpen={true}
-              />
-              {watch("openTriggerType") === TriggerTypesEnum.Enum.Element && (
-                <a>{watch("openTriggerValue")}</a>
-              )}
-            </Stack>
-          </GridItem>
-          <GridItem w="100%">
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="display-effect">
-                <Tooltip
-                  label="The effect to use when displaying the modal"
-                  fontSize="md"
-                >
-                  Display effect
-                </Tooltip>
-              </FormLabel>
-              <Select
-                size="sm"
-                id="display-effect"
-                defaultValue={getValues().openEffectType}
-                onChange={(val) =>
-                  setValue(
-                    "openEffectType",
-                    OpenEffectTypesEnum.parse(val.target.value),
-                  )
-                }
-              >
-                {OpenEffectTypesEnum.options.map((value) => (
-                  <option value={value}>{value}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.openDuration?.message}
-              name="openDuration"
-              label="Open Duration"
-              initialValue={getValues().openDuration}
-              onValueChange={(value) => setValue("openDuration", value)}
-              helpText="Duration to show the modal"
-              formatter={(val) => `${val} ms`}
-              parser={(val) => parseInt(val.replace(" ms", ""))}
-              disabled={
-                watch("openEffectType") === OpenEffectTypesEnum.enum.None
-              }
-            />
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="close-modal-trigger" mb="0">
-                <Tooltip
-                  label="Element or class to trigger the modal closing"
-                  fontSize="md"
-                >
-                  Secondary trigger to close the modal on click
-                </Tooltip>
-              </FormLabel>
-              <RadioGroup
-                id="close-modal-trigger"
-                onChange={(v: TriggerTypesEnum) => {
-                  setValue("closeTriggerType", v);
-                  setValue("closeTriggerValue", undefined);
-                }}
-                value={getValues().closeTriggerType}
-              >
-                <Stack direction="row">
-                  {TriggerTypesEnum.options.map((value) => (
-                    <Radio key={value} value={value}>
-                      {value}
-                    </Radio>
-                  ))}
-                </Stack>
-              </RadioGroup>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <Stack direction="column">
-              <ModalTriggerSelection
-                modalElement={modalElement}
-                trigger={watch("closeTriggerType")}
-                defaultValue={getValues().closeTriggerValue}
-                setSelectedValue={(value: string) =>
-                  setValue("closeTriggerValue", value)
-                }
-                id="close-trigger-value"
-                showOnModalOpen={true}
-              />
-              {watch("closeTriggerType") === TriggerTypesEnum.Enum.Element && (
-                <a>{watch("closeTriggerValue")}</a>
-              )}
-            </Stack>
-          </GridItem>
-          <GridItem w="100%">
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="hide-effect">
-                <Tooltip
-                  label="The effect to use when hiding the modal"
-                  fontSize="md"
-                >
-                  Hide effect
-                </Tooltip>
-              </FormLabel>
-              <Select
-                size="sm"
-                id="hide-effect"
-                defaultValue={getValues().closeEffectType}
-                onChange={(val) =>
-                  setValue(
-                    "closeEffectType",
-                    CloseEffectTypesEnum.parse(val.target.value),
-                  )
-                }
-              >
-                {CloseEffectTypesEnum.options.map((value) => (
-                  <option value={value}>{value}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.closeDuration?.message}
-              name="closeDuration"
-              label="Close Duration"
-              initialValue={getValues().closeDuration}
-              onValueChange={(value) => setValue("closeDuration", value)}
-              formatter={(val) => `${val} ms`}
-              parser={(val) => parseInt(val.replace(" ms", ""))}
-              helpText="Duration to hide the modal"
-              disabled={
-                watch("closeEffectType") === OpenEffectTypesEnum.enum.None
-              }
-            />
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="close-on-click-underlay" mb="0">
-                <Tooltip
-                  label="Toggles whether to close the modal when underlay is clicked"
-                  fontSize="md"
-                >
-                  Closes modal on click underlay
-                </Tooltip>
-              </FormLabel>
-              <Switch
-                id="close-on-click-underlay"
-                defaultChecked={getValues().closeOnClickOverlay}
-                onChange={(e) =>
-                  setValue("closeOnClickOverlay", e.target.checked)
-                }
-              />
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="insert-script" mb="0">
-                <Tooltip
-                  label="Toggles whether to embed the javascript code on the page"
-                  fontSize="md"
-                >
-                  Insert script in body?
-                </Tooltip>
-              </FormLabel>
-              <Switch
-                id="insert-script"
-                onChange={insertingScript}
-                isChecked={insertScript}
-              />
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="copy-script" mb="0">
-                <Tooltip
-                  label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                  fontSize="md"
-                >
-                  Copy script to clipboard
-                </Tooltip>
-              </FormLabel>
-              <CopyToClipboard
-                text={`<script src="${Modal.SOURCE_URL}"></script>`}
-                onCopy={() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 5000);
-                }}
-              >
-                <IconButton
-                  id="copy-script"
-                  colorScheme="green"
-                  aria-label="Copy to clipboard"
-                  fontSize="20px"
-                  icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
+                <GridItem display={"flex"} alignItems={"center"} colSpan={1}>
+                  <FormLabel htmlFor="open-modal-trigger" mb="0">
+                    <Tooltip
+                      label="Element or class to trigger the modal opening"
+                      fontSize="md"
+                    >
+                      Open trigger
+                    </Tooltip>
+                  </FormLabel>
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <RadioGroup
+                    id="open-modal-trigger"
+                    onChange={(v: TriggerTypesEnum) => {
+                      setValue("openTriggerType", v);
+                      setValue("openTriggerValue", undefined);
+                    }}
+                    value={getValues().openTriggerType}
+                  >
+                    <Stack direction="row">
+                      {TriggerTypesEnum.options.map((value) => (
+                        <Radio key={value} value={value}>
+                          {value}
+                        </Radio>
+                      ))}
+                    </Stack>
+                  </RadioGroup>
+                </GridItem>
+                <GridItem w="100%" colSpan={4}>
+                  <Stack direction="row" alignItems={"flex-start"}>
+                    <ModalTriggerSelection
+                      modalElement={modalElement}
+                      trigger={watch("openTriggerType")}
+                      defaultValue={getValues().openTriggerValue}
+                      setSelectedValue={(value: string) =>
+                        setValue("openTriggerValue", value)
+                      }
+                      id="open-trigger-value"
+                      hideOnModalOpen={true}
+                    />
+                    {watch("openTriggerType") ===
+                      TriggerTypesEnum.Enum.Element && (
+                      <a>{watch("openTriggerValue")}</a>
+                    )}
+                  </Stack>
+                </GridItem>
+                <GridItem>
+                  <FormLabel htmlFor="display-effect">
+                    <Tooltip
+                      label="The effect to use when displaying the modal"
+                      fontSize="md"
+                    >
+                      Effect
+                    </Tooltip>
+                  </FormLabel>{" "}
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <Select
+                    id="display-effect"
+                    defaultValue={{
+                      label: getValues().openEffectType,
+                      value: getValues().openEffectType,
+                    }}
+                    options={OpenEffectTypesEnum.options.map((value) => ({
+                      value,
+                      label: value,
+                    }))}
+                    onChange={(val) =>
+                      setValue(
+                        "openEffectType",
+                        OpenEffectTypesEnum.parse(val?.value),
+                      )
+                    }
+                  />
+                </GridItem>
+                <NumberFormElement
+                  error={errors.openDuration?.message}
+                  name="openDuration"
+                  label="Duration"
+                  initialValue={getValues().openDuration}
+                  onValueChange={(value) => setValue("openDuration", value)}
+                  helpText="Duration to show the modal"
+                  formatter={(val) => `${val} ms`}
+                  parser={(val) => parseInt(val.replace(" ms", ""))}
+                  disabled={
+                    watch("openEffectType") === OpenEffectTypesEnum.enum.None
+                  }
                 />
-              </CopyToClipboard>
-            </FormControl>
-          </GridItem>
-        </Grid>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Scripts" />
+            <AccordionPanel>
+              <Grid gap={"8px"} padding={"8px"}>
+                <GridItem>
+                  <FormLabel htmlFor="close-modal-trigger" mb="0">
+                    <Tooltip
+                      label="Element or class to trigger the modal closing"
+                      fontSize="md"
+                    >
+                      Secondary trigger
+                    </Tooltip>
+                  </FormLabel>
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <RadioGroup
+                    id="close-modal-trigger"
+                    onChange={(v: TriggerTypesEnum) => {
+                      setValue("closeTriggerType", v);
+                      setValue("closeTriggerValue", undefined);
+                    }}
+                    value={getValues().closeTriggerType}
+                  >
+                    <Stack direction="row">
+                      {TriggerTypesEnum.options.map((value) => (
+                        <Radio key={value} value={value}>
+                          {value}
+                        </Radio>
+                      ))}
+                    </Stack>
+                  </RadioGroup>
+                </GridItem>
+                <GridItem w="100%" colSpan={4}>
+                  <Stack direction="column">
+                    <ModalTriggerSelection
+                      modalElement={modalElement}
+                      trigger={watch("closeTriggerType")}
+                      defaultValue={getValues().closeTriggerValue}
+                      setSelectedValue={(value: string) =>
+                        setValue("closeTriggerValue", value)
+                      }
+                      id="close-trigger-value"
+                      showOnModalOpen={true}
+                    />
+                    {watch("closeTriggerType") ===
+                      TriggerTypesEnum.Enum.Element && (
+                      <a>{watch("closeTriggerValue")}</a>
+                    )}
+                  </Stack>
+                </GridItem>
+                <GridItem>
+                  <FormLabel htmlFor="hide-effect">
+                    <Tooltip
+                      label="The effect to use when hiding the modal"
+                      fontSize="md"
+                    >
+                      Hide effect
+                    </Tooltip>
+                  </FormLabel>
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <Select
+                    id="hide-effect"
+                    defaultValue={{
+                      value: getValues().closeEffectType,
+                      label: getValues().closeEffectType,
+                    }}
+                    onChange={(val) =>
+                      setValue(
+                        "closeEffectType",
+                        CloseEffectTypesEnum.parse(val.value),
+                      )
+                    }
+                    options={CloseEffectTypesEnum.options.map((value) => ({
+                      value,
+                      label: value,
+                    }))}
+                  />
+                </GridItem>
+                <NumberFormElement
+                  error={errors.closeDuration?.message}
+                  name="closeDuration"
+                  label="Close Duration"
+                  initialValue={getValues().closeDuration}
+                  onValueChange={(value) => setValue("closeDuration", value)}
+                  formatter={(val) => `${val} ms`}
+                  parser={(val) => parseInt(val.replace(" ms", ""))}
+                  helpText="Duration to hide the modal"
+                  disabled={
+                    watch("closeEffectType") === OpenEffectTypesEnum.enum.None
+                  }
+                />
+                <GridItem
+                  w="100%"
+                  colSpan={4}
+                  display="flex"
+                  alignItems="center"
+                >
+                  <FormLabel htmlFor="close-on-click-underlay" mb="0">
+                    <Tooltip
+                      label="Toggles whether to close the modal when underlay is clicked"
+                      fontSize="md"
+                    >
+                      Closes modal on click underlay
+                    </Tooltip>
+                  </FormLabel>
+                  <Switch
+                    id="close-on-click-underlay"
+                    defaultChecked={getValues().closeOnClickOverlay}
+                    onChange={(e) =>
+                      setValue("closeOnClickOverlay", e.target.checked)
+                    }
+                  />
+                </GridItem>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Scripts" />
+            <AccordionPanel>
+              <Grid gap={"8px"} padding={"8px"}>
+                <GridItem w="100%" colSpan={2}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    margin={"2"}
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="insert-script" mb="0">
+                      <Tooltip
+                        label="Toggles whether to embed the javascript code on the page"
+                        fontSize="md"
+                      >
+                        Insert script in body?
+                      </Tooltip>
+                    </FormLabel>
+                    <Switch
+                      id="insert-script"
+                      onChange={insertingScript}
+                      isChecked={insertScript}
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem w="100%" colSpan={2}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    margin={"2"}
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="copy-script" mb="0">
+                      <Tooltip
+                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
+                        fontSize="md"
+                      >
+                        Copy script to clipboard
+                      </Tooltip>
+                    </FormLabel>
+                    <CopyToClipboard
+                      text={`<script src="${Modal.SOURCE_URL}"></script>`}
+                      onCopy={() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 5000);
+                      }}
+                    >
+                      <IconButton
+                        id="copy-script"
+                        colorScheme="green"
+                        aria-label="Copy to clipboard"
+                        fontSize="20px"
+                        icon={
+                          <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
+                        }
+                      />
+                    </CopyToClipboard>
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </form>
     </>
   );

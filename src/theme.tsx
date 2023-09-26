@@ -1,3 +1,10 @@
+import { buttonTheme, iconButtonBaseTheme } from "./themes/Buttons";
+import { formLabelTheme } from "./themes/FormLabel";
+import { inputTheme } from "./themes/Input";
+import { menuTheme } from "./themes/Menu";
+import { numberInputTheme } from "./themes/NumberInput";
+import { switchTheme } from "./themes/Switch";
+
 const colors = {
   header: {
     background: "rgb(77, 77, 77)",
@@ -14,7 +21,7 @@ const colors = {
   border: {
     panelColor: "rgb(54, 54, 54)",
   },
-  input: {
+  inputField: {
     background: "rgb(43, 43, 43)",
     borderColor: "rgb(33, 33, 33)",
     color: "rgb(217, 217, 217)",
@@ -42,14 +49,37 @@ const colors = {
     color: "rgb(54, 54, 54)",
     background: "rgb(235, 235, 235)",
   },
-  switch: { background: "rgb(94, 94, 94)" },
+  switch: {
+    track: {
+      background: "rgb(159, 156, 156)",
+      checked: { background: "rgb(94, 94, 94)" },
+    },
+  },
+  accordion: {
+    borderTopColor: "rgb(33, 33, 33)",
+    borderBottomColor: "rgb(33, 33, 33)",
+
+    heading: {
+      background: "rgb(43, 43, 43)",
+      borderBottomColor: "rgb(33, 33, 33)",
+      color: "rgb(235, 235, 235)",
+    },
+  },
+  alertDialog: {
+    borderColor: "rgb(33, 33, 33)",
+    background: "rgb(77, 77, 77)",
+    color: "rgb(235, 235, 235)",
+    header: {
+      borderColor: "rgb(33, 33, 33)",
+    },
+  },
 };
 
 const fontSizes = {
   header: {
     fontSize: "20px",
   },
-  input: {
+  inputField: {
     fontSize: "11px",
   },
   label: {
@@ -57,6 +87,32 @@ const fontSizes = {
   },
   tooltip: {
     fontSize: "11px",
+  },
+  accordion: {
+    heading: {
+      button: { fontSize: "12px" },
+    },
+  },
+  alertDialog: {
+    header: {
+      fontSize: "14px",
+    },
+    body: {
+      fontSize: "14px",
+    },
+  },
+};
+
+const fontWeights = {
+  accordion: {
+    heading: {
+      button: { fontWeight: "600" },
+    },
+  },
+  alertDialog: {
+    header: {
+      fontWeight: "600",
+    },
   },
 };
 
@@ -69,11 +125,37 @@ const space = {
       padding: "3px",
     },
   },
+  accordion: {
+    panel: {
+      padding: "0",
+    },
+    heading: {
+      padding: "0",
+      button: {
+        paddingLeft: "8px",
+        text: { marginLeft: "6px" },
+      },
+    },
+  },
+  alertDialog: {
+    margin: "10px",
+    header: {
+      paddingLeft: "16px",
+      paddingRight: "16px",
+      paddingTop: "10px",
+      paddingBottom: "10px",
+    },
+  },
 };
 
 const sizes = {
   header: {
     height: "45px",
+  },
+  accordion: {
+    heading: {
+      height: "28px",
+    },
   },
 };
 
@@ -86,6 +168,15 @@ const borderWidths = {
   },
   tooltip: {
     borderWidth: "1px",
+  },
+  accordion: {
+    heading: {
+      borderBottomWidth: "1px",
+    },
+  },
+  alertDialog: {
+    borderWidth: "1px",
+    header: { borderBottomWidth: "1px" },
   },
 };
 
@@ -100,7 +191,7 @@ const radii = {
       },
     },
   },
-  input: {
+  inputField: {
     borderRadius: "2px",
   },
   select: {
@@ -116,14 +207,21 @@ const radii = {
   tooltip: {
     borderRadius: "2px",
   },
+  alertDialog: {
+    borderRadius: "3px",
+  },
 };
 
 const shadows = {
   dropdown: { boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 10px" },
+  alertDialog: { boxShadow: "rgba(0, 0, 0, 0.3) 0px 1px 15px 0px" },
 };
 
 const styles = {
   global: {
+    html: {
+      bg: "rgb(43, 43, 43)",
+    },
     // styles for the `body`
     body: {
       bg: "#404040",
@@ -145,4 +243,13 @@ export default {
   fontSizes,
   radii,
   shadows,
+  fontWeights,
+  components: {
+    Button: buttonTheme,
+    Switch: switchTheme,
+    NumberInput: numberInputTheme,
+    FormLabel: formLabelTheme,
+    Input: inputTheme,
+    Menu: menuTheme,
+  },
 };

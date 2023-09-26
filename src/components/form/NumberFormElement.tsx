@@ -73,14 +73,7 @@ function NumberFormElement({
             max={max}
             isDisabled={disabled}
           >
-            <NumberInputField
-              backgroundColor={"input.background"}
-              borderColor={"input.borderColor"}
-              borderRadius={"input.borderRadius"}
-              color={"input.color"}
-              fontSize={"input.fontSize"}
-              _hover={{ borderColor: "input.borderColor" }}
-            />
+            <NumberInputField />
           </NumberInput>
         </InputGroup>
       </GridItem>

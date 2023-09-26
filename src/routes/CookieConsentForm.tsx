@@ -88,21 +88,24 @@ function CookieConsentForm() {
 
   useEffect(() => {
     console.log("loaded cookie consent");
-    let initialRun = true;
+    let firstRunElement: string | null = null;
     const selectedElementCallback = (element: AnyElement | null) => {
       // skip initial run after isSelecting changes
-      if (element && !initialRun) {
+      if (element) {
+        if (firstRunElement === null) {
+          firstRunElement = element.id;
+          return;
+        }
         // if another element is clicked redirect to root unless an element is being selected to choose an element value
         if (
           !isSelectingElement &&
           cookieConsentElement &&
-          element.id !== cookieConsentElement.id
+          element.id !== cookieConsentElement.id &&
+          element.id !== firstRunElement
         ) {
           navigate(Paths.app, { replace: true });
         }
       }
-
-      initialRun = false;
     };
 
     const unsubscribeSelectedElement = webflow.subscribe(

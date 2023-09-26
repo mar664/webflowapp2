@@ -7,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  Stack,
   useDisclosure,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
@@ -89,7 +90,7 @@ function ElementTriggerElement({
 
   return (
     <>
-      <Button onClick={selectElement}>
+      <Button onClick={selectElement} size={"sm"}>
         {modal.isOpen ? "Selecting Element" : "Select an element"}
       </Button>
 
@@ -102,25 +103,49 @@ function ElementTriggerElement({
       >
         <AlertDialogOverlay />
 
-        <AlertDialogContent margin={"2"}>
-          <AlertDialogHeader>Select element</AlertDialogHeader>
-          <AlertDialogCloseButton />
-          <AlertDialogBody>
+        <AlertDialogContent
+          marginTop={"alertDialog.margin"}
+          background={"alertDialog.background"}
+          color={"alertDialog.color"}
+          borderColor={"alertDialog.borderColor"}
+          borderRadius={"alertDialog.borderRadius"}
+          boxShadow={"alertDialog.boxShadow"}
+          maxWidth={"95%"}
+        >
+          <AlertDialogHeader
+            fontSize={"alertDialog.header.fontSize"}
+            fontWeight="alertDialog.header.fontWeight"
+            borderColor={"alertDialog.header.borderColor"}
+            borderBottomWidth={"alertDialog.header.borderBottomWidth"}
+            paddingLeft={"alertDialog.header.paddingLeft"}
+            paddingRight={"alertDialog.header.paddingRight"}
+            paddingTop={"alertDialog.header.paddingTop"}
+            paddingBottom={"alertDialog.header.paddingBottom"}
+            display={"flex"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+          >
+            Select element
+          </AlertDialogHeader>
+          <AlertDialogCloseButton size={"sm"} variant={"headerIcon"} />
+          <AlertDialogBody fontSize={"alertDialog.body.fontSize"}>
             Please select an element in webflow and then click to confirm the
             selection
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={modal.onClose}>
-              Cancel
-            </Button>
-            <Button
-              colorScheme="green"
-              ml={3}
-              onClick={setSelection}
-              isDisabled={!canConfirmSelection}
-            >
-              Confirm
-            </Button>
+            <Stack flexDir={"row"} gap={"2"}>
+              <Button ref={cancelRef} onClick={modal.onClose} size={"sm"}>
+                Cancel
+              </Button>
+              <Button
+                variant="enable"
+                onClick={setSelection}
+                isDisabled={!canConfirmSelection}
+                size={"sm"}
+              >
+                Confirm
+              </Button>
+            </Stack>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

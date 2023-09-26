@@ -25,6 +25,7 @@ export function RemoveButton({
         disclosure={disclosure}
       />
       <IconButton
+        variant={"headerIcon"}
         onClick={disclosure.onOpen}
         icon={<FontAwesomeIcon icon={faTrashCan} />}
         {...buttonProps}
