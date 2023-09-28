@@ -1,5 +1,6 @@
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { ElementModel } from "../models/ElementModel";
+import { TimeUnits, milliseconds, seconds } from "../types";
 
 export function removeChars(str: string) {
   return str
@@ -45,4 +46,21 @@ export function uuidv4() {
       v = c == "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
+}
+
+export function timeUnitToNumberValue(val: string | undefined) {
+  if (val) {
+    const isMilli = milliseconds.safeParse(val);
+    if (isMilli.success) {
+      return { value: Number.parseInt(isMilli.data.slice(0, -2)), unit: "ms" };
+    }
+    const isSeconds = seconds.safeParse(val);
+    if (isSeconds.success) {
+      return {
+        value: Number.parseInt(isSeconds.data.slice(0, -1)),
+        unit: "s",
+      };
+    }
+  }
+  return undefined;
 }

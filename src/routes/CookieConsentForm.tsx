@@ -12,6 +12,7 @@ import {
   useSetPrevElementId,
 } from "../contexts/AppContext";
 import {
+  Accordion,
   Box,
   Button,
   ButtonGroup,
@@ -24,7 +25,6 @@ import {
   Input,
   Radio,
   RadioGroup,
-  Select,
   Stack,
   Switch,
 } from "@chakra-ui/react";
@@ -51,6 +51,13 @@ import {
   PositionEnum,
 } from "../models/CookieConsent";
 import { Paths } from "../paths";
+import AccordionItem from "../components/accordion/AccordionItem";
+import AccordionHeading from "../components/accordion/AccordionHeading";
+import AccordionPanel from "../components/accordion/AccordionPanel";
+import Combobox from "../components/dropdown/Combobox";
+import { TIME_UNITS_OPTIONS } from "../constants";
+import { timeUnitToNumberValue } from "../utils";
+import { TimeUnits } from "../types";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.cookieConsentForm>>;
@@ -189,7 +196,7 @@ function CookieConsentForm() {
         visibilityAction={visibility}
         removeAction={removal}
       />
-      {
+      {/*
         <Box textColor={"red"}>
           <ul>
             {Object.keys(errors).map((k) => {
@@ -204,197 +211,233 @@ function CookieConsentForm() {
             })}
           </ul>
         </Box>
-      }
+        */}
 
       <form>
-        <Grid templateColumns="repeat(2, 1fr)" gap={1}>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="position">
-                <Tooltip
-                  label="The position to display the cookie consent on the screen"
-                  fontSize="md"
-                >
-                  Position
-                </Tooltip>
-              </FormLabel>
-              <Select
-                size="sm"
-                id="position"
-                defaultValue={getValues().position}
-                onChange={(val) =>
-                  setValue("position", PositionEnum.parse(val.target.value))
-                }
+        <Accordion defaultIndex={[0, 1, 2, 3, 4]} allowMultiple>
+          <AccordionItem>
+            <AccordionHeading headingText="Positioning" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="60px 1fr 60px 1fr"
+                gap={"8px"}
+                padding={"8px"}
               >
-                {PositionEnum.options.map((value) => (
-                  <option value={value}>{value}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%">
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="display-effect">
-                <Tooltip
-                  label="The effect to use when displaying the cookie consent"
-                  fontSize="md"
-                >
-                  Display effect
-                </Tooltip>
-              </FormLabel>
-              <Select
-                size="sm"
-                id="display-effect"
-                defaultValue={getValues().openEffectType}
-                onChange={(val) =>
-                  setValue(
-                    "openEffectType",
-                    OpenEffectTypesEnum.parse(val.target.value),
-                  )
-                }
-              >
-                {OpenEffectTypesEnum.options.map((value) => (
-                  <option value={value}>{value}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.openDuration?.message}
-              name="openDuration"
-              label="Open Duration"
-              initialValue={getValues().openDuration}
-              onValueChange={(value) => setValue("openDuration", value)}
-              helpText="Duration to show the modal"
-              formatter={(val) => `${val} ms`}
-              parser={(val) => parseInt(val.replace(" ms", ""))}
-              disabled={
-                watch("openEffectType") === OpenEffectTypesEnum.enum.None
-              }
-            />
-          </GridItem>
-          <GridItem w="100%">
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="hide-effect">
-                <Tooltip
-                  label="The effect to use when hiding the cookie consent"
-                  fontSize="md"
-                >
-                  Hide effect
-                </Tooltip>
-              </FormLabel>
-              <Select
-                size="sm"
-                id="hide-effect"
-                defaultValue={getValues().closeEffectType}
-                onChange={(val) =>
-                  setValue(
-                    "closeEffectType",
-                    CloseEffectTypesEnum.parse(val.target.value),
-                  )
-                }
-              >
-                {CloseEffectTypesEnum.options.map((value) => (
-                  <option value={value}>{value}</option>
-                ))}
-              </Select>
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%">
-            <NumberFormElement
-              error={errors.closeDuration?.message}
-              name="closeDuration"
-              label="Close Duration"
-              initialValue={getValues().closeDuration}
-              onValueChange={(value) => setValue("closeDuration", value)}
-              formatter={(val) => `${val} ms`}
-              parser={(val) => parseInt(val.replace(" ms", ""))}
-              helpText="Duration to hide the cookie consent"
-              disabled={
-                watch("closeEffectType") === OpenEffectTypesEnum.enum.None
-              }
-            />
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl margin={"2"}>
-              <FormLabel htmlFor="cookie-name" mb="0">
-                <Tooltip label="You can use a custom cookie name" fontSize="md">
-                  Cookie Name
-                </Tooltip>
-              </FormLabel>
-              <Input
-                id="cookie-name"
-                onChange={(e) => setValue("cookieName", e.target.value)}
-                placeholder={getValues().cookieName}
-              />
-            </FormControl>
-            <NumberFormElement
-              error={errors.cookieExpiry?.message}
-              name="cookieExpiry"
-              label="Cookie Expiry"
-              initialValue={getValues().cookieExpiry}
-              onValueChange={(value) => setValue("cookieExpiry", value)}
-              helpText="Days to set the cookie to expire after"
-              formatter={(val) => `${val} days`}
-              parser={(val) => parseInt(val.replace(" days", ""))}
-            />
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="insert-script" mb="0">
-                <Tooltip
-                  label="Toggles whether to embed the javascript code on the page"
-                  fontSize="md"
-                >
-                  Insert script in body?
-                </Tooltip>
-              </FormLabel>
-              <Switch
-                id="insert-script"
-                onChange={insertingScript}
-                isChecked={insertScript}
-              />
-            </FormControl>
-          </GridItem>
-          <GridItem w="100%" colSpan={2}>
-            <FormControl
-              display="flex"
-              alignItems="center"
-              margin={"2"}
-              maxWidth={"full"}
-            >
-              <FormLabel htmlFor="copy-script" mb="0">
-                <Tooltip
-                  label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                  fontSize="md"
-                >
-                  Copy script to clipboard
-                </Tooltip>
-              </FormLabel>
-              <CopyToClipboard
-                text={`<script src="${CookieConsent.SOURCE_URL}"></script>`}
-                onCopy={() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 5000);
-                }}
-              >
-                <IconButton
-                  id="copy-script"
-                  colorScheme="green"
-                  aria-label="Copy to clipboard"
-                  fontSize="20px"
-                  icon={<FontAwesomeIcon icon={copied ? faCheck : faCopy} />}
+                <Combobox
+                  id="position"
+                  label="Position"
+                  helpText="The position to display the cookie consent on the screen"
+                  defaultValue={{
+                    label: getValues().position,
+                    value: getValues().position,
+                  }}
+                  onChange={(val) =>
+                    setValue("position", PositionEnum.parse(val.value))
+                  }
+                  options={PositionEnum.options.map((value) => ({
+                    label: value,
+                    value,
+                  }))}
                 />
-              </CopyToClipboard>
-            </FormControl>
-          </GridItem>
-        </Grid>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Opening Consent Dialog" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="60px 1fr 60px 1fr"
+                gap={"8px"}
+                padding={"8px"}
+              >
+                <Combobox
+                  id="open-effect"
+                  label="Effect"
+                  helpText="The effect to use when displaying the cookie consent"
+                  defaultValue={{
+                    label: getValues().openEffectType,
+                    value: getValues().openEffectType,
+                  }}
+                  onChange={(val) =>
+                    setValue(
+                      "openEffectType",
+                      OpenEffectTypesEnum.parse(val.value),
+                    )
+                  }
+                  options={OpenEffectTypesEnum.options.map((value) => ({
+                    label: value,
+                    value,
+                  }))}
+                />
+                <NumberFormElement
+                  error={errors.openDuration?.message}
+                  name="openDuration"
+                  label="Duration"
+                  initialValue={getValues().openDuration}
+                  onValueChange={(value) =>
+                    setValue("openDuration", TimeUnits.parse(value))
+                  }
+                  helpText="Duration to show the cookie consent"
+                  disabled={
+                    watch("openEffectType") === OpenEffectTypesEnum.enum.None
+                  }
+                  units={{
+                    options: TIME_UNITS_OPTIONS,
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
+                />
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Closing Consent Dialog" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="60px 1fr 60px 1fr"
+                gap={"8px"}
+                padding={"8px"}
+              >
+                <Combobox
+                  id="close-effect"
+                  label="Effect"
+                  helpText="The effect to use when hiding the cookie consent"
+                  defaultValue={{
+                    label: getValues().closeEffectType,
+                    value: getValues().closeEffectType,
+                  }}
+                  onChange={(val) =>
+                    setValue(
+                      "closeEffectType",
+                      CloseEffectTypesEnum.parse(val.value),
+                    )
+                  }
+                  options={CloseEffectTypesEnum.options.map((value) => ({
+                    label: value,
+                    value,
+                  }))}
+                />
+                <NumberFormElement
+                  error={errors.closeDuration?.message}
+                  name="closeDuration"
+                  label="Duration"
+                  initialValue={getValues().closeDuration}
+                  onValueChange={(value) =>
+                    setValue("closeDuration", TimeUnits.parse(value))
+                  }
+                  helpText="Duration to hide the cookie consent"
+                  disabled={
+                    watch("closeEffectType") === OpenEffectTypesEnum.enum.None
+                  }
+                  units={{
+                    options: TIME_UNITS_OPTIONS,
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
+                />
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Cookies" />
+            <AccordionPanel>
+              <Grid
+                templateColumns="60px 1fr 60px 1fr"
+                gap={"8px"}
+                padding={"8px"}
+              >
+                <GridItem>
+                  <FormLabel htmlFor="cookie-name">
+                    <Tooltip
+                      label="You can use a custom cookie name"
+                      fontSize="md"
+                    >
+                      Name
+                    </Tooltip>
+                  </FormLabel>
+                </GridItem>
+                <GridItem colSpan={3}>
+                  <Input
+                    id="cookie-name"
+                    onChange={(e) => setValue("cookieName", e.target.value)}
+                    placeholder={getValues().cookieName}
+                    size="sm"
+                  />
+                </GridItem>
+
+                <NumberFormElement
+                  error={errors.cookieExpiry?.message}
+                  name="cookieExpiry"
+                  label="Expiry"
+                  initialValue={getValues().cookieExpiry}
+                  onValueChange={(value) =>
+                    setValue("cookieExpiry", value as number)
+                  }
+                  helpText="Days to set the cookie to expire after"
+                />
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <AccordionHeading headingText="Scripts" />
+            <AccordionPanel>
+              <Grid gap={"8px"} padding={"8px"}>
+                <GridItem w="100%" colSpan={2}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="insert-script">
+                      <Tooltip
+                        label="Toggles whether to embed the javascript code on the page"
+                        fontSize="md"
+                      >
+                        Insert script in body?
+                      </Tooltip>
+                    </FormLabel>
+                    <Switch
+                      id="insert-script"
+                      onChange={insertingScript}
+                      isChecked={insertScript}
+                    />
+                  </FormControl>
+                </GridItem>
+                <GridItem w="100%" colSpan={2}>
+                  <FormControl
+                    display="flex"
+                    alignItems="center"
+                    maxWidth={"full"}
+                  >
+                    <FormLabel htmlFor="copy-script">
+                      <Tooltip
+                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
+                        fontSize="md"
+                      >
+                        Copy script to clipboard
+                      </Tooltip>
+                    </FormLabel>
+                    <CopyToClipboard
+                      text={`<script src="${CookieConsent.SOURCE_URL}"></script>`}
+                      onCopy={() => {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 5000);
+                      }}
+                    >
+                      <IconButton
+                        id="copy-script"
+                        colorScheme="green"
+                        aria-label="Copy to clipboard"
+                        fontSize="20px"
+                        icon={
+                          <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
+                        }
+                      />
+                    </CopyToClipboard>
+                  </FormControl>
+                </GridItem>
+              </Grid>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </form>
     </>
   );

@@ -15,6 +15,8 @@ import {
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { Tooltip } from "../Tooltip";
+import InputAddon from "../dropdown/InputAddon";
+import { Option } from "../../types";
 
 interface FormProps {
   error: string | undefined;
@@ -23,11 +25,18 @@ interface FormProps {
   helpText: string;
   min?: number;
   max?: number;
-  onValueChange: (value: number) => void;
-  initialValue: number;
-  formatter?: (val: number) => string;
-  parser?: (val: string) => number;
+  onValueChange: (value: number | string) => void;
+  initialValue: number | string;
   disabled?: boolean;
+  units?: {
+    options: Option[];
+    conversionFunc: (val: string | undefined) =>
+      | {
+          value: number;
+          unit: string;
+        }
+      | undefined;
+  };
 }
 
 function NumberFormElement({
@@ -39,14 +48,26 @@ function NumberFormElement({
   helpText,
   min = Number.MIN_SAFE_INTEGER,
   max = Number.MAX_SAFE_INTEGER,
-  formatter = (val) => val.toString(),
-  parser = (val) => parseInt(val),
   disabled,
+  units,
 }: FormProps) {
-  const [value, setValue] = useState(initialValue);
+  // Parse value e.g. 100ms to {value: 100, unit: "ms"}
+  const initialParsedValue =
+    units && typeof initialValue === "string"
+      ? units.conversionFunc(initialValue)
+      : undefined;
+
+  const [value, setValue] = useState(
+    initialParsedValue ? initialParsedValue.value : initialValue,
+  );
+
+  const [unit, setUnit] = useState(
+    initialParsedValue ? initialParsedValue.unit : undefined,
+  );
+
   // use debounced callback to delay calling for onChange so that it doesn't keep triggering save of form data
-  const debounced = useDebouncedCallback((value) => {
-    onValueChange(value);
+  const debounced = useDebouncedCallback(({ valueAsNumber, unit }) => {
+    onValueChange(unit ? `${valueAsNumber}${unit}` : valueAsNumber);
   }, 1000);
 
   return (
@@ -65,16 +86,32 @@ function NumberFormElement({
             maxW={"full"}
             id={name}
             onChange={(valueAsString, valueAsNumber) => {
-              setValue(parser(valueAsString));
-              debounced(parser(valueAsString));
+              setValue(valueAsNumber);
+              debounced({ valueAsNumber, unit });
             }}
-            value={formatter(value)}
+            value={value}
             min={min}
             max={max}
             isDisabled={disabled}
           >
             <NumberInputField />
           </NumberInput>
+
+          {units && (
+            <InputRightElement>
+              <InputAddon
+                defaultValue={units.options.find(
+                  (o) => o.value === initialParsedValue?.unit,
+                )}
+                id={`${name}-units`}
+                {...units}
+                onChange={(option) => {
+                  onValueChange(`${value}${option.value}`);
+                  setUnit(option.value);
+                }}
+              />
+            </InputRightElement>
+          )}
         </InputGroup>
       </GridItem>
     </>

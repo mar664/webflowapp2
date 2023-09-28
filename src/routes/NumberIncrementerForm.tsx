@@ -213,7 +213,9 @@ function NumberIncrementerForm() {
                   name="incrementStart"
                   label="Initial"
                   initialValue={getValues().incrementStart}
-                  onValueChange={(value) => setValue("incrementStart", value)}
+                  onValueChange={(value) =>
+                    setValue("incrementStart", value as number)
+                  }
                   helpText="Initial value of number incrementer"
                 />
                 <NumberFormElement
@@ -221,7 +223,9 @@ function NumberIncrementerForm() {
                   name="incrementEnd"
                   label="Final"
                   initialValue={getValues().incrementEnd}
-                  onValueChange={(value) => setValue("incrementEnd", value)}
+                  onValueChange={(value) =>
+                    setValue("incrementEnd", value as number)
+                  }
                   helpText="Final value of number incrementer"
                 />
                 <NumberFormElement
@@ -229,9 +233,9 @@ function NumberIncrementerForm() {
                   name="duration"
                   label="Duration"
                   initialValue={getValues().duration}
-                  onValueChange={(value) => setValue("duration", value)}
-                  formatter={(val) => `${val} ms`}
-                  parser={(val) => parseInt(val.replace(" ms", ""))}
+                  onValueChange={(value) =>
+                    setValue("duration", value as number)
+                  }
                   helpText="Duration in milliseconds"
                   min={0}
                 />
@@ -241,10 +245,8 @@ function NumberIncrementerForm() {
                   label="Trigger"
                   initialValue={getValues().percentageVisible}
                   onValueChange={(value) =>
-                    setValue("percentageVisible", value)
+                    setValue("percentageVisible", value as number)
                   }
-                  formatter={(val) => `${val} %`}
-                  parser={(val) => parseInt(val.replace(" %", ""))}
                   helpText="Increment will start when this % of element is visible in viewport"
                   min={0}
                   max={100}

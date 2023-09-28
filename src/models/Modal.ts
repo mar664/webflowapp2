@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { ElementModel } from "./ElementModel";
+import { TimeUnits } from "../types";
 
 const TriggerTypes = ["Element", "Class"] as const;
 export const TriggerTypesEnum = z.enum(TriggerTypes);
@@ -59,7 +60,7 @@ export const ModalOptions = z.object({
     return undefined;
   }, z.string().optional()),
   openEffectType: OpenEffectTypesEnum.default(OpenEffectTypesEnum.enum.Fade),
-  openDuration: z.coerce.number().min(0).default(1000),
+  openDuration: TimeUnits,
   closeTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Element),
   closeTriggerValue: z.preprocess((arg) => {
     if (typeof arg === "string") {
@@ -68,7 +69,7 @@ export const ModalOptions = z.object({
     return undefined;
   }, z.string().optional()),
   closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
-  closeDuration: z.coerce.number().min(0).default(1000),
+  closeDuration: TimeUnits,
   closeOnClickOverlay: Boolean,
 });
 export type ModalOptions = z.infer<typeof ModalOptions>;

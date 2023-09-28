@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { ElementModel } from "./ElementModel";
+import { TimeUnits } from "../types";
 
 const Position = ["Top", "Bottom"] as const;
 export const PositionEnum = z.enum(Position);
@@ -38,9 +39,9 @@ const Boolean = z.preprocess((arg) => {
 
 export const CookieConsentOptions = z.object({
   openEffectType: OpenEffectTypesEnum.default(OpenEffectTypesEnum.enum.Fade),
-  openDuration: z.coerce.number().min(0).default(1000),
+  openDuration: TimeUnits,
   closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
-  closeDuration: z.coerce.number().min(0).default(1000),
+  closeDuration: TimeUnits,
   cookieExpiry: z.coerce.number().positive().default(30),
   cookieName: z.string().default("mr-cookie-consent"),
   position: z.string().default(PositionEnum.enum.Top),

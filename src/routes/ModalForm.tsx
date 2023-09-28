@@ -57,7 +57,10 @@ import { Paths } from "../paths";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
-import Select from "../components/dropdown/Select";
+import Combobox from "../components/dropdown/Combobox";
+import { TIME_UNITS_OPTIONS } from "../constants";
+import { timeUnitToNumberValue } from "../utils";
+import { TimeUnits } from "../types";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.modalForm>>;
@@ -293,47 +296,41 @@ function ModalForm() {
                       )}
                   </Stack>
                 </GridItem>
-                <GridItem display="flex" alignItems="center">
-                  <FormLabel htmlFor="display-effect">
-                    <Tooltip
-                      label="The effect to use when displaying the modal"
-                      fontSize="md"
-                    >
-                      Effect
-                    </Tooltip>
-                  </FormLabel>{" "}
-                </GridItem>
-                <GridItem colSpan={3} display="flex" alignItems="center">
-                  <Select
-                    id="display-effect"
-                    defaultValue={{
-                      label: getValues().openEffectType,
-                      value: getValues().openEffectType,
-                    }}
-                    options={OpenEffectTypesEnum.options.map((value) => ({
-                      value,
-                      label: value,
-                    }))}
-                    onChange={(val) =>
-                      setValue(
-                        "openEffectType",
-                        OpenEffectTypesEnum.parse(val?.value),
-                      )
-                    }
-                  />
-                </GridItem>
+                <Combobox
+                  id="open-effect"
+                  label="Effect"
+                  helpText="The effect to use when displaying the modal"
+                  defaultValue={{
+                    label: getValues().openEffectType,
+                    value: getValues().openEffectType,
+                  }}
+                  options={OpenEffectTypesEnum.options.map((value) => ({
+                    value,
+                    label: value,
+                  }))}
+                  onChange={(val) =>
+                    setValue(
+                      "openEffectType",
+                      OpenEffectTypesEnum.parse(val?.value),
+                    )
+                  }
+                />
                 <NumberFormElement
                   error={errors.openDuration?.message}
                   name="openDuration"
                   label="Duration"
                   initialValue={getValues().openDuration}
-                  onValueChange={(value) => setValue("openDuration", value)}
+                  onValueChange={(value) =>
+                    setValue("openDuration", TimeUnits.parse(value))
+                  }
                   helpText="Duration to show the modal"
-                  formatter={(val) => `${val} ms`}
-                  parser={(val) => parseInt(val.replace(" ms", ""))}
                   disabled={
                     watch("openEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  units={{
+                    options: TIME_UNITS_OPTIONS,
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
                 />
               </Grid>
             </AccordionPanel>
@@ -405,47 +402,42 @@ function ModalForm() {
                       )}
                   </Stack>
                 </GridItem>
-                <GridItem display="flex" alignItems="center">
-                  <FormLabel htmlFor="hide-effect">
-                    <Tooltip
-                      label="The effect to use when hiding the modal"
-                      fontSize="md"
-                    >
-                      Effect
-                    </Tooltip>
-                  </FormLabel>
-                </GridItem>
-                <GridItem colSpan={3} display="flex" alignItems="center">
-                  <Select
-                    id="hide-effect"
-                    defaultValue={{
-                      value: getValues().closeEffectType,
-                      label: getValues().closeEffectType,
-                    }}
-                    onChange={(val) =>
-                      setValue(
-                        "closeEffectType",
-                        CloseEffectTypesEnum.parse(val.value),
-                      )
-                    }
-                    options={CloseEffectTypesEnum.options.map((value) => ({
-                      value,
-                      label: value,
-                    }))}
-                  />
-                </GridItem>
+
+                <Combobox
+                  id="close-effect"
+                  label="Effect"
+                  helpText="The effect to use when hiding the modal"
+                  defaultValue={{
+                    value: getValues().closeEffectType,
+                    label: getValues().closeEffectType,
+                  }}
+                  onChange={(val) =>
+                    setValue(
+                      "closeEffectType",
+                      CloseEffectTypesEnum.parse(val.value),
+                    )
+                  }
+                  options={CloseEffectTypesEnum.options.map((value) => ({
+                    value,
+                    label: value,
+                  }))}
+                />
                 <NumberFormElement
                   error={errors.closeDuration?.message}
                   name="closeDuration"
                   label="Duration"
                   initialValue={getValues().closeDuration}
-                  onValueChange={(value) => setValue("closeDuration", value)}
-                  formatter={(val) => `${val} ms`}
-                  parser={(val) => parseInt(val.replace(" ms", ""))}
+                  onValueChange={(value) =>
+                    setValue("closeDuration", TimeUnits.parse(value))
+                  }
                   helpText="Duration to hide the modal"
                   disabled={
                     watch("closeEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  units={{
+                    options: TIME_UNITS_OPTIONS,
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
                 />
                 <GridItem
                   w="100%"

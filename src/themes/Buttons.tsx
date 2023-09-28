@@ -73,6 +73,22 @@ const selectButton = defineStyle({
   fontSize: "11px",
   width: "100%",
   textAlign: "left",
+  justifyContent: "space-between",
+});
+
+const inputElementButton = defineStyle({
+  color: "rgb(171,171,171)",
+  borderRadius: "none",
+  height: "calc(100% - 2px)",
+  paddingInlineStart: "2px",
+  paddingInlineEnd: "2px",
+  minWidth: "none",
+  fontSize: "11px",
+  backgroundColor: "inherit",
+  _hover: {
+    color: "rgb(246,246,246)",
+    backgroundColor: "rgba(255,255,255,0.02)",
+  },
 });
 
 export const buttonTheme = defineStyleConfig({
@@ -84,18 +100,8 @@ export const buttonTheme = defineStyleConfig({
     icon: iconButtonDefault,
     headerIcon: iconButtonHeader,
     select: selectButton,
+    inputElement: inputElementButton,
   },
-  defaultProps: {
-    size: "md",
-    variant: "default",
-  },
-});
-
-const iconButtonBase = defineStyle({});
-
-export const iconButtonBaseTheme = defineStyleConfig({
-  baseStyle: iconButtonBase,
-  variants: { default: iconButtonDefault, header: iconButtonHeader },
   defaultProps: {
     size: "md",
     variant: "default",

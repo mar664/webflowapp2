@@ -1,4 +1,6 @@
-import { buttonTheme, iconButtonBaseTheme } from "./themes/Buttons";
+import { buttonTheme } from "./themes/Buttons";
+import { combolistTheme } from "./themes/Combolist";
+import { combolistItemTheme } from "./themes/CombolistItem";
 import { formLabelTheme } from "./themes/FormLabel";
 import { inputTheme } from "./themes/Input";
 import { menuTheme } from "./themes/Menu";
@@ -6,6 +8,7 @@ import { numberInputTheme } from "./themes/NumberInput";
 import { radioTheme } from "./themes/Radio";
 import { switchTheme } from "./themes/Switch";
 import { tagTheme } from "./themes/Tag";
+import { tooltipTheme } from "./themes/Tooltip";
 
 const colors = {
   header: {
@@ -253,8 +256,11 @@ export default {
     NumberInput: numberInputTheme,
     FormLabel: formLabelTheme,
     Input: inputTheme,
-    Menu: menuTheme,
     Radio: radioTheme,
     Tag: tagTheme,
+    Combolist: combolistTheme,
+    CombolistItem: combolistItemTheme,
+    Menu: menuTheme,
+    Tooltip: tooltipTheme,
   },
 };
