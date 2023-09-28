@@ -19,7 +19,7 @@ import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import { CompatibleElement } from "../../elements/CompatibleElement";
 import { useElementVisibility } from "../../hooks/element";
 import { Modal } from "../../models/Modal";
-import { AddIcon } from "@chakra-ui/icons";
+import { HiOutlineCursorArrowRipple } from "react-icons/hi2";
 
 interface Props {
   setSelectedElement: any;
@@ -97,7 +97,7 @@ function ElementTriggerElement({
         onClick={selectElement}
         size={"sm"}
         variant={"enable"}
-        leftIcon={<AddIcon />}
+        leftIcon={<HiOutlineCursorArrowRipple />}
       >
         Target element
       </Button>
@@ -111,32 +111,10 @@ function ElementTriggerElement({
       >
         <AlertDialogOverlay />
 
-        <AlertDialogContent
-          marginTop={"alertDialog.margin"}
-          background={"alertDialog.background"}
-          color={"alertDialog.color"}
-          borderColor={"alertDialog.borderColor"}
-          borderRadius={"alertDialog.borderRadius"}
-          boxShadow={"alertDialog.boxShadow"}
-          maxWidth={"95%"}
-        >
-          <AlertDialogHeader
-            fontSize={"alertDialog.header.fontSize"}
-            fontWeight="alertDialog.header.fontWeight"
-            borderColor={"alertDialog.header.borderColor"}
-            borderBottomWidth={"alertDialog.header.borderBottomWidth"}
-            paddingLeft={"alertDialog.header.paddingLeft"}
-            paddingRight={"alertDialog.header.paddingRight"}
-            paddingTop={"alertDialog.header.paddingTop"}
-            paddingBottom={"alertDialog.header.paddingBottom"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            Select target element
-          </AlertDialogHeader>
+        <AlertDialogContent>
+          <AlertDialogHeader>Select target element</AlertDialogHeader>
           <AlertDialogCloseButton size={"sm"} variant={"headerIcon"} />
-          <AlertDialogBody fontSize={"alertDialog.body.fontSize"}>
+          <AlertDialogBody>
             Please select an element in webflow and then click to confirm the
             selection
           </AlertDialogBody>

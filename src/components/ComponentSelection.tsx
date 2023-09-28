@@ -1,6 +1,7 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import { type RemoveHandler } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useState } from "react";
 
 interface Props {
   elementType: string;
@@ -17,8 +18,17 @@ function ComponentSelection({
   index,
   disabled,
 }: Props) {
+  const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
+  const onEnterComponent = () => setIsHoveredOrFocused(true);
+  const onLeaveComponent = () => setIsHoveredOrFocused(false);
+
   return (
-    <Flex
+    <Link
+    display="flex"
+      onFocus={onEnterComponent}
+      onMouseEnter={onEnterComponent}
+      onBlur={onLeaveComponent}
+      onMouseLeave={onLeaveComponent}
       aria-disabled={disabled}
       position={"relative"}
       flexDir={"column"}
@@ -45,6 +55,7 @@ function ComponentSelection({
       }}
     >
       <Button
+        display={isHoveredOrFocused ? "block" : "none"}
         position={"absolute"}
         right={"0.25rem"}
         top={"0.25rem"}
@@ -66,7 +77,7 @@ function ComponentSelection({
       <Box textAlign={"center"} fontFamily={"0.8rem"}>
         {elementType}
       </Box>
-    </Flex>
+    </Link>
   );
 }
 
