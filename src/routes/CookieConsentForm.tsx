@@ -25,7 +25,7 @@ import {
   Input,
   Radio,
   RadioGroup,
-  Stack,
+  Tooltip,
   Switch,
 } from "@chakra-ui/react";
 import NumberFormElement from "../components/form/NumberFormElement";
@@ -42,7 +42,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
 import Header from "../components/Header";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
-import { Tooltip } from "../components/Tooltip";
 import {
   CloseEffectTypesEnum,
   CookieConsent,
@@ -57,7 +56,7 @@ import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { timeUnitToNumberValue } from "../utils";
-import { TimeUnits } from "../types";
+import { TimeUnits, TimeUnitsEnum } from "../types";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.cookieConsentForm>>;
@@ -282,7 +281,12 @@ function CookieConsentForm() {
                     watch("openEffectType") === OpenEffectTypesEnum.enum.None
                   }
                   units={{
-                    options: TIME_UNITS_OPTIONS,
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Milliseconds,
+                        TimeUnitsEnum.enum.Seconds,
+                      ].includes(o.value),
+                    ),
                     conversionFunc: timeUnitToNumberValue,
                   }}
                 />
@@ -329,7 +333,12 @@ function CookieConsentForm() {
                     watch("closeEffectType") === OpenEffectTypesEnum.enum.None
                   }
                   units={{
-                    options: TIME_UNITS_OPTIONS,
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Milliseconds,
+                        TimeUnitsEnum.enum.Seconds,
+                      ].includes(o.value),
+                    ),
                     conversionFunc: timeUnitToNumberValue,
                   }}
                 />
@@ -346,10 +355,7 @@ function CookieConsentForm() {
               >
                 <GridItem>
                   <FormLabel htmlFor="cookie-name">
-                    <Tooltip
-                      label="You can use a custom cookie name"
-                      fontSize="md"
-                    >
+                    <Tooltip label="You can use a custom cookie name">
                       Name
                     </Tooltip>
                   </FormLabel>
@@ -369,9 +375,21 @@ function CookieConsentForm() {
                   label="Expiry"
                   initialValue={getValues().cookieExpiry}
                   onValueChange={(value) =>
-                    setValue("cookieExpiry", value as number)
+                    setValue("cookieExpiry", TimeUnits.parse(value))
                   }
                   helpText="Days to set the cookie to expire after"
+                  units={{
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Minutes,
+                        TimeUnitsEnum.enum.Hours,
+                        TimeUnitsEnum.enum.Days,
+                        TimeUnitsEnum.enum.Months,
+                        TimeUnitsEnum.enum.Years,
+                      ].includes(o.value),
+                    ),
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
                 />
               </Grid>
             </AccordionPanel>
@@ -387,10 +405,7 @@ function CookieConsentForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="insert-script">
-                      <Tooltip
-                        label="Toggles whether to embed the javascript code on the page"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Toggles whether to embed the javascript code on the page">
                         Insert script in body?
                       </Tooltip>
                     </FormLabel>
@@ -408,10 +423,7 @@ function CookieConsentForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="copy-script">
-                      <Tooltip
-                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
                         Copy script to clipboard
                       </Tooltip>
                     </FormLabel>

@@ -14,7 +14,7 @@ import {
 import {
   Accordion,
   Box,
-  Button,
+  Tooltip,
   ButtonGroup,
   FormControl,
   FormLabel,
@@ -52,7 +52,6 @@ import ModalTriggerSelection from "../components/form/ModalTriggerSelection";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import Header from "../components/Header";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
-import { Tooltip } from "../components/Tooltip";
 import { Paths } from "../paths";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionHeading from "../components/accordion/AccordionHeading";
@@ -60,7 +59,7 @@ import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { timeUnitToNumberValue } from "../utils";
-import { TimeUnits } from "../types";
+import { TimeUnits, TimeUnitsEnum } from "../types";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.modalForm>>;
@@ -239,10 +238,7 @@ function ModalForm() {
               >
                 <GridItem display={"flex"} alignItems={"center"} colSpan={1}>
                   <FormLabel htmlFor="open-modal-trigger" mb="0">
-                    <Tooltip
-                      label="Element or class to trigger the modal opening"
-                      fontSize="md"
-                    >
+                    <Tooltip label="Element or class to trigger the modal opening">
                       Trigger
                     </Tooltip>
                   </FormLabel>
@@ -328,7 +324,12 @@ function ModalForm() {
                     watch("openEffectType") === OpenEffectTypesEnum.enum.None
                   }
                   units={{
-                    options: TIME_UNITS_OPTIONS,
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Milliseconds,
+                        TimeUnitsEnum.enum.Seconds,
+                      ].includes(o.value),
+                    ),
                     conversionFunc: timeUnitToNumberValue,
                   }}
                 />
@@ -345,10 +346,7 @@ function ModalForm() {
               >
                 <GridItem display="flex" alignItems="center">
                   <FormLabel htmlFor="close-modal-trigger" mb="0">
-                    <Tooltip
-                      label="Element or class to trigger the modal closing"
-                      fontSize="md"
-                    >
+                    <Tooltip label="Element or class to trigger the modal closing">
                       Trigger
                     </Tooltip>
                   </FormLabel>
@@ -435,7 +433,12 @@ function ModalForm() {
                     watch("closeEffectType") === OpenEffectTypesEnum.enum.None
                   }
                   units={{
-                    options: TIME_UNITS_OPTIONS,
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Milliseconds,
+                        TimeUnitsEnum.enum.Seconds,
+                      ].includes(o.value),
+                    ),
                     conversionFunc: timeUnitToNumberValue,
                   }}
                 />
@@ -446,10 +449,7 @@ function ModalForm() {
                   alignItems="center"
                 >
                   <FormLabel htmlFor="close-on-click-overlay" mb="0">
-                    <Tooltip
-                      label="Toggles whether to close the modal when overlay is clicked"
-                      fontSize="md"
-                    >
+                    <Tooltip label="Toggles whether to close the modal when overlay is clicked">
                       Close modal on click overlay
                     </Tooltip>
                   </FormLabel>
@@ -475,10 +475,7 @@ function ModalForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="insert-script" mb="0">
-                      <Tooltip
-                        label="Toggles whether to embed the javascript code on the page"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Toggles whether to embed the javascript code on the page">
                         Insert script in body?
                       </Tooltip>
                     </FormLabel>
@@ -496,10 +493,7 @@ function ModalForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="copy-script" mb="0">
-                      <Tooltip
-                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
                         Copy script to clipboard
                       </Tooltip>
                     </FormLabel>

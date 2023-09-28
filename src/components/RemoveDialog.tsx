@@ -10,9 +10,9 @@ import {
   Button,
   Stack,
   UseDisclosureReturn,
+  Tooltip,
 } from "@chakra-ui/react";
 import React from "react";
-import { Tooltip } from "./Tooltip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
@@ -38,28 +38,8 @@ export function RemoveDialog({
       onClose={disclosure.onClose}
     >
       <AlertDialogOverlay>
-        <AlertDialogContent
-          marginTop={"alertDialog.margin"}
-          background={"alertDialog.background"}
-          color={"alertDialog.color"}
-          borderColor={"alertDialog.borderColor"}
-          borderRadius={"alertDialog.borderRadius"}
-          boxShadow={"alertDialog.boxShadow"}
-          maxWidth={"95%"}
-        >
-          <AlertDialogHeader
-            fontSize={"alertDialog.header.fontSize"}
-            fontWeight="alertDialog.header.fontWeight"
-            borderColor={"alertDialog.header.borderColor"}
-            borderBottomWidth={"alertDialog.header.borderBottomWidth"}
-            paddingLeft={"alertDialog.header.paddingLeft"}
-            paddingRight={"alertDialog.header.paddingRight"}
-            paddingTop={"alertDialog.header.paddingTop"}
-            paddingBottom={"alertDialog.header.paddingBottom"}
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
+        <AlertDialogContent>
+          <AlertDialogHeader>
             <Box>Delete {elementType}</Box>
             <AlertDialogCloseButton
               size={"sm"}
@@ -68,7 +48,7 @@ export function RemoveDialog({
             />
           </AlertDialogHeader>
 
-          <AlertDialogBody fontSize={"alertDialog.body.fontSize"}>
+          <AlertDialogBody>
             Are you sure want to delete {elementType}?
           </AlertDialogBody>
 
@@ -77,7 +57,7 @@ export function RemoveDialog({
               <Button ref={cancelRef} onClick={disclosure.onClose} size={"sm"}>
                 Cancel
               </Button>
-              <Tooltip label="Delete the attributes set" fontSize="md">
+              <Tooltip label="Delete the attributes set">
                 <Button
                   variant={"warning"}
                   onClick={async () => {
@@ -90,10 +70,7 @@ export function RemoveDialog({
                 </Button>
               </Tooltip>
 
-              <Tooltip
-                label="Delete the attributes set and the element from the webflow designer"
-                fontSize="md"
-              >
+              <Tooltip label="Delete the attributes set and the element from the webflow designer">
                 <Button
                   variant="warning"
                   onClick={async () => {

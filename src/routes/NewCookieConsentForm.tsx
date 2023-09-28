@@ -4,7 +4,7 @@ import {
   ButtonGroup,
   FormControl,
   FormLabel,
-  Heading,
+  Tooltip,
   Input,
   Switch,
 } from "@chakra-ui/react";
@@ -12,7 +12,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
 import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
-import { Tooltip } from "../components/Tooltip";
 import { useIsPageLoading } from "../contexts/AppContext";
 import {
   CookieConsent,
@@ -303,10 +302,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-header" mb="0">
-            <Tooltip
-              label="Toggles whether to create a header element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a header element for the modal">
               Create header element
             </Tooltip>
           </FormLabel>
@@ -324,10 +320,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-close" mb="0">
-            <Tooltip
-              label="Toggles whether to create a close button element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a close button element for the modal">
               Create close button element
             </Tooltip>
           </FormLabel>
@@ -345,10 +338,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-body" mb="0">
-            <Tooltip
-              label="Toggles whether to create a body div element for the Cookie Consent"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a body div element for the Cookie Consent">
               Create body div element
             </Tooltip>
           </FormLabel>
@@ -366,10 +356,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-footer" mb="0">
-            <Tooltip
-              label="Toggles whether to create a footer div element for the Cookie Consent"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a footer div element for the Cookie Consent">
               Create footer element
             </Tooltip>
           </FormLabel>
@@ -387,10 +374,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-about" mb="0">
-            <Tooltip
-              label="Toggles whether to create a link to about cookies"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a link to about cookies">
               Create about cookies link
             </Tooltip>
           </FormLabel>
@@ -410,10 +394,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-allow" mb="0">
-            <Tooltip
-              label="Toggles whether to create a button for allow all"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a button for allow all">
               Create allow all button
             </Tooltip>
           </FormLabel>
@@ -431,10 +412,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-deny" mb="0">
-            <Tooltip
-              label="Toggles whether to create a button for deny"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a button for deny">
               Create deny button
             </Tooltip>
           </FormLabel>
@@ -452,10 +430,7 @@ function NewCookieConsentForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-classes" mb="0">
-            <Tooltip
-              label="Toggles whether to create classes for the elements for the Cookie Consent e.g MR Cookie Consent Container, MR Cookie Consent Overlay etc"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create classes for the elements for the Cookie Consent e.g MR Cookie Consent Container, MR Cookie Consent Overlay etc">
               Create classes for each element
             </Tooltip>
           </FormLabel>
@@ -476,10 +451,7 @@ function NewCookieConsentForm() {
             maxWidth={"full"}
           >
             <FormLabel htmlFor="use-custom-class-prefix" mb="0">
-              <Tooltip
-                label="Toggles whether to change the default class prefix 'MR Cookie Consent'"
-                fontSize="md"
-              >
+              <Tooltip label="Toggles whether to change the default class prefix 'MR Cookie Consent'">
                 Use a custom class prefix
               </Tooltip>
             </FormLabel>
@@ -491,12 +463,9 @@ function NewCookieConsentForm() {
           </FormControl>
         )}
         {watch("createClasses") && watch("useCustomPrefix") && (
-          <FormControl margin={"2"}>
+          <FormControl margin={"2"} w={"auto"}>
             <FormLabel htmlFor="custom-class-prefix" mb="0">
-              <Tooltip
-                label="You can use a custom class prefix e.g My Custom Class Prefix"
-                fontSize="md"
-              >
+              <Tooltip label="You can use a custom class prefix e.g My Custom Class Prefix">
                 Custom prefix
               </Tooltip>
             </FormLabel>
@@ -508,7 +477,14 @@ function NewCookieConsentForm() {
           </FormControl>
         )}
         <ButtonGroup spacing="4" float={"right"} m={4}>
-          <Button size={"sm"}>Cancel</Button>
+          <Button
+            size={"sm"}
+            onClick={(event) => {
+              navigate(Paths.app, { replace: true });
+            }}
+          >
+            Cancel
+          </Button>
           <Button variant={"enable"} type="submit" size={"sm"}>
             Create
           </Button>

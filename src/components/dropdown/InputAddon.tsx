@@ -11,11 +11,10 @@ import {
   ListItem,
   Portal,
   Text,
-  forwardRef,
+  Tooltip,
 } from "@chakra-ui/react";
 import Downshift, { UseSelectStateChangeTypes, useSelect } from "downshift";
 import React, { useState } from "react";
-import { Tooltip } from "../Tooltip";
 import { Combolist, CombolistItem } from "./Combolist";
 
 type Option = { label: string; value: string };
@@ -25,6 +24,7 @@ interface Props {
   defaultValue: Option | undefined;
   onChange: (option: Option) => void;
   id: string;
+  disabled?: boolean;
 }
 
 function itemToString(item: Option | null) {
@@ -36,6 +36,7 @@ export default function InputAddon({
   defaultValue,
   onChange,
   id,
+  disabled = false,
 }: Props) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [selectedItem, setSelectedItem] = useState(defaultValue);
@@ -63,39 +64,40 @@ export default function InputAddon({
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const ulRef = React.useRef<HTMLUListElement>(null);
 
+  const onOpenCombobox = () => {
+    const margin = 10;
+    if (buttonRef && buttonRef.current && ulRef && ulRef.current) {
+      const bodyRect = document.body.getBoundingClientRect();
+      ulRef.current.style.display = "";
+      const ulRect = ulRef.current.getBoundingClientRect();
+
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      let { x, y } = buttonRect;
+      if (buttonRect.x + ulRect.width + margin > bodyRect.right) {
+        x = x - (bodyRect.right - (buttonRect.x + ulRect.width + margin));
+      }
+      if (buttonRect.y + ulRect.height > bodyRect.bottom) {
+        y = y - (bodyRect.bottom - (buttonRect.y + ulRect.height + margin));
+      }
+      x += window.scrollX;
+      y += window.scrollY;
+      setPosition({ x, y });
+    }
+  };
+
   return (
     <>
       <Button
         {...getToggleButtonProps({
           ref: buttonRef,
-          onClick: (event) => {
-            const margin = 10;
-            if (buttonRef && buttonRef.current && ulRef && ulRef.current) {
-              const bodyRect = document.body.getBoundingClientRect();
-              ulRef.current.style.display = "";
-              const ulRect = ulRef.current.getBoundingClientRect();
-
-              const buttonRect = buttonRef.current.getBoundingClientRect();
-              console.log(buttonRect, ulRect, bodyRect);
-              let { x, y } = buttonRect;
-              if (buttonRect.x + ulRect.width + margin > bodyRect.right) {
-                x =
-                  x - (bodyRect.right - (buttonRect.x + ulRect.width + margin));
-              }
-              if (buttonRect.y + ulRect.height > bodyRect.bottom) {
-                y =
-                  y -
-                  (bodyRect.bottom - (buttonRect.y + ulRect.height + margin));
-              }
-
-              setPosition({ x, y });
-            }
-          },
+          onClick: onOpenCombobox,
+          onKeyUp: onOpenCombobox,
         })}
         variant={"inputElement"}
         size={"sm"}
+        isDisabled={disabled}
       >
-        {selectedItem ? selectedItem.label : "Select"}
+        {selectedItem && selectedItem.value}
       </Button>
       <Portal>
         <Combolist

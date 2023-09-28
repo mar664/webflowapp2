@@ -39,10 +39,10 @@ const Boolean = z.preprocess((arg) => {
 
 export const CookieConsentOptions = z.object({
   openEffectType: OpenEffectTypesEnum.default(OpenEffectTypesEnum.enum.Fade),
-  openDuration: TimeUnits,
+  openDuration: TimeUnits.default("1000ms"),
   closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
-  closeDuration: TimeUnits,
-  cookieExpiry: z.coerce.number().positive().default(30),
+  closeDuration: TimeUnits.default("1000ms"),
+  cookieExpiry: TimeUnits.default("30d"),
   cookieName: z.string().default("mr-cookie-consent"),
   position: z.string().default(PositionEnum.enum.Top),
 });

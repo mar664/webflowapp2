@@ -1,6 +1,15 @@
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { ElementModel } from "../models/ElementModel";
-import { TimeUnits, milliseconds, seconds } from "../types";
+import {
+  TimeUnits,
+  days,
+  hours,
+  milliseconds,
+  minutes,
+  months,
+  seconds,
+  years,
+} from "../types";
 
 export function removeChars(str: string) {
   return str
@@ -59,6 +68,38 @@ export function timeUnitToNumberValue(val: string | undefined) {
       return {
         value: Number.parseInt(isSeconds.data.slice(0, -1)),
         unit: "s",
+      };
+    }
+    const isMinutes = minutes.safeParse(val);
+    if (isMinutes.success) {
+      return { value: Number.parseInt(isMinutes.data.slice(0, -2)), unit: "m" };
+    }
+    const isHours = hours.safeParse(val);
+    if (isHours.success) {
+      return {
+        value: Number.parseInt(isHours.data.slice(0, -1)),
+        unit: "h",
+      };
+    }
+    const isDays = days.safeParse(val);
+    if (isDays.success) {
+      return {
+        value: Number.parseInt(isDays.data.slice(0, -1)),
+        unit: "d",
+      };
+    }
+    const isMonths = months.safeParse(val);
+    if (isMonths.success) {
+      return {
+        value: Number.parseInt(isMonths.data.slice(0, -3)),
+        unit: "mth",
+      };
+    }
+    const isYears = years.safeParse(val);
+    if (isYears.success) {
+      return {
+        value: Number.parseInt(isYears.data.slice(0, -1)),
+        unit: "y",
       };
     }
   }

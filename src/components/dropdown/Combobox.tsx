@@ -11,11 +11,10 @@ import {
   ListItem,
   Portal,
   Text,
-  forwardRef,
+  Tooltip,
 } from "@chakra-ui/react";
 import Downshift, { UseSelectStateChangeTypes, useSelect } from "downshift";
 import React, { useState } from "react";
-import { Tooltip } from "../Tooltip";
 import { Combolist, CombolistItem } from "./Combolist";
 
 type Option = { label: string; value: string };
@@ -27,6 +26,7 @@ interface Props {
   label: string;
   helpText: string;
   id: string;
+  disabled?: boolean;
 }
 
 function itemToString(item: Option | null) {
@@ -40,6 +40,7 @@ export default function Combobox({
   onChange,
   helpText,
   id,
+  disabled = false,
 }: Props) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const {
@@ -65,47 +66,44 @@ export default function Combobox({
   const buttonRef = React.useRef<HTMLButtonElement>(null);
   const ulRef = React.useRef<HTMLUListElement>(null);
 
+  const onOpenCombobox = () => {
+    const margin = 10;
+    if (buttonRef && buttonRef.current && ulRef && ulRef.current) {
+      const bodyRect = document.body.getBoundingClientRect();
+      ulRef.current.style.display = "";
+      const ulRect = ulRef.current.getBoundingClientRect();
+
+      const buttonRect = buttonRef.current.getBoundingClientRect();
+      let { x, y } = buttonRect;
+      if (buttonRect.x + ulRect.width + margin > bodyRect.right) {
+        x = x - (bodyRect.right - (buttonRect.x + ulRect.width + margin));
+      }
+      if (buttonRect.y + ulRect.height > bodyRect.bottom) {
+        y = y - (bodyRect.bottom - (buttonRect.y + ulRect.height + margin));
+      }
+      x += window.scrollX;
+      y += window.scrollY;
+      setPosition({ x, y });
+    }
+  };
   return (
     <>
       <GridItem display={"flex"} alignItems={"center"}>
         <FormLabel {...getLabelProps()}>
-          <Tooltip label={helpText} fontSize="md">
-            {label}
-          </Tooltip>
+          <Tooltip label={helpText}>{label}</Tooltip>
         </FormLabel>
       </GridItem>
       <GridItem colSpan={3} display="flex" alignItems="center">
         <Button
           {...getToggleButtonProps({
             ref: buttonRef,
-            onClick: (event) => {
-              const margin = 10;
-              if (buttonRef && buttonRef.current && ulRef && ulRef.current) {
-                const bodyRect = document.body.getBoundingClientRect();
-                ulRef.current.style.display = "";
-                const ulRect = ulRef.current.getBoundingClientRect();
-
-                const buttonRect = buttonRef.current.getBoundingClientRect();
-                console.log(buttonRect, ulRect, bodyRect);
-                let { x, y } = buttonRect;
-                if (buttonRect.x + ulRect.width + margin > bodyRect.right) {
-                  x =
-                    x -
-                    (bodyRect.right - (buttonRect.x + ulRect.width + margin));
-                }
-                if (buttonRect.y + ulRect.height > bodyRect.bottom) {
-                  y =
-                    y -
-                    (bodyRect.bottom - (buttonRect.y + ulRect.height + margin));
-                }
-
-                setPosition({ x, y });
-              }
-            },
+            onClick: onOpenCombobox,
+            onKeyUp: onOpenCombobox,
           })}
           variant={"select"}
           size={"sm"}
           rightIcon={<UpDownIcon />}
+          disabled={disabled}
         >
           {selectedItem ? selectedItem.label : "Select"}
         </Button>

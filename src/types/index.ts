@@ -27,13 +27,8 @@ export interface CompatibleComponents {
 export interface Option {
   value: string;
   label: string;
+  descripion?: string;
 }
-
-export const seconds = z.custom<`${number}s`>((val) => {
-  return typeof val === "string" ? /^\d+s$/.test(val) : false;
-});
-
-export type seconds = z.infer<typeof seconds>;
 
 export const milliseconds = z.custom<`${number}ms`>((val) => {
   return typeof val === "string" ? /^\d+ms$/.test(val) : false;
@@ -41,8 +36,63 @@ export const milliseconds = z.custom<`${number}ms`>((val) => {
 
 export type milliseconds = z.infer<typeof milliseconds>;
 
-export const TimeUnits = z
-  .union([seconds, milliseconds])
-  .default(milliseconds.parse("1000ms"));
+export const seconds = z.custom<`${number}s`>((val) => {
+  return typeof val === "string" ? /^\d+s$/.test(val) : false;
+});
+
+export type seconds = z.infer<typeof seconds>;
+
+export const minutes = z.custom<`${number}m`>((val) => {
+  return typeof val === "string" ? /^\d+m$/.test(val) : false;
+});
+
+export type minutes = z.infer<typeof minutes>;
+
+export const hours = z.custom<`${number}ms`>((val) => {
+  return typeof val === "string" ? /^\d+h$/.test(val) : false;
+});
+
+export type hours = z.infer<typeof hours>;
+
+export const days = z.custom<`${number}d`>((val) => {
+  return typeof val === "string" ? /^\d+d$/.test(val) : false;
+});
+
+export type days = z.infer<typeof days>;
+
+export const months = z.custom<`${number}mth`>((val) => {
+  return typeof val === "string" ? /^\d+mth$/.test(val) : false;
+});
+
+export type months = z.infer<typeof months>;
+
+export const years = z.custom<`${number}y`>((val) => {
+  return typeof val === "string" ? /^\d+y$/.test(val) : false;
+});
+
+export type years = z.infer<typeof years>;
+
+export const TimeUnits = z.union([
+  milliseconds,
+  seconds,
+  minutes,
+  hours,
+  days,
+  months,
+  years,
+]);
+
+enum TimeUnitsNativeEnum {
+  Milliseconds = "ms",
+  Seconds = "s",
+  Minutes = "m",
+  Hours = "h",
+  Days = "d",
+  Months = "mth",
+  Years = "y",
+}
+
+export const TimeUnitsEnum = z.nativeEnum(TimeUnitsNativeEnum);
+export type TimeUnitsEnum = z.infer<typeof TimeUnitsEnum>; // Fruits
 
 export type TimeUnits = z.infer<typeof TimeUnits>;

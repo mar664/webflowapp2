@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { RemoveHandler, VisibilityHandler } from "../types";
 import { ElementModel } from "../models/ElementModel";
+import { Paths } from "../paths";
 
 export const useElementVisibility = (
   currentElement: CompatibleElement | null,
@@ -138,7 +139,7 @@ export const useElementRemoval = (
       duration: 4000,
       isClosable: true,
     });
-    navigate(0);
+    navigate(Paths.app, { replace: true });
     return true;
   };
   return { remove };

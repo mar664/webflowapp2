@@ -4,7 +4,7 @@ import {
   ButtonGroup,
   FormControl,
   FormLabel,
-  Heading,
+  Tooltip,
   Input,
   Switch,
 } from "@chakra-ui/react";
@@ -13,7 +13,6 @@ import { Modal, NewModalOptions } from "../models/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
-import { Tooltip } from "../components/Tooltip";
 import { useIsPageLoading } from "../contexts/AppContext";
 import { uuidv4 } from "../utils";
 import { Paths } from "../paths";
@@ -277,10 +276,7 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-header" mb="0">
-            <Tooltip
-              label="Toggles whether to create a header element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a header element for the modal">
               Create header element
             </Tooltip>
           </FormLabel>
@@ -298,10 +294,7 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-close" mb="0">
-            <Tooltip
-              label="Toggles whether to create a close button element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a close button element for the modal">
               Create close button element
             </Tooltip>
           </FormLabel>
@@ -319,10 +312,7 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-body" mb="0">
-            <Tooltip
-              label="Toggles whether to create a body div element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a body div element for the modal">
               Create body div element
             </Tooltip>
           </FormLabel>
@@ -340,10 +330,7 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-footer" mb="0">
-            <Tooltip
-              label="Toggles whether to create a footer div element for the modal"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create a footer div element for the modal">
               Create footer element
             </Tooltip>
           </FormLabel>
@@ -360,10 +347,7 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-classes" mb="0">
-            <Tooltip
-              label="Toggles whether to create classes for the elements for the modal e.g MR Modal Container, MR Modal Overlay etc"
-              fontSize="md"
-            >
+            <Tooltip label="Toggles whether to create classes for the elements for the modal e.g MR Modal Container, MR Modal Overlay etc">
               Create classes for each element
             </Tooltip>
           </FormLabel>
@@ -384,10 +368,7 @@ function NewModalForm() {
             maxWidth={"full"}
           >
             <FormLabel htmlFor="use-custom-class-prefix" mb="0">
-              <Tooltip
-                label="Toggles whether to change the default class prefix 'MR Modal'"
-                fontSize="md"
-              >
+              <Tooltip label="Toggles whether to change the default class prefix 'MR Modal'">
                 Use a custom class prefix
               </Tooltip>
             </FormLabel>
@@ -399,12 +380,9 @@ function NewModalForm() {
           </FormControl>
         )}
         {watch("createClasses") && watch("useCustomPrefix") && (
-          <FormControl margin={"2"}>
+          <FormControl margin={"2"} w={"auto"}>
             <FormLabel htmlFor="custom-class-prefix" mb="0">
-              <Tooltip
-                label="You can use a custom class prefix e.g My Custom Class Prefix"
-                fontSize="md"
-              >
+              <Tooltip label="You can use a custom class prefix e.g My Custom Class Prefix">
                 Custom prefix
               </Tooltip>
             </FormLabel>
@@ -416,7 +394,14 @@ function NewModalForm() {
           </FormControl>
         )}
         <ButtonGroup spacing="4" float={"right"} m={4}>
-          <Button size={"sm"}>Cancel</Button>
+          <Button
+            size={"sm"}
+            onClick={(event) => {
+              navigate(Paths.app, { replace: true });
+            }}
+          >
+            Cancel
+          </Button>
           <Button variant="enable" type="submit" size={"sm"}>
             Create
           </Button>

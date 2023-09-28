@@ -20,7 +20,17 @@ const defaultStyle = definePartsStyle({
       color: "#696969",
     },
   },
-  element: { height: "100%", width: "auto" },
+  element: {
+    width: "auto",
+    color: "rgb(171,171,171)",
+    borderRadius: "none",
+    height: "calc(100% - 2px)",
+    paddingInlineStart: "3px",
+    paddingInlineEnd: "3px",
+    minWidth: "10px",
+    fontSize: "11px",
+    backgroundColor: "inherit",
+  },
 });
 
 export const inputTheme = defineMultiStyleConfig({

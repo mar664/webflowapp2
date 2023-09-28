@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -10,11 +11,10 @@ import {
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
-  NumberInputStepper,
+  Tooltip,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { Tooltip } from "../Tooltip";
 import InputAddon from "../dropdown/InputAddon";
 import { Option } from "../../types";
 
@@ -28,15 +28,17 @@ interface FormProps {
   onValueChange: (value: number | string) => void;
   initialValue: number | string;
   disabled?: boolean;
-  units?: {
-    options: Option[];
-    conversionFunc: (val: string | undefined) =>
-      | {
-          value: number;
-          unit: string;
-        }
-      | undefined;
-  };
+  units?:
+    | {
+        options: Option[];
+        conversionFunc: (val: string | undefined) =>
+          | {
+              value: number;
+              unit: string;
+            }
+          | undefined;
+      }
+    | string;
 }
 
 function NumberFormElement({
@@ -53,7 +55,7 @@ function NumberFormElement({
 }: FormProps) {
   // Parse value e.g. 100ms to {value: 100, unit: "ms"}
   const initialParsedValue =
-    units && typeof initialValue === "string"
+    units && typeof units !== "string" && typeof initialValue === "string"
       ? units.conversionFunc(initialValue)
       : undefined;
 
@@ -74,14 +76,13 @@ function NumberFormElement({
     <>
       <GridItem display={"flex"} alignItems={"center"}>
         <FormLabel htmlFor={name} fontSize={"label.fontSize"} mb={0}>
-          <Tooltip label={helpText} fontSize="md">
-            {label}
-          </Tooltip>
+          <Tooltip label={helpText}>{label}</Tooltip>
         </FormLabel>
       </GridItem>
       <GridItem>
         <InputGroup>
           <NumberInput
+            allowMouseWheel
             size="sm"
             maxW={"full"}
             id={name}
@@ -97,9 +98,10 @@ function NumberFormElement({
             <NumberInputField />
           </NumberInput>
 
-          {units && (
+          {units && typeof units !== "string" && (
             <InputRightElement>
               <InputAddon
+                disabled={disabled}
                 defaultValue={units.options.find(
                   (o) => o.value === initialParsedValue?.unit,
                 )}
@@ -110,6 +112,12 @@ function NumberFormElement({
                   setUnit(option.value);
                 }}
               />
+            </InputRightElement>
+          )}
+
+          {units && typeof units === "string" && (
+            <InputRightElement>
+              <Box as="span">{units}</Box>
             </InputRightElement>
           )}
         </InputGroup>

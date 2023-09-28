@@ -4,17 +4,20 @@ import {
   FormControl,
   FormLabel,
   IconButton,
-  MenuListProps,
+  Tooltip,
   Spinner,
+  Tag,
+  Text,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
   ChakraStylesConfig,
-  CreatableSelect,
+  AsyncCreatableSelect,
   chakraComponents,
 } from "chakra-react-select";
 import {
   ActionMeta,
+  FormatOptionLabelMeta,
   GroupBase,
   MultiValue,
   OnChangeValue,
@@ -24,8 +27,8 @@ import {
 import { IStyleItem } from "../../hooks/styles";
 import { removeChars } from "../../utils";
 import { useStyles } from "../../contexts/AppContext";
-import { Tooltip } from "../Tooltip";
 import { CloseIcon } from "@chakra-ui/icons";
+import { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 
 interface FormProps {
   setSelectedClass: any;
@@ -56,10 +59,13 @@ const chakraStyles: ChakraStylesConfig<IStyleItem> = {
     ...provided,
     width: "100%",
   }),
-  option: (provided, state) => ({
-    ...provided,
-    fontSize: "11px",
-  }),
+  option: (provided, state) => {
+    return {
+      ...provided,
+      backgroundColor: state.isFocused ? "rgb(94, 94, 94)" : "inherit",
+      fontSize: "11px",
+    };
+  },
   placeholder: (provided, state) => ({
     ...provided,
     color: "rgb(117, 117, 117)",
@@ -95,7 +101,6 @@ const customComponents: SelectComponentsConfig<
   DropdownIndicator: ({ ...props }) => null,
   MenuList: ({ children, ...props }) => {
     let firstChild;
-    console.log(children);
     if (
       children &&
       Array.isArray(children) &&
@@ -106,7 +111,6 @@ const customComponents: SelectComponentsConfig<
     ) {
       firstChild = children.shift();
     }
-    console.log(firstChild);
     return (
       <chakraComponents.MenuList {...props}>
         <Box
@@ -145,6 +149,59 @@ const customComponents: SelectComponentsConfig<
   },
 };
 
+const formatCreateLabel = (inputValue: string) => {
+  return (
+    <>
+      <Box as="span" marginRight={2}>
+        Create
+      </Box>
+      <Tag>{inputValue}</Tag>
+    </>
+  );
+};
+
+const formatOptionLabel = (
+  data: IStyleItem,
+  formatOptionLabelMeta: FormatOptionLabelMeta<IStyleItem>,
+) => {
+  if (!data.__isNew__) {
+    const letters = [];
+    if (formatOptionLabelMeta.inputValue !== "") {
+      const inputChars = formatOptionLabelMeta.inputValue
+        .toLowerCase()
+        .split("");
+
+      const iterator = data.label[Symbol.iterator]();
+      let theChar = iterator.next();
+
+      while (!theChar.done) {
+        if (inputChars.includes(theChar.value.toLowerCase())) {
+          letters.push(
+            <Text as={"b"}>
+              <Text as={"u"}>
+                {theChar.value !== " " ? theChar.value : " "}
+              </Text>
+            </Text>,
+          );
+        } else {
+          letters.push(theChar.value);
+        }
+        theChar = iterator.next();
+      }
+
+      return <Tag>{letters}</Tag>;
+    }
+    return <Tag>{data.label}</Tag>;
+  }
+  return data.label;
+};
+
+const filterStyles = (inputValue: string, styles: IStyleItem[]) => {
+  return styles.filter((i) =>
+    i.label.toLowerCase().includes(inputValue.toLowerCase()),
+  );
+};
+
 function ClassTriggerElement({
   setSelectedClass,
   defaultValue,
@@ -159,14 +216,12 @@ function ClassTriggerElement({
     newValue: SingleValue<IStyleItem> | MultiValue<IStyleItem>,
     actionMeta: ActionMeta<IStyleItem>,
   ) => {
-    console.log(newValue, actionMeta);
     if (
       newValue &&
       typeof newValue === "object" &&
       "value" in newValue &&
       "label" in newValue
     ) {
-      console.log(newValue);
       setSelectedClass(newValue.value);
       setValue(newValue);
     }
@@ -198,19 +253,32 @@ function ClassTriggerElement({
     })();
   };
 
+  const getOptions = (
+    inputValue: string,
+    callback: (options: IStyleItem[]) => void,
+  ) => {
+    if (inputValue === "") {
+      callback(styles.slice(0, 5));
+    } else {
+      callback(filterStyles(inputValue, styles));
+    }
+  };
+
   return (
     <FormControl>
       <FormLabel htmlFor={id} mb="1">
-        <Tooltip label="The class to open the modal on click" fontSize="md">
+        <Tooltip label="The class to open the modal on click">
           Style selector
         </Tooltip>
       </FormLabel>
-      <CreatableSelect
+      <AsyncCreatableSelect
         placeholder="Select a class or type new class"
         isLoading={isLoading}
         onChange={handleSelectedItemsChange}
         onCreateOption={handleCreate}
-        options={styles}
+        formatCreateLabel={formatCreateLabel}
+        formatOptionLabel={formatOptionLabel}
+        loadOptions={getOptions}
         value={value}
         id={id}
         chakraStyles={chakraStyles}
@@ -219,6 +287,7 @@ function ClassTriggerElement({
         isClearable={true}
         variant="default"
         createOptionPosition="first"
+        defaultOptions
       />
     </FormControl>
   );

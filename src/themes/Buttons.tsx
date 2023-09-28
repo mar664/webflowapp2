@@ -79,11 +79,12 @@ const selectButton = defineStyle({
 const inputElementButton = defineStyle({
   color: "rgb(171,171,171)",
   borderRadius: "none",
-  height: "calc(100% - 2px)",
+  height: "100%",
+  width: "100%",
+  minWidth: "10px",
+  fontSize: "11px",
   paddingInlineStart: "2px",
   paddingInlineEnd: "2px",
-  minWidth: "none",
-  fontSize: "11px",
   backgroundColor: "inherit",
   _hover: {
     color: "rgb(246,246,246)",

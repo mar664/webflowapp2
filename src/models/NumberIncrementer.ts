@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { ElementModel } from "./ElementModel";
+import { TimeUnits } from "../types";
 
 export const NumberIncrementerOptions = z
   .object({
-    incrementStart: z.number().min(0),
-    incrementEnd: z.number().min(0),
-    percentageVisible: z.number().min(0).max(100),
-    duration: z.number().min(0),
+    incrementStart: z.coerce.number().min(0).default(0),
+    incrementEnd: z.coerce.number().min(0).default(100),
+    percentageVisible: z.coerce.number().min(0).max(100).default(0),
+    duration: TimeUnits.default("1000ms"),
   })
   .refine((data) => data.incrementEnd > data.incrementStart, {
     message: "Increment end must be larger than increment start",
@@ -15,6 +16,22 @@ export const NumberIncrementerOptions = z
   });
 
 export type NumberIncrementerOptions = z.infer<typeof NumberIncrementerOptions>;
+
+function getAttributeFunc(element: CompatibleElement) {
+  return (arg: string) => {
+    const attributeValue = element.getAttribute(arg);
+    if (attributeValue === null) {
+      return undefined;
+    }
+    return attributeValue;
+  };
+}
+
+function setAttributeFunc(element: CompatibleElement) {
+  return (arg: string, value: string) => {
+    element.setAttribute(arg, value);
+  };
+}
 
 export class NumberIncrementer extends ElementModel {
   // set default values for incrementer
@@ -27,7 +44,7 @@ export class NumberIncrementer extends ElementModel {
 
   static DEFAULT_INCREMENT_START = 0;
   static DEFAULT_INCREMENT_END = 100;
-  static DEFAULT_INCREMENT_DURATION = 1000; // duration in ms
+  static DEFAULT_INCREMENT_DURATION = "1000ms";
   static DEFAULT_UPDATE_INTERVAL = 100; // duration in ms
   static DEFAULT_PERCENTAGE_VISIBLE = 25;
 
@@ -39,21 +56,23 @@ export class NumberIncrementer extends ElementModel {
     element: CompatibleElement,
     options: NumberIncrementerOptions,
   ) {
+    const setAttribute = setAttributeFunc(element);
+
     const parsedOptions = NumberIncrementerOptions.parse(options);
     console.log(parsedOptions);
-    element.setAttribute(
+    setAttribute(
       NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
       parsedOptions.incrementStart.toString(),
     );
-    element.setAttribute(
+    setAttribute(
       NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
       parsedOptions.incrementEnd.toString(),
     );
-    element.setAttribute(
+    setAttribute(
       NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
       parsedOptions.percentageVisible.toString(),
     );
-    element.setAttribute(
+    setAttribute(
       NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
       parsedOptions.duration.toString(),
     );
@@ -89,32 +108,22 @@ export class NumberIncrementer extends ElementModel {
   }
 
   static parse(element: CompatibleElement) {
-    return {
-      incrementStart:
-        parseInt(
-          element.getAttribute(
-            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
-          ) as string,
-        ) || NumberIncrementer.DEFAULT_INCREMENT_START,
-      incrementEnd:
-        parseInt(
-          element.getAttribute(
-            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
-          ) as string,
-        ) || NumberIncrementer.DEFAULT_INCREMENT_END,
-      percentageVisible:
-        parseInt(
-          element.getAttribute(
-            NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
-          ) as string,
-        ) || NumberIncrementer.DEFAULT_PERCENTAGE_VISIBLE,
-      duration:
-        parseInt(
-          element.getAttribute(
-            NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
-          ) as string,
-        ) || NumberIncrementer.DEFAULT_INCREMENT_DURATION,
-    };
+    const getAttribute = getAttributeFunc(element);
+
+    return NumberIncrementerOptions.parse({
+      incrementStart: getAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
+      ),
+      incrementEnd: getAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_END,
+      ),
+      percentageVisible: getAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_PERCENTAGE_VISIBLE,
+      ),
+      duration: getAttribute(
+        NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_DURATION,
+      ),
+    });
   }
 
   static async insertScriptInBody() {

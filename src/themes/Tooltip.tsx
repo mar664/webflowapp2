@@ -7,9 +7,10 @@ const tooltipDefault = defineStyle({
   color: "tooltip.color",
   borderColor: "tooltip.borderColor",
   borderRadius: "tooltip.borderRadius",
-  fontSize: "tooltip.fontSize",
+  fontSize: "11px",
   maxWidth: "90vw",
   margin: "4",
+  fontWeight: "500",
 });
 
 export const tooltipTheme = defineStyleConfig({

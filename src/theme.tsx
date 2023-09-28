@@ -4,6 +4,7 @@ import { combolistItemTheme } from "./themes/CombolistItem";
 import { formLabelTheme } from "./themes/FormLabel";
 import { inputTheme } from "./themes/Input";
 import { menuTheme } from "./themes/Menu";
+import { modalTheme } from "./themes/Modal";
 import { numberInputTheme } from "./themes/NumberInput";
 import { radioTheme } from "./themes/Radio";
 import { switchTheme } from "./themes/Switch";
@@ -91,7 +92,7 @@ const fontSizes = {
     fontSize: "11px",
   },
   tooltip: {
-    fontSize: "11px",
+    fontSize: "10px",
   },
   accordion: {
     heading: {
@@ -230,10 +231,12 @@ const styles = {
     },
     // styles for the `body`
     body: {
+      maxWidth: "100%",
       bg: "#404040",
       color: "white",
       fontFamily:
         'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif',
+      overflowX: "hidden",
     },
   },
 };
@@ -262,5 +265,6 @@ export default {
     CombolistItem: combolistItemTheme,
     Menu: menuTheme,
     Tooltip: tooltipTheme,
+    Modal: modalTheme,
   },
 };

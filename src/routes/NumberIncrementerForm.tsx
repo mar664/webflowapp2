@@ -20,7 +20,7 @@ import {
   FormLabel,
   Grid,
   GridItem,
-  Heading,
+  Tooltip,
   Input,
 } from "@chakra-ui/react";
 import { TriangleDownIcon } from "@chakra-ui/icons";
@@ -41,12 +41,14 @@ import {
   NumberIncrementer,
   NumberIncrementerOptions,
 } from "../models/NumberIncrementer";
-import { Tooltip } from "../components/Tooltip";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
 import { Paths } from "../paths";
 import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionPanel from "../components/accordion/AccordionPanel";
+import { TIME_UNITS_OPTIONS } from "../constants";
+import { timeUnitToNumberValue } from "../utils";
+import { TimeUnits, TimeUnitsEnum } from "../types";
 
 interface LoaderArgs extends LoaderFunctionArgs {
   params: Params<ParamParseKey<typeof Paths.numberIncrementerForm>>;
@@ -138,12 +140,7 @@ function NumberIncrementerForm() {
       return parsedElement;
     }
 
-    return {
-      incrementStart: NumberIncrementer.DEFAULT_INCREMENT_START,
-      incrementEnd: NumberIncrementer.DEFAULT_INCREMENT_END,
-      percentageVisible: NumberIncrementer.DEFAULT_PERCENTAGE_VISIBLE,
-      duration: NumberIncrementer.DEFAULT_INCREMENT_DURATION,
-    };
+    return NumberIncrementerOptions.parse({});
   };
 
   const {
@@ -234,10 +231,19 @@ function NumberIncrementerForm() {
                   label="Duration"
                   initialValue={getValues().duration}
                   onValueChange={(value) =>
-                    setValue("duration", value as number)
+                    setValue("duration", TimeUnits.parse(value))
                   }
                   helpText="Duration in milliseconds"
                   min={0}
+                  units={{
+                    options: TIME_UNITS_OPTIONS.filter((o) =>
+                      [
+                        TimeUnitsEnum.enum.Milliseconds,
+                        TimeUnitsEnum.enum.Seconds,
+                      ].includes(o.value),
+                    ),
+                    conversionFunc: timeUnitToNumberValue,
+                  }}
                 />
                 <NumberFormElement
                   error={errors.percentageVisible?.message}
@@ -250,6 +256,7 @@ function NumberIncrementerForm() {
                   helpText="Increment will start when this % of element is visible in viewport"
                   min={0}
                   max={100}
+                  units={"%"}
                 />
               </Grid>
             </AccordionPanel>
@@ -269,10 +276,7 @@ function NumberIncrementerForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="insert-script">
-                      <Tooltip
-                        label="Toggles whether to embed the javascript code on the page"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Toggles whether to embed the javascript code on the page">
                         Insert script in body?
                       </Tooltip>
                     </FormLabel>
@@ -290,10 +294,7 @@ function NumberIncrementerForm() {
                     maxWidth={"full"}
                   >
                     <FormLabel htmlFor="copy-script">
-                      <Tooltip
-                        label="Copy the javascript embed code to clipboard so it can be added to webflow"
-                        fontSize="md"
-                      >
+                      <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
                         Copy script to clipboard
                       </Tooltip>
                     </FormLabel>

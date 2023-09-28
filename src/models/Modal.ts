@@ -60,7 +60,7 @@ export const ModalOptions = z.object({
     return undefined;
   }, z.string().optional()),
   openEffectType: OpenEffectTypesEnum.default(OpenEffectTypesEnum.enum.Fade),
-  openDuration: TimeUnits,
+  openDuration: TimeUnits.default("1000ms"),
   closeTriggerType: TriggerTypesEnum.default(TriggerTypesEnum.enum.Element),
   closeTriggerValue: z.preprocess((arg) => {
     if (typeof arg === "string") {
@@ -69,7 +69,7 @@ export const ModalOptions = z.object({
     return undefined;
   }, z.string().optional()),
   closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
-  closeDuration: TimeUnits,
+  closeDuration: TimeUnits.default("1000ms"),
   closeOnClickOverlay: Boolean,
 });
 export type ModalOptions = z.infer<typeof ModalOptions>;

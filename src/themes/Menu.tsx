@@ -22,9 +22,6 @@ const baseStyle = definePartsStyle({
     // this will style the MenuItem and MenuItemOption components
     color: "rgb(235, 235, 235)",
     backgroundColor: "rgb(77, 77, 77)",
-    _hover: {
-      bg: "rgb(94, 94, 94)",
-    },
     _focus: {
       bg: "rgb(94, 94, 94)",
     },

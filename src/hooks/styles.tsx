@@ -6,6 +6,7 @@ import { OptionBase } from "chakra-react-select";
 export interface IStyleItem extends OptionBase {
   value: string;
   label: string;
+  __isNew__?: boolean;
 }
 
 export const useStyles = () => {
