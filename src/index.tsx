@@ -77,7 +77,7 @@ const router = createHashRouter([
     ],
   },
 ]);
-console.log(router);
+
 createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ChakraProvider theme={_theme}>

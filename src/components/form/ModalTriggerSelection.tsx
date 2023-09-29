@@ -22,7 +22,6 @@ function ModalTriggerSelection({
   hideOnModalOpen,
   showOnModalOpen,
 }: FormProps) {
-  console.log(trigger);
   switch (trigger) {
     case TriggerTypesEnum.enum.Class:
       return (

@@ -7,8 +7,12 @@ export const useSelectedElement = () => {
     console.log("subscribe selected element callback");
     let prevElement: AnyElement | null = null;
     const selectedElementCallback = (element: AnyElement | null) => {
-      if (prevElement && element && prevElement.id !== element.id) {
-        setSelectedElement(element);
+      if (element) {
+        if (!prevElement) {
+          setSelectedElement(element);
+        } else if (prevElement && prevElement.id !== element.id) {
+          setSelectedElement(element);
+        }
       }
       prevElement = element;
     };

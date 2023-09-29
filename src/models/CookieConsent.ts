@@ -86,7 +86,7 @@ export class CookieConsent extends ElementModel {
     options: CookieConsentOptions,
   ) {
     const parsedOptions = CookieConsentOptions.parse(options);
-    console.log(parsedOptions);
+
     const setAttribute = setAttributeFunc(element);
     setAttribute(
       CookieConsent.DATA_ATTRIBUTE_OPEN_DURATION,

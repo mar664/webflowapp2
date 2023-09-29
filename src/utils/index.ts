@@ -115,7 +115,6 @@ export function componentsCompatible(
   { isNumberIncrementer, isModal, isCookieConsent }: Record<string, boolean>,
   element: CompatibleElement,
 ) {
-  console.log("compatible element", element);
   // clone initial object
   const compatible = { ...INIT_COMPATIBLE_COMPONENTS };
 

@@ -59,7 +59,7 @@ export class NumberIncrementer extends ElementModel {
     const setAttribute = setAttributeFunc(element);
 
     const parsedOptions = NumberIncrementerOptions.parse(options);
-    console.log(parsedOptions);
+
     setAttribute(
       NumberIncrementer.DATA_ATTRIBUTE_INCREMENT_START,
       parsedOptions.incrementStart.toString(),
