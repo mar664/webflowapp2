@@ -13,7 +13,9 @@ import {
 import React, { useEffect, useState } from "react";
 import {
   useIsSelectingElement,
+  useSelectedElement,
   useSetIsSelectingElement,
+  useSetSelectedElement,
 } from "../../contexts/AppContext";
 import { ModalCompatibleElement } from "../../elements/ModalCompatibleElement";
 import { CompatibleElement } from "../../elements/CompatibleElement";
@@ -46,24 +48,17 @@ function ElementTriggerElement({
   const [canConfirmSelection, setCanConfirmSelection] =
     useState<boolean>(false);
 
+  const { selectedElement } = useSelectedElement();
+  const setGlobalSelectedElement = useSetSelectedElement();
+
   useEffect(() => {
     // listens for change in element when selecting the original modal element again
     if (isSelectingElement && !selectionFinished) {
-      const selectedElementCallback = (element: AnyElement | null) => {
-        setCanConfirmSelection(!!(element && element.id !== modalElement.id));
-      };
-
-      const unsubscribeSelectedElement = webflow.subscribe(
-        "selectedelement",
-        selectedElementCallback,
+      setCanConfirmSelection(
+        !!(selectedElement && selectedElement.id !== modalElement.id),
       );
-
-      return () => {
-        console.log("unloaded");
-        unsubscribeSelectedElement();
-      };
     }
-  }, [isSelectingElement, selectionFinished]);
+  }, [selectedElement, isSelectingElement, selectionFinished]);
 
   const selectElement = async () => {
     setIsSelectingElement(true);
@@ -87,6 +82,7 @@ function ElementTriggerElement({
     await selectedElement?.save();
     setSelectionFinished(true);
     modal.onClose();
+    setGlobalSelectedElement(modalElement.element);
     setIsSelectingElement(false);
     setSelectionFinished(false);
   };

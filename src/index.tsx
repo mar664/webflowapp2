@@ -5,8 +5,9 @@ import {
   createHashRouter,
   RouterProvider,
   useRouteError,
+  LoaderFunction,
 } from "react-router-dom";
-import App from "./App";
+import App from "./routes/App";
 import NumberIncrementerForm, {
   loader as numberIncrementerLoader,
 } from "./routes/NumberIncrementerForm";
@@ -14,19 +15,15 @@ import { AppContextProvider } from "./contexts/AppContext";
 // 1. import `ChakraProvider` component
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 import ModalForm, { loader as modalLoader } from "./routes/ModalForm";
-import NewModalForm, { loader as newModalLoader } from "./routes/NewModalForm";
 import { Root } from "./routes/Root";
-import NewCookieConsentForm, {
-  loader as newCookieConsentLoader,
-} from "./routes/NewCookieConsentForm";
+import NewCookieConsentForm from "./routes/NewCookieConsentForm";
 import CookieConsentForm, {
   loader as cookieConsentLoader,
 } from "./routes/CookieConsentForm";
 import { Paths } from "./paths";
-import NewNumberIncrementerForm, {
-  loader as newNumberIncrementerLoader,
-} from "./routes/NewNumberIncrementerForm";
+import NewNumberIncrementerForm from "./routes/NewNumberIncrementerForm";
 import theme from "./theme";
+import NewModalForm from "./routes/NewModalForm";
 
 const _theme = extendTheme(theme);
 
@@ -47,34 +44,35 @@ const router = createHashRouter([
         element: <App />,
       },
       {
+        path: Paths.appBackState,
+        element: <App />,
+      },
+      {
         path: Paths.newNumberIncrementerForm,
         element: <NewNumberIncrementerForm />,
-        loader: newNumberIncrementerLoader,
       },
       {
         path: Paths.numberIncrementerForm,
         element: <NumberIncrementerForm />,
-        loader: numberIncrementerLoader,
+        loader: numberIncrementerLoader as unknown as LoaderFunction,
       },
       {
         path: Paths.newModalForm,
         element: <NewModalForm />,
-        loader: newModalLoader,
       },
       {
         path: Paths.modalForm,
         element: <ModalForm />,
-        loader: modalLoader,
+        loader: modalLoader as unknown as LoaderFunction,
       },
       {
         path: Paths.newCookieConsentForm,
         element: <NewCookieConsentForm />,
-        loader: newCookieConsentLoader,
       },
       {
         path: Paths.cookieConsentForm,
         element: <CookieConsentForm />,
-        loader: cookieConsentLoader,
+        loader: cookieConsentLoader as unknown as LoaderFunction,
       },
     ],
   },

@@ -1,4 +1,7 @@
 import { CompatibleElement } from "../elements/CompatibleElement";
+import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
+import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
+import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
 import { ElementModel } from "../models/ElementModel";
 import {
   TimeUnits,
@@ -10,6 +13,8 @@ import {
   seconds,
   years,
 } from "../types";
+import { INIT_COMPATIBLE_COMPONENTS } from "../constants";
+import { LoaderFunction, LoaderFunctionArgs } from "react-router-dom";
 
 export function removeChars(str: string) {
   return str
@@ -104,4 +109,70 @@ export function timeUnitToNumberValue(val: string | undefined) {
     }
   }
   return undefined;
+}
+
+export function componentsCompatible(
+  { isNumberIncrementer, isModal, isCookieConsent }: Record<string, boolean>,
+  element: CompatibleElement,
+) {
+  console.log("compatible element", element);
+  // clone initial object
+  const compatible = { ...INIT_COMPATIBLE_COMPONENTS };
+
+  compatible.numberIncrementer = {
+    isAlready: isNumberIncrementer,
+    isApplicable:
+      isModal || isCookieConsent
+        ? false
+        : NumberIncrementerCompatibleElement.isCompatible(element), // an element can only be of one type
+  };
+
+  compatible.modal = {
+    isAlready: isModal,
+    isApplicable:
+      isNumberIncrementer || isCookieConsent
+        ? false
+        : ModalCompatibleElement.isCompatible(element), // an element can only be of one type
+  };
+
+  compatible.cookieConsent = {
+    isAlready: isCookieConsent,
+    isApplicable:
+      isNumberIncrementer || isModal
+        ? false
+        : CookieConsentCompatibleElement.isCompatible(element), // an element can only be of one type
+  };
+
+  console.log(compatible);
+
+  return compatible;
+}
+
+interface LoaderArg {
+  params: { elementId: string; isNew: string };
+}
+
+export function loaderFactory(ElementType: typeof CompatibleElement) {
+  return async ({ params: { elementId, isNew } }: LoaderArg) => {
+    let element = null;
+    if (isNew === "true") {
+      element = (await webflow.getAllElements()).find(
+        (e) => e.id === elementId,
+      );
+    } else {
+      element = await webflow.getSelectedElement();
+    }
+
+    if (!element) {
+      throw new Error(`${ElementType.name} element not found`);
+    }
+    if (element.id !== elementId) {
+      throw new Error("Incorrect element");
+    }
+    const compatibleElement = ElementType.fromElement(element);
+    if (compatibleElement !== null) {
+      return { element: compatibleElement };
+    }
+    throw new Error(`Compatible ${ElementType.name} element not found`);
+  };
 }

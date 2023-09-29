@@ -1,36 +1,34 @@
 import React, { useEffect } from "react";
-import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import { useIsPageLoading } from "../contexts/AppContext";
 import { uuidv4 } from "../utils";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
 import { NumberIncrementer } from "../models/NumberIncrementer";
 import { Paths } from "../paths";
-
-export async function loader() {
-  const selectedElement =
-    await NumberIncrementerCompatibleElement.getSelected();
-  return { selectedElement };
-}
-
-type loaderData = Awaited<ReturnType<typeof loader>>;
+import { useSelectedElementOfType } from "../hooks/selectedElement";
 
 function NewNumberIncrementerForm() {
   const navigate = useNavigate();
   const { setIsPageLoading } = useIsPageLoading();
-  const { selectedElement } = useLoaderData() as loaderData;
+
+  const selectedNumberIncrementerElement = useSelectedElementOfType(
+    NumberIncrementerCompatibleElement,
+  ) as NumberIncrementerCompatibleElement;
 
   useEffect(() => {
     setIsPageLoading(true);
     (async () => {
-      if (selectedElement) {
+      if (selectedNumberIncrementerElement) {
         const id = uuidv4();
 
         const numberIncrementElement = webflow.createDOM("div");
         NumberIncrementer.apply(numberIncrementElement);
-        selectedElement.setChildren(
-          selectedElement.getChildren().concat(numberIncrementElement),
+        selectedNumberIncrementerElement.setChildren(
+          selectedNumberIncrementerElement
+            .getChildren()
+            .concat(numberIncrementElement),
         );
-        await selectedElement.save();
+        await selectedNumberIncrementerElement.save();
         console.log(
           "created number incrementer with id",
           numberIncrementElement.id,
@@ -38,6 +36,7 @@ function NewNumberIncrementerForm() {
         navigate(
           generatePath(Paths.numberIncrementerForm, {
             elementId: numberIncrementElement.id,
+            isNew: "true",
           }),
         );
         setTimeout(() => setIsPageLoading(false), 500);

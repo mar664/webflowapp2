@@ -10,9 +10,9 @@ import {
 } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
+import { generatePath, useNavigate } from "react-router-dom";
 import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
-import { useIsPageLoading } from "../contexts/AppContext";
+import { useIsPageLoading, useSelectedElement } from "../contexts/AppContext";
 import {
   CookieConsent,
   NewCookieConsentOptions,
@@ -20,19 +20,15 @@ import {
 import { uuidv4 } from "../utils";
 import { Paths } from "../paths";
 import Header from "../components/Header";
-
-export async function loader() {
-  const selectedElement = await CookieConsentCompatibleElement.getSelected();
-  return { selectedElement };
-}
-
-type loaderData = Awaited<ReturnType<typeof loader>>;
+import { useSelectedElementOfType } from "../hooks/selectedElement";
 
 function NewCookieConsentForm() {
   const navigate = useNavigate();
   const { setIsPageLoading } = useIsPageLoading();
 
-  const { selectedElement } = useLoaderData() as loaderData;
+  const selectedCookieConsentElement = useSelectedElementOfType(
+    CookieConsentCompatibleElement,
+  ) as CookieConsentCompatibleElement;
 
   const {
     handleSubmit,
@@ -50,7 +46,7 @@ function NewCookieConsentForm() {
     console.log("Submitting", data);
     const classPrefix = data.classPrefix;
 
-    if (selectedElement) {
+    if (selectedCookieConsentElement) {
       const id = uuidv4();
       const cookieConsentElement = webflow.createDOM("div");
 
@@ -245,11 +241,11 @@ function NewCookieConsentForm() {
       // change from data-w-id to data-cookie-consent-id, fix so that changes in editor
       positionStyleElement.setTextContent(
         `
-        *[data-w-id='${selectedElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Top']{
+        *[data-w-id='${cookieConsentElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Top']{
           top: 0;
           left: 0;
         }
-        *[data-w-id='${selectedElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Bottom']{
+        *[data-w-id='${cookieConsentElement.id}'][${CookieConsent.DATA_ATTRIBUTE_POSITION}='Bottom']{
           bottom: 0;
           left: 0;
         }`,
@@ -260,10 +256,10 @@ function NewCookieConsentForm() {
 
       styleElement.setTextContent(
         `
-        html.wf-design-mode *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${selectedElement.id}']{
+        html.wf-design-mode *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${cookieConsentElement.id}']{
           display: ${CookieConsent.DISPLAY_TYPE};
         }
-        html:not(.wf-design-mode) *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${selectedElement.id}']{
+        html:not(.wf-design-mode) *[${CookieConsent.DATA_ATTRIBUTE_BASE}='${cookieConsentElement.id}']{
           display: none;
         }`,
       );
@@ -273,14 +269,15 @@ function NewCookieConsentForm() {
         contentElement,
       ]);
 
-      selectedElement.setChildren(
-        selectedElement.getChildren().concat(cookieConsentElement),
+      selectedCookieConsentElement.setChildren(
+        selectedCookieConsentElement.getChildren().concat(cookieConsentElement),
       );
-      await selectedElement.save();
+      await selectedCookieConsentElement.save();
 
       navigate(
         generatePath(Paths.cookieConsentForm, {
           elementId: cookieConsentElement.id,
+          isNew: "true",
         }),
         { replace: true },
       );

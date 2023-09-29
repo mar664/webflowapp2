@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import {
   useIsSelectingElement,
+  useSelectedElement,
   useSetPrevElementId,
 } from "../contexts/AppContext";
 import {
@@ -58,80 +59,41 @@ import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { timeUnitToNumberValue } from "../utils";
+import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
 
-interface LoaderArgs extends LoaderFunctionArgs {
-  params: Params<ParamParseKey<typeof Paths.modalForm>>;
-}
-
-// loads data before switching route and sets current element
-// as a modal and applies modal to it if it doesn't already exist
-export async function loader({ params: { elementId } }: LoaderArgs) {
-  const modalElement = (await webflow.getAllElements()).find(
-    (e) => e.id === elementId,
-  );
-  if (!modalElement) {
-    throw new Error("Modal element not found");
-  }
-  const compatibleModalElement =
-    ModalCompatibleElement.fromElement(modalElement);
-  if (compatibleModalElement !== null) {
-    return { modalElement: compatibleModalElement };
-  }
-  throw new Error("Compatible modal element not found");
-}
+export const loader = loaderFactory(ModalCompatibleElement);
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function ModalForm() {
-  const setPrevElement = useSetPrevElementId();
   const navigate = useNavigate();
 
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { modalElement } = useLoaderData() as loaderData;
+  const { element: modalElement } = useLoaderData() as loaderData as {
+    element: ModalCompatibleElement;
+  };
 
   const visibility = useElementVisibility(modalElement, Modal);
   const removal = useElementRemoval(modalElement, Modal);
 
   const isSelectingElement = useIsSelectingElement();
 
+  const { selectedElement } = useSelectedElement();
+
   useEffect(() => {
-    console.log("loaded modal");
-    let firstRunElement: string | null = null;
-    const selectedElementCallback = (element: AnyElement | null) => {
-      // skip initial run after isSelecting changes
-      if (element) {
-        if (firstRunElement === null) {
-          firstRunElement = element.id;
-          return;
-        }
-        // if another element is clicked redirect to root unless an element is being selected to choose an element value
-        if (
-          !isSelectingElement &&
-          modalElement &&
-          element.id !== modalElement.id &&
-          element.id !== firstRunElement
-        ) {
-          setPrevElement(null);
-
-          navigate(Paths.app, { replace: true });
-        }
-      }
-    };
-
-    const unsubscribeSelectedElement = webflow.subscribe(
-      "selectedelement",
-      selectedElementCallback,
-    );
-
-    return () => {
-      console.log("unloaded");
-      unsubscribeSelectedElement();
-    };
-  }, [isSelectingElement]);
+    // if another element is clicked redirect to root unless an element is being selected to choose an element value
+    if (
+      !isSelectingElement &&
+      modalElement &&
+      selectedElement &&
+      selectedElement.id !== modalElement.id
+    ) {
+      navigate(Paths.app, { replace: true });
+    }
+  }, [isSelectingElement, selectedElement]);
 
   const fetchDefaultValues = async () => {
     const allElements = await webflow.getAllElements();

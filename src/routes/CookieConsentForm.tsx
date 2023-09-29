@@ -55,27 +55,10 @@ import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { timeUnitToNumberValue } from "../utils";
+import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
 
-interface LoaderArgs extends LoaderFunctionArgs {
-  params: Params<ParamParseKey<typeof Paths.cookieConsentForm>>;
-}
-
-export async function loader({ params: { elementId } }: LoaderArgs) {
-  const cookieConsentElement = (await webflow.getAllElements()).find(
-    (e) => e.id === elementId,
-  );
-  if (!cookieConsentElement) {
-    throw new Error("Cookie consent element not found");
-  }
-  const compatibleCookieConsentElement =
-    CookieConsentCompatibleElement.fromElement(cookieConsentElement);
-  if (compatibleCookieConsentElement !== null) {
-    return { cookieConsentElement: compatibleCookieConsentElement };
-  }
-  throw new Error("Compatible cookie consent element not found");
-}
+export const loader = loaderFactory(CookieConsentCompatibleElement);
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
@@ -86,7 +69,9 @@ function CookieConsentForm() {
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const { cookieConsentElement } = useLoaderData() as loaderData;
+  const { element: cookieConsentElement } = useLoaderData() as loaderData as {
+    element: CookieConsentCompatibleElement;
+  };
   const visibility = useElementVisibility(cookieConsentElement, CookieConsent);
   const removal = useElementRemoval(cookieConsentElement, CookieConsent);
 

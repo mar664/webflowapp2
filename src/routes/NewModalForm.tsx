@@ -11,26 +11,23 @@ import {
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Modal, NewModalOptions } from "../models/Modal";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { generatePath, useLoaderData, useNavigate } from "react-router-dom";
+import { generatePath, useNavigate, useParams } from "react-router-dom";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
-import { useIsPageLoading } from "../contexts/AppContext";
+import { useIsPageLoading, useSelectedElement } from "../contexts/AppContext";
 import { uuidv4 } from "../utils";
 import { Paths } from "../paths";
 import Header from "../components/Header";
-
-export async function loader() {
-  const selectedElement = await ModalCompatibleElement.getSelected();
-  return { selectedElement };
-}
-
-type loaderData = Awaited<ReturnType<typeof loader>>;
+import { useSelectedElementOfType } from "../hooks/selectedElement";
 
 function NewModalForm() {
   const navigate = useNavigate();
-  const { setIsPageLoading } = useIsPageLoading();
-  const { selectedElement } = useLoaderData() as loaderData;
 
-  console.log(NewModalOptions.parse({}));
+  const { setIsPageLoading } = useIsPageLoading();
+
+  const selectedModalElement = useSelectedElementOfType(
+    ModalCompatibleElement,
+  ) as ModalCompatibleElement;
+
   const {
     handleSubmit,
     setValue,
@@ -47,7 +44,7 @@ function NewModalForm() {
     console.log("Submitting", data);
     const classPrefix = data.classPrefix;
 
-    if (selectedElement) {
+    if (selectedModalElement) {
       const id = uuidv4();
       const modalElement = webflow.createDOM("div");
 
@@ -247,14 +244,15 @@ function NewModalForm() {
         contentElement,
       ]);
 
-      selectedElement.setChildren(
-        selectedElement.getChildren().concat(modalElement),
+      selectedModalElement.setChildren(
+        selectedModalElement.getChildren().concat(modalElement),
       );
-      await selectedElement.save();
+      await selectedModalElement.save();
 
       navigate(
         generatePath(Paths.modalForm, {
           elementId: modalElement.id,
+          isNew: "true",
         }),
         { replace: true },
       );

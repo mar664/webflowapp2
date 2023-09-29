@@ -47,29 +47,10 @@ import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { timeUnitToNumberValue } from "../utils";
+import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
 
-interface LoaderArgs extends LoaderFunctionArgs {
-  params: Params<ParamParseKey<typeof Paths.numberIncrementerForm>>;
-}
-
-// loads data before switching route and sets current element
-// as a modal and applies modal to it if it doesn't already exist
-export async function loader({ params: { elementId } }: LoaderArgs) {
-  const numberIncrementerElement = (await webflow.getAllElements()).find(
-    (e) => e.id === elementId,
-  );
-  if (!numberIncrementerElement) {
-    throw new Error("Number incrementer element not found");
-  }
-  const compatibleNumberIncrementerElement =
-    NumberIncrementerCompatibleElement.fromElement(numberIncrementerElement);
-  if (compatibleNumberIncrementerElement !== null) {
-    return { numberIncrementerElement: compatibleNumberIncrementerElement };
-  }
-  throw new Error("Compatible number incrementer element element not found");
-}
+export const loader = loaderFactory(NumberIncrementerCompatibleElement);
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
@@ -81,7 +62,10 @@ function NumberIncrementerForm() {
 
   const params = useParams();
 
-  const { numberIncrementerElement } = useLoaderData() as loaderData;
+  const { element: numberIncrementerElement } =
+    useLoaderData() as loaderData as {
+      element: NumberIncrementerCompatibleElement;
+    };
   const removal = useElementRemoval(
     numberIncrementerElement,
     NumberIncrementer,

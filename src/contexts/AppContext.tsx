@@ -1,5 +1,6 @@
 import { useState, createContext, useContext } from "react";
 import { IStyleItem, useStyles as useStylesHook } from "../hooks/styles";
+import { useSelectedElement as useSelectedElementHook } from "../hooks/selectedElement";
 
 interface IAppContext {
   prevElementId: string | null;
@@ -23,6 +24,12 @@ interface IAppContext {
     isPageLoading: boolean;
     setIsPageLoading: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  useSelectedElement: {
+    selectedElement: AnyElement | null | undefined;
+  };
+  useSetSelectedElement: React.Dispatch<
+    React.SetStateAction<AnyElement | null | undefined>
+  >;
 }
 
 export interface IUseAppContext {
@@ -49,6 +56,12 @@ export interface IUseAppContext {
     isPageLoading: boolean;
     setIsPageLoading: React.Dispatch<React.SetStateAction<boolean>>;
   };
+  useSelectedElement: {
+    selectedElement: AnyElement | null | undefined;
+  };
+  useSetSelectedElement: React.Dispatch<
+    React.SetStateAction<AnyElement | null | undefined>
+  >;
 }
 
 interface AppContextProviderProps {
@@ -58,6 +71,7 @@ interface AppContextProviderProps {
 const AppContext = createContext<IAppContext>({} as IAppContext);
 
 export const AppContextProvider = (props: AppContextProviderProps) => {
+  const { selectedElement, setSelectedElement } = useSelectedElementHook();
   const [prevElementId, setPrevElementId] = useState<string | null>(null);
   const [isSelectingElement, setIsSelectingElement] = useState<boolean>(false);
   const { styles, setStyles, isLoading, setIsLoading, update } =
@@ -77,6 +91,10 @@ export const AppContextProvider = (props: AppContextProviderProps) => {
         useStyles: { styles, setStyles, isLoading, setIsLoading, update },
         useIsElementHidden: { isElementHidden, setIsElementHidden },
         useIsPageLoading: { isPageLoading, setIsPageLoading },
+        useSelectedElement: {
+          selectedElement,
+        },
+        useSetSelectedElement: setSelectedElement,
       }}
     >
       {props.children}
@@ -117,6 +135,16 @@ export const useIsElementHidden = () => {
 export const useIsPageLoading = () => {
   const context = useContext(AppContext);
   return context.useIsPageLoading;
+};
+
+export const useSelectedElement = () => {
+  const context = useContext(AppContext);
+  return context.useSelectedElement;
+};
+
+export const useSetSelectedElement = () => {
+  const context = useContext(AppContext);
+  return context.useSetSelectedElement;
 };
 
 export default AppContext;

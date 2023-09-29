@@ -1,30 +1,49 @@
-import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Link } from "@chakra-ui/react";
 import { type RemoveHandler } from "../types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { EditIcon } from "@chakra-ui/icons";
+import { useSelectedElement } from "../contexts/AppContext";
+import { useNavigate, generatePath } from "react-router-dom";
 
 interface Props {
   elementType: string;
-  newHandler: () => void;
+  newPath: string;
+  existingPath: string;
   icon: any;
   index: number;
   disabled: boolean;
+  editable: boolean;
 }
 
 function ComponentSelection({
   elementType,
-  newHandler,
+  newPath,
+  existingPath,
   icon,
   index,
   disabled,
+  editable,
 }: Props) {
+  const navigate = useNavigate();
   const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
   const onEnterComponent = () => setIsHoveredOrFocused(true);
   const onLeaveComponent = () => setIsHoveredOrFocused(false);
+  const { selectedElement } = useSelectedElement();
+
+  const clickHandler = (path: string) => {
+    navigate(
+      generatePath(path, {
+        elementId: selectedElement?.id,
+        isNew: "false",
+      }),
+      { replace: true },
+    );
+  };
 
   return (
     <Link
-    display="flex"
+      display="flex"
       onFocus={onEnterComponent}
       onMouseEnter={onEnterComponent}
       onBlur={onLeaveComponent}
@@ -32,7 +51,13 @@ function ComponentSelection({
       aria-disabled={disabled}
       position={"relative"}
       flexDir={"column"}
-      onClick={newHandler}
+      onClick={
+        !disabled && selectedElement
+          ? () => {
+              editable ? clickHandler(existingPath) : clickHandler(newPath);
+            }
+          : undefined
+      }
       flexBasis={"33.3333%"}
       alignItems={"center"}
       flexGrow={0}
@@ -54,6 +79,14 @@ function ComponentSelection({
         cursor: disabled ? "not-allowed" : "pointer",
       }}
     >
+      <Icon
+        as={EditIcon}
+        display={editable ? "block" : "none"}
+        position={"absolute"}
+        right={"0.25rem"}
+        left={"0.25rem"}
+        aria-label="Edit icon"
+      />
       <Button
         display={isHoveredOrFocused ? "block" : "none"}
         position={"absolute"}

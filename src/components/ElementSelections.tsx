@@ -12,26 +12,31 @@ function ElementSelections({ elements }: Props) {
   return (
     <Flex flexDir={"row"} wrap={"wrap"} alignItems={"stretch"}>
       {Object.entries(elements).map(([key, value], index) => {
+        const disabled = !value.isApplicable && !value.isAlready;
+        const editable = value.isAlready;
         switch (key) {
           case "numberIncrementer":
             return (
               <NumberIncrementerSelection
                 index={index}
-                disabled={!(value.isApplicable && !value.isAlready)}
+                disabled={disabled}
+                editable={editable}
               />
             );
           case "modal":
             return (
               <ModalSelection
                 index={index}
-                disabled={!(value.isApplicable && !value.isAlready)}
+                disabled={disabled}
+                editable={editable}
               />
             );
           case "cookieConsent":
             return (
               <CookieConsentSelection
                 index={index}
-                disabled={!(value.isApplicable && !value.isAlready)}
+                disabled={disabled}
+                editable={editable}
               />
             );
           default:

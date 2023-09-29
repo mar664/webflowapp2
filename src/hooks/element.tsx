@@ -6,6 +6,7 @@ import {
   useIsElementHidden,
   useIsPageLoading,
   useSetPrevElementId,
+  useSetSelectedElement,
 } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
 import { RemoveHandler, VisibilityHandler } from "../types";
@@ -120,7 +121,7 @@ export const useElementRemoval = (
   currentElement: CompatibleElement | null,
   ElementType: typeof ElementModel,
 ) => {
-  const setPrevElement = useSetPrevElementId();
+  const setSelectedElement = useSetSelectedElement();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -129,10 +130,8 @@ export const useElementRemoval = (
   }
 
   const remove: RemoveHandler = async (removeElement = false) => {
-    // reset the prev element value so that selected element callback fires
-    setPrevElement(null);
     await ElementType.remove(currentElement, removeElement);
-
+    setSelectedElement(await webflow.getSelectedElement());
     toast({
       title: `${ElementType.NAME} removed`,
       status: "success",

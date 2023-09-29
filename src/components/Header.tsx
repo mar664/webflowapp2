@@ -1,11 +1,12 @@
 import { Heading, IconButton, Stack } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, generatePath } from "react-router-dom";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { RemoveButton } from "./RemoveButton";
 import type { RemoveHandler } from "../types";
 import { Paths } from "../paths";
+import { useSetSelectedElement } from "../contexts/AppContext";
 
 interface Props {
   heading: string;
@@ -14,6 +15,7 @@ interface Props {
 }
 const Header = ({ heading, visibilityAction, removeAction }: Props) => {
   const navigate = useNavigate();
+  const setSelectedElement = useSetSelectedElement();
 
   return (
     <Stack
@@ -56,8 +58,11 @@ const Header = ({ heading, visibilityAction, removeAction }: Props) => {
         ) : null}
         <IconButton
           variant={"headerIcon"}
-          onClick={(event) => {
-            navigate(Paths.app, { replace: true });
+          onClick={async (event) => {
+            setSelectedElement(await webflow.getSelectedElement());
+            navigate(generatePath(Paths.appBackState, { isFromBack: "true" }), {
+              replace: true,
+            });
           }}
           icon={<FontAwesomeIcon icon={faArrowLeft} />}
           size={"xs"}
