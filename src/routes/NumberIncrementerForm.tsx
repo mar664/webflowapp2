@@ -8,7 +8,12 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { useIsPageLoading, useSetPrevElementId } from "../contexts/AppContext";
+import {
+  useIsPageLoading,
+  useIsSelectingElement,
+  useSelectedElement,
+  useSetPrevElementId,
+} from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
@@ -49,6 +54,7 @@ import AccordionPanel from "../components/accordion/AccordionPanel";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
+import { useDidMountEffect } from "../hooks/utils";
 
 export const loader = loaderFactory(NumberIncrementerCompatibleElement);
 
@@ -60,7 +66,6 @@ function NumberIncrementerForm() {
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
-  const setPrevElement = useSetPrevElementId();
 
   const params = useParams();
 
@@ -73,39 +78,22 @@ function NumberIncrementerForm() {
     NumberIncrementer,
   );
 
-  useEffect(() => {
-    let firstRunElement: string | null = null;
-    console.log("loaded incrementer");
-    const selectedElementCallback = (element: AnyElement | null) => {
-      if (element) {
-        // since webflow doesn't allow selecting element the element in the first run
-        // may not be that of the number incrementer element
-        if (firstRunElement === null) {
-          firstRunElement = element.id;
-          return;
-        }
-        // if another element is clicked redirect to root
-        if (
-          numberIncrementerElement &&
-          element.id !== numberIncrementerElement.id &&
-          element.id !== firstRunElement
-        ) {
-          setPrevElement(null);
-          navigate(Paths.root, { replace: true });
-        }
-      }
-    };
+  const isSelectingElement = useIsSelectingElement();
 
-    const unsubscribeSelectedElement = webflow.subscribe(
-      "selectedelement",
-      selectedElementCallback,
-    );
+  const { selectedElement } = useSelectedElement();
 
-    return () => {
-      console.log("unloaded");
-      unsubscribeSelectedElement();
-    };
-  }, []);
+  useDidMountEffect(() => {
+    // if another element is clicked redirect to root unless an element is being selected to choose an element value
+    if (
+      !isSelectingElement &&
+      numberIncrementerElement &&
+      selectedElement &&
+      selectedElement.id !== numberIncrementerElement.id
+    ) {
+      console.log("redirecting");
+      navigate(Paths.app, { replace: true });
+    }
+  }, [isSelectingElement, selectedElement]);
 
   const fetchDefaultValues = async () => {
     const allElements = await webflow.getAllElements();

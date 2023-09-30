@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   LoaderFunctionArgs,
   ParamParseKey,
@@ -62,6 +62,7 @@ import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
+import { useDidMountEffect } from "../hooks/utils";
 
 export const loader = loaderFactory(ModalCompatibleElement);
 
@@ -85,7 +86,7 @@ function ModalForm() {
 
   const { selectedElement } = useSelectedElement();
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     // if another element is clicked redirect to root unless an element is being selected to choose an element value
     if (
       !isSelectingElement &&
@@ -93,6 +94,7 @@ function ModalForm() {
       selectedElement &&
       selectedElement.id !== modalElement.id
     ) {
+      console.log("redirecting");
       navigate(Paths.app, { replace: true });
     }
   }, [isSelectingElement, selectedElement]);

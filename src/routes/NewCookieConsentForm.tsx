@@ -289,7 +289,7 @@ function NewCookieConsentForm() {
 
   return (
     <>
-      <Header heading="New Cookie Consent" />
+      <Header heading="New Cookie Consent" creationPage={true} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl

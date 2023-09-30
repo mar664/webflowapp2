@@ -264,7 +264,7 @@ function NewModalForm() {
 
   return (
     <>
-      <Header heading="New Modal" />
+      <Header heading="New Modal" creationPage={true} />
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl

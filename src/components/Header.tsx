@@ -12,27 +12,40 @@ interface Props {
   heading: string;
   visibilityActions?: VisibilityHandler;
   removeAction?: { remove: RemoveHandler };
+  creationPage?: boolean;
 }
-const Header = ({ heading, visibilityActions, removeAction }: Props) => {
+const Header = ({
+  heading,
+  visibilityActions,
+  removeAction,
+  creationPage = false,
+}: Props) => {
   const navigate = useNavigate();
   const setSelectedElement = useSetSelectedElement();
 
   useEffect(() => {
-    console.log("loading header");
-    if (visibilityActions) {
-      (async () => {
-        await visibilityActions.show();
-      })();
-    }
-    return () => {
-      console.log("unloading header");
-
+    if (!creationPage) {
+      console.log("loading header");
       if (visibilityActions) {
         (async () => {
-          await visibilityActions.hide(true);
+          await visibilityActions.show();
         })();
       }
-    };
+      return () => {
+        console.log("unloading header");
+
+        if (visibilityActions) {
+          (async () => {
+            try {
+              await visibilityActions.hide(true);
+            } catch (ex) {
+              console.log(ex);
+              console.log("Error hiding");
+            }
+          })();
+        }
+      };
+    }
   }, []);
 
   return (
