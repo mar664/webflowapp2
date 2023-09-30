@@ -54,7 +54,12 @@ import AccordionPanel from "../components/accordion/AccordionPanel";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
-import { useDidMountEffect } from "../hooks/utils";
+import {
+  useDidMountEffect,
+  useSelectedElementChangeRedirect,
+} from "../hooks/utils";
+import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
+import { InsertScript } from "../components/InsertScript";
 
 export const loader = loaderFactory(NumberIncrementerCompatibleElement);
 
@@ -63,9 +68,7 @@ type loaderData = Awaited<ReturnType<typeof loader>>;
 function NumberIncrementerForm() {
   const { setIsPageLoading } = useIsPageLoading();
 
-  const [insertScript, setInsertScript] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const navigate = useNavigate();
+  const [scriptInserted, setScriptInserted] = useState(false);
 
   const params = useParams();
 
@@ -73,27 +76,13 @@ function NumberIncrementerForm() {
     useLoaderData() as loaderData as {
       element: NumberIncrementerCompatibleElement;
     };
+
   const removal = useElementRemoval(
     numberIncrementerElement,
     NumberIncrementer,
   );
 
-  const isSelectingElement = useIsSelectingElement();
-
-  const { selectedElement } = useSelectedElement();
-
-  useDidMountEffect(() => {
-    // if another element is clicked redirect to root unless an element is being selected to choose an element value
-    if (
-      !isSelectingElement &&
-      numberIncrementerElement &&
-      selectedElement &&
-      selectedElement.id !== numberIncrementerElement.id
-    ) {
-      console.log("redirecting");
-      navigate(Paths.app, { replace: true });
-    }
-  }, [isSelectingElement, selectedElement]);
+  useSelectedElementChangeRedirect(numberIncrementerElement);
 
   const fetchDefaultValues = async () => {
     const allElements = await webflow.getAllElements();
@@ -104,7 +93,7 @@ function NumberIncrementerForm() {
         t.getAttribute("src") === NumberIncrementer.SOURCE_URL,
     );
 
-    setInsertScript(scriptExisting.length !== 0);
+    setScriptInserted(scriptExisting.length !== 0);
 
     if (numberIncrementerElement && params && params.exists) {
       const parsedElement = NumberIncrementer.parse(numberIncrementerElement);
@@ -140,18 +129,6 @@ function NumberIncrementerForm() {
   useEffect(() => {
     setIsPageLoading(isLoading);
   }, [isLoading]);
-
-  const insertingScript = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setInsertScript(event.target.checked);
-
-    if (event.target.checked) {
-      await NumberIncrementer.insertScriptInBody();
-    } else {
-      await NumberIncrementer.removeScriptFromBody();
-    }
-  };
 
   if (isLoading) return null;
 
@@ -249,51 +226,13 @@ function NumberIncrementerForm() {
                 padding={"8px"}
               >
                 <GridItem w="100%" colSpan={4}>
-                  <FormControl
-                    display="flex"
-                    alignItems="center"
-                    maxWidth={"full"}
-                  >
-                    <FormLabel htmlFor="insert-script">
-                      <Tooltip label="Toggles whether to embed the javascript code on the page">
-                        Insert script in body?
-                      </Tooltip>
-                    </FormLabel>
-                    <Switch
-                      id="insert-script"
-                      onChange={insertingScript}
-                      isChecked={insertScript}
-                    />
-                  </FormControl>
+                  <InsertScript
+                    alreadyInserted={scriptInserted}
+                    ElementType={NumberIncrementer}
+                  />
                 </GridItem>
                 <GridItem w="100%" colSpan={4}>
-                  <FormControl
-                    display="flex"
-                    alignItems="center"
-                    maxWidth={"full"}
-                  >
-                    <FormLabel htmlFor="copy-script">
-                      <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
-                        Copy script to clipboard
-                      </Tooltip>
-                    </FormLabel>
-                    <CopyToClipboard
-                      text={`<script src="${NumberIncrementer.SOURCE_URL}"></script>`}
-                      onCopy={() => {
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 5000);
-                      }}
-                    >
-                      <IconButton
-                        id="copy-script"
-                        aria-label="Copy to clipboard"
-                        size={"sm"}
-                        icon={
-                          <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
-                        }
-                      />
-                    </CopyToClipboard>
-                  </FormControl>
+                  <CopyScriptToClipboard ElementType={NumberIncrementer} />
                 </GridItem>
               </Grid>
             </AccordionPanel>

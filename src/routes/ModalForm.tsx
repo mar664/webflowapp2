@@ -62,18 +62,19 @@ import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
 import { loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
-import { useDidMountEffect } from "../hooks/utils";
+import {
+  useDidMountEffect,
+  useSelectedElementChangeRedirect,
+} from "../hooks/utils";
+import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
+import { InsertScript } from "../components/InsertScript";
 
 export const loader = loaderFactory(ModalCompatibleElement);
 
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function ModalForm() {
-  const navigate = useNavigate();
   const { setIsPageLoading } = useIsPageLoading();
-
-  const [insertScript, setInsertScript] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const { element: modalElement } = useLoaderData() as loaderData as {
     element: ModalCompatibleElement;
@@ -82,22 +83,9 @@ function ModalForm() {
   const visibility = useElementVisibility(modalElement, Modal);
   const removal = useElementRemoval(modalElement, Modal);
 
-  const isSelectingElement = useIsSelectingElement();
+  useSelectedElementChangeRedirect(modalElement);
 
-  const { selectedElement } = useSelectedElement();
-
-  useDidMountEffect(() => {
-    // if another element is clicked redirect to root unless an element is being selected to choose an element value
-    if (
-      !isSelectingElement &&
-      modalElement &&
-      selectedElement &&
-      selectedElement.id !== modalElement.id
-    ) {
-      console.log("redirecting");
-      navigate(Paths.app, { replace: true });
-    }
-  }, [isSelectingElement, selectedElement]);
+  const [scriptInserted, setScriptInserted] = useState(false);
 
   const fetchDefaultValues = async () => {
     const allElements = await webflow.getAllElements();
@@ -108,7 +96,7 @@ function ModalForm() {
         t.getAttribute("src") === Modal.SOURCE_URL,
     );
 
-    setInsertScript(scriptExisting.length !== 0);
+    setScriptInserted(scriptExisting.length !== 0);
 
     if (modalElement) {
       const parsedElement = Modal.parse(modalElement);
@@ -147,18 +135,6 @@ function ModalForm() {
   useEffect(() => {
     setIsPageLoading(isLoading);
   }, [isLoading]);
-
-  const insertingScript = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setInsertScript(event.target.checked);
-
-    if (event.target.checked) {
-      await Modal.insertScriptInBody();
-    } else {
-      await Modal.removeScriptFromBody();
-    }
-  };
 
   if (isLoading) return null;
 
@@ -439,52 +415,13 @@ function ModalForm() {
             <AccordionPanel>
               <Grid gap={"8px"} padding={"8px"}>
                 <GridItem w="100%" colSpan={2}>
-                  <FormControl
-                    display="flex"
-                    alignItems="center"
-                    maxWidth={"full"}
-                  >
-                    <FormLabel htmlFor="insert-script" mb="0">
-                      <Tooltip label="Toggles whether to embed the javascript code on the page">
-                        Insert script in body?
-                      </Tooltip>
-                    </FormLabel>
-                    <Switch
-                      id="insert-script"
-                      onChange={insertingScript}
-                      isChecked={insertScript}
-                    />
-                  </FormControl>
+                  <InsertScript
+                    alreadyInserted={scriptInserted}
+                    ElementType={Modal}
+                  />
                 </GridItem>
                 <GridItem w="100%" colSpan={2}>
-                  <FormControl
-                    display="flex"
-                    alignItems="center"
-                    maxWidth={"full"}
-                  >
-                    <FormLabel htmlFor="copy-script" mb="0">
-                      <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
-                        Copy script to clipboard
-                      </Tooltip>
-                    </FormLabel>
-                    <CopyToClipboard
-                      text={`<script src="${Modal.SOURCE_URL}"></script>`}
-                      onCopy={() => {
-                        setCopied(true);
-                        setTimeout(() => setCopied(false), 5000);
-                      }}
-                    >
-                      <IconButton
-                        id="copy-script"
-                        colorScheme="green"
-                        aria-label="Copy to clipboard"
-                        fontSize="20px"
-                        icon={
-                          <FontAwesomeIcon icon={copied ? faCheck : faCopy} />
-                        }
-                      />
-                    </CopyToClipboard>
-                  </FormControl>
+                  <CopyScriptToClipboard ElementType={Modal} />
                 </GridItem>
               </Grid>
             </AccordionPanel>

@@ -6,6 +6,7 @@ export abstract class ElementModel {
   static DATA_ATTRIBUTE_BASE = "data-base";
   static DATA_ATTRIBUTE_VISIBLE = `${ElementModel.DATA_ATTRIBUTE_BASE}-visible`;
   static DISPLAY_TYPE = "block";
+  static SOURCE_URL: string | undefined = undefined;
 
   static async update(element: CompatibleElement, options: any) {}
 
