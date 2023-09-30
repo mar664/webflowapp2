@@ -1,10 +1,9 @@
-import { type } from "os";
 import { z } from "zod";
 export type VisibilityHandler = {
   toggleVisibility: () => Promise<void>;
   isHidden: boolean;
-  hide: () => Promise<void>;
-  show: () => Promise<void>;
+  hide: (force?: boolean) => Promise<void>;
+  show: (force?: boolean) => Promise<void>;
 };
 
 export type RemoveHandler = (removeElement?: boolean) => Promise<boolean>;

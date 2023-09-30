@@ -8,6 +8,7 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  useIsPageLoading,
   useIsSelectingElement,
   useSelectedElement,
   useSetPrevElementId,
@@ -68,6 +69,7 @@ type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function ModalForm() {
   const navigate = useNavigate();
+  const { setIsPageLoading } = useIsPageLoading();
 
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -140,6 +142,10 @@ function ModalForm() {
     return () => subscription.unsubscribe();
   }, [handleSubmit, watch]);
 
+  useEffect(() => {
+    setIsPageLoading(isLoading);
+  }, [isLoading]);
+
   const insertingScript = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -162,7 +168,7 @@ function ModalForm() {
     <>
       <Header
         heading="Editing Modal"
-        visibilityAction={visibility}
+        visibilityActions={visibility}
         removeAction={removal}
       />
       {/*

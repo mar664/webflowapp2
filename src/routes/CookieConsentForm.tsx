@@ -8,7 +8,9 @@ import {
   useParams,
 } from "react-router-dom";
 import {
+  useIsPageLoading,
   useIsSelectingElement,
+  useSelectedElement,
   useSetPrevElementId,
 } from "../contexts/AppContext";
 import {
@@ -63,8 +65,8 @@ export const loader = loaderFactory(CookieConsentCompatibleElement);
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function CookieConsentForm() {
-  const setPrevElement = useSetPrevElementId();
   const navigate = useNavigate();
+  const { setIsPageLoading } = useIsPageLoading();
 
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -77,38 +79,19 @@ function CookieConsentForm() {
 
   const isSelectingElement = useIsSelectingElement();
 
+  const { selectedElement } = useSelectedElement();
+
   useEffect(() => {
-    console.log("loaded cookie consent");
-    let firstRunElement: string | null = null;
-    const selectedElementCallback = (element: AnyElement | null) => {
-      // skip initial run after isSelecting changes
-      if (element) {
-        if (firstRunElement === null) {
-          firstRunElement = element.id;
-          return;
-        }
-        // if another element is clicked redirect to root unless an element is being selected to choose an element value
-        if (
-          !isSelectingElement &&
-          cookieConsentElement &&
-          element.id !== cookieConsentElement.id &&
-          element.id !== firstRunElement
-        ) {
-          navigate(Paths.app, { replace: true });
-        }
-      }
-    };
-
-    const unsubscribeSelectedElement = webflow.subscribe(
-      "selectedelement",
-      selectedElementCallback,
-    );
-
-    return () => {
-      console.log("unloaded");
-      unsubscribeSelectedElement();
-    };
-  }, [isSelectingElement]);
+    // if another element is clicked redirect to root unless an element is being selected to choose an element value
+    if (
+      !isSelectingElement &&
+      cookieConsentElement &&
+      selectedElement &&
+      selectedElement.id !== cookieConsentElement.id
+    ) {
+      navigate(Paths.app, { replace: true });
+    }
+  }, [isSelectingElement, selectedElement]);
 
   const fetchDefaultValues = async () => {
     const allElements = await webflow.getAllElements();
@@ -155,6 +138,10 @@ function CookieConsentForm() {
     return () => subscription.unsubscribe();
   }, [handleSubmit, watch]);
 
+  useEffect(() => {
+    setIsPageLoading(isLoading);
+  }, [isLoading]);
+
   const insertingScript = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -177,7 +164,7 @@ function CookieConsentForm() {
     <>
       <Header
         heading="Editing Cookie consent"
-        visibilityAction={visibility}
+        visibilityActions={visibility}
         removeAction={removal}
       />
       {/*

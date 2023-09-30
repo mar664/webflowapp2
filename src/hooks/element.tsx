@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback } from "react";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { isElementHidden as isElementHiddenFunc } from "../utils";
 import { useToast } from "@chakra-ui/react";
 import {
   useIsElementHidden,
   useIsPageLoading,
-  useSetPrevElementId,
   useSetSelectedElement,
 } from "../contexts/AppContext";
 import { useNavigate } from "react-router-dom";
@@ -17,84 +16,98 @@ export const useElementVisibility = (
   currentElement: CompatibleElement | null,
   ElementType: typeof ElementModel,
 ): VisibilityHandler | undefined => {
-  const { setIsPageLoading } = useIsPageLoading();
-
-  const _isElementHidden = React.useMemo(
-    () => isElementHiddenFunc(currentElement, ElementType),
-    [currentElement],
-  );
-
   const { isElementHidden, setIsElementHidden } = useIsElementHidden();
 
   useEffect(() => {
-    if (currentElement) {
-      setIsElementHidden({
-        ...isElementHidden,
-        [`${currentElement.id}`]: _isElementHidden,
-      });
+    if (currentElement && !(`${currentElement.id}` in isElementHidden)) {
+      console.log("setting inital is hidden value");
+      setIsElementHidden((prev) => ({
+        ...prev,
+        [`${currentElement.id}`]: isElementHiddenFunc(
+          currentElement,
+          ElementType,
+        ),
+      }));
     }
-  }, [currentElement]);
+  }, []);
+
+  useEffect(() => {
+    console.log(isElementHidden, "isHidden");
+  }, [isElementHidden]);
 
   if (!currentElement) {
-    return;
+    throw Error("HEre");
   }
 
   const styleElement =
     currentElement.element.children && currentElement.element.getChildren()[0];
 
-  const hide = async () => {
-    if (
-      !styleElement ||
-      styleElement.type !== "DOM" ||
-      styleElement.getTag() !== "style"
-    ) {
-      throw new Error("Style element missing");
-    }
-    if (!isElementHidden[`${currentElement.id}`]) {
-      styleElement.setTextContent(
-        `*[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement.id}']{
+  const hide = useCallback(
+    async (force = false) => {
+      console.log("attempting to hide");
+      if (
+        !styleElement ||
+        styleElement.type !== "DOM" ||
+        styleElement.getTag() !== "style"
+      ) {
+        throw new Error("Style element missing");
+      }
+      if (!isElementHidden[`${currentElement.id}`] || force) {
+        styleElement.setTextContent(
+          `*[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement.id}']{
               display: none;
             }`,
-      );
-      styleElement.removeAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE);
+        );
+        styleElement.removeAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE);
 
-      await styleElement.save();
+        await styleElement.save();
+        console.log(`Setting ${currentElement.id} hidden`);
+        setIsElementHidden((prev) => ({
+          ...prev,
+          [`${currentElement.id}`]: true,
+        }));
+      } else {
+        console.log("Can't hide already hidden", isElementHidden);
+      }
+    },
+    [isElementHidden],
+  );
 
-      setIsElementHidden({
-        ...isElementHidden,
-        [`${currentElement.id}`]: true,
-      });
-    }
-  };
-
-  const show = async () => {
-    if (
-      !styleElement ||
-      styleElement.type !== "DOM" ||
-      styleElement.getTag() !== "style"
-    ) {
-      throw new Error("Style element missing");
-    }
-    if (isElementHidden[`${currentElement.id}`]) {
-      styleElement.setTextContent(
-        `
+  const show = useCallback(
+    async (force = false) => {
+      if (
+        !styleElement ||
+        styleElement.type !== "DOM" ||
+        styleElement.getTag() !== "style"
+      ) {
+        throw new Error("Style element missing");
+      }
+      if (isElementHidden[`${currentElement.id}`] || force) {
+        styleElement.setTextContent(
+          `
           html.wf-design-mode *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: ${ElementType.DISPLAY_TYPE};
           }
           html:not(.wf-design-mode) *[${ElementType.DATA_ATTRIBUTE_BASE}='${currentElement?.id}']{
             display: none;
           }`,
-      );
-      styleElement.setAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE, "true");
-      await styleElement.save();
-      setIsElementHidden({
-        ...isElementHidden,
-        [`${currentElement.id}`]: false,
-      });
-    }
-  };
+        );
+        styleElement.setAttribute(ElementType.DATA_ATTRIBUTE_VISIBLE, "true");
+        await styleElement.save();
+        console.log(`Setting ${currentElement.id} visible`);
 
-  const toggleVisibility = async () => {
+        setIsElementHidden((prev) => ({
+          ...prev,
+          [`${currentElement.id}`]: false,
+        }));
+      } else {
+        console.log("Can't show already visible");
+      }
+    },
+    [isElementHidden],
+  );
+
+  const toggleVisibility = useCallback(async () => {
     if (
       !styleElement ||
       styleElement.type !== "DOM" ||
@@ -107,7 +120,7 @@ export const useElementVisibility = (
     } else {
       await hide();
     }
-  };
+  }, [isElementHidden]);
 
   return {
     toggleVisibility,

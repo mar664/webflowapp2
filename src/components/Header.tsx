@@ -4,18 +4,36 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, generatePath } from "react-router-dom";
 import { faEye, faEyeSlash } from "@fortawesome/free-regular-svg-icons";
 import { RemoveButton } from "./RemoveButton";
-import type { RemoveHandler } from "../types";
+import type { RemoveHandler, VisibilityHandler } from "../types";
 import { Paths } from "../paths";
 import { useSetSelectedElement } from "../contexts/AppContext";
-
+import { useEffect } from "react";
 interface Props {
   heading: string;
-  visibilityAction?: { isHidden: boolean; toggleVisibility: () => void };
+  visibilityActions?: VisibilityHandler;
   removeAction?: { remove: RemoveHandler };
 }
-const Header = ({ heading, visibilityAction, removeAction }: Props) => {
+const Header = ({ heading, visibilityActions, removeAction }: Props) => {
   const navigate = useNavigate();
   const setSelectedElement = useSetSelectedElement();
+
+  useEffect(() => {
+    console.log("loading header");
+    if (visibilityActions) {
+      (async () => {
+        await visibilityActions.show();
+      })();
+    }
+    return () => {
+      console.log("unloading header");
+
+      if (visibilityActions) {
+        (async () => {
+          await visibilityActions.hide(true);
+        })();
+      }
+    };
+  }, []);
 
   return (
     <Stack
@@ -33,13 +51,13 @@ const Header = ({ heading, visibilityAction, removeAction }: Props) => {
         {heading}
       </Heading>
       <Stack flexDirection={"row"}>
-        {visibilityAction ? (
+        {visibilityActions ? (
           <IconButton
             variant={"headerIcon"}
-            onClick={visibilityAction.toggleVisibility}
+            onClick={visibilityActions.toggleVisibility}
             icon={
               <FontAwesomeIcon
-                icon={visibilityAction.isHidden ? faEye : faEyeSlash}
+                icon={visibilityActions.isHidden ? faEye : faEyeSlash}
               />
             }
             aria-label="toggle visibility"

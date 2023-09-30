@@ -8,7 +8,7 @@ import {
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { useSetPrevElementId } from "../contexts/AppContext";
+import { useIsPageLoading, useSetPrevElementId } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Accordion,
@@ -55,6 +55,8 @@ export const loader = loaderFactory(NumberIncrementerCompatibleElement);
 type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function NumberIncrementerForm() {
+  const { setIsPageLoading } = useIsPageLoading();
+
   const [insertScript, setInsertScript] = useState(false);
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
@@ -147,6 +149,10 @@ function NumberIncrementerForm() {
     return () => subscription.unsubscribe();
   }, [handleSubmit, watch]);
 
+  useEffect(() => {
+    setIsPageLoading(isLoading);
+  }, [isLoading]);
+
   const insertingScript = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -160,6 +166,7 @@ function NumberIncrementerForm() {
   };
 
   if (isLoading) return null;
+
   return (
     <>
       <Header heading="Incrementer Settings" removeAction={removal} />
