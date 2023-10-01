@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { useIsPageLoading } from "../contexts/AppContext";
 import { Paths } from "../paths";
+import { ComboSearchBox } from "../components/dropdown/ComboSearchBox";
 
 export function Root() {
   const navigation = useNavigation();

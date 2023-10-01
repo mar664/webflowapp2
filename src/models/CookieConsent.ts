@@ -45,6 +45,7 @@ export const CookieConsentOptions = z.object({
   cookieExpiry: TimeUnits.default("30d"),
   cookieName: z.string().default("mr-cookie-consent"),
   position: z.string().default(PositionEnum.enum.Top),
+  scriptInserted: z.boolean().default(false),
 });
 export type CookieConsentOptions = z.infer<typeof CookieConsentOptions>;
 

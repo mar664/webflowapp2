@@ -9,6 +9,7 @@ export const NumberIncrementerOptions = z
     incrementEnd: z.coerce.number().min(0).default(100),
     percentageVisible: z.coerce.number().min(0).max(100).default(0),
     duration: TimeUnits.default("1000ms"),
+    scriptInserted: z.boolean().default(false),
   })
   .refine((data) => data.incrementEnd > data.incrementStart, {
     message: "Increment end must be larger than increment start",

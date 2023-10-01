@@ -1,29 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect } from "react";
 import {
-  LoaderFunctionArgs,
-  ParamParseKey,
-  Params,
   useLoaderData,
-  useNavigate,
-  useParams,
 } from "react-router-dom";
 import {
   useIsPageLoading,
-  useIsSelectingElement,
-  useSelectedElement,
-  useSetPrevElementId,
 } from "../contexts/AppContext";
 import {
   Accordion,
-  Box,
   Tooltip,
-  ButtonGroup,
-  FormControl,
   FormLabel,
   Grid,
   GridItem,
-  Heading,
-  IconButton,
   Radio,
   RadioGroup,
   Stack,
@@ -40,30 +27,20 @@ import {
   TriggerTypesEnum,
 } from "../models/Modal";
 import NumberFormElement from "../components/form/NumberFormElement";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import CopyToClipboard from "react-copy-to-clipboard";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import {
-  faCheck,
-  faCircleExclamation,
-  faArrowLeft,
-} from "@fortawesome/free-solid-svg-icons";
-import { SubmitHandler, useForm, get } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ModalTriggerSelection from "../components/form/ModalTriggerSelection";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import Header from "../components/Header";
 import { useElementRemoval, useElementVisibility } from "../hooks/element";
-import { Paths } from "../paths";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { loaderFactory, timeUnitToNumberValue } from "../utils";
+import { fetchDefaultFormValues, loaderFactory, timeUnitToNumberValue } from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
 import {
-  useDidMountEffect,
   useSelectedElementChangeRedirect,
 } from "../hooks/utils";
 import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
@@ -85,30 +62,6 @@ function ModalForm() {
 
   useSelectedElementChangeRedirect(modalElement);
 
-  const [scriptInserted, setScriptInserted] = useState(false);
-
-  const fetchDefaultValues = async () => {
-    const allElements = await webflow.getAllElements();
-    const scriptExisting = allElements.filter(
-      (t) =>
-        t.type === "DOM" &&
-        t.getTag() === "script" &&
-        t.getAttribute("src") === Modal.SOURCE_URL,
-    );
-
-    setScriptInserted(scriptExisting.length !== 0);
-
-    if (modalElement) {
-      const parsedElement = Modal.parse(modalElement);
-      if (!parsedElement) {
-        throw new Error("Error parsing modal attributes");
-      }
-      return parsedElement;
-    }
-
-    return ModalOptions.parse({});
-  };
-
   const {
     handleSubmit,
     setValue,
@@ -116,7 +69,7 @@ function ModalForm() {
     watch,
     formState: { isLoading, errors },
   } = useForm<ModalOptions>({
-    defaultValues: fetchDefaultValues,
+    defaultValues: fetchDefaultFormValues<ModalOptions>(modalElement, Modal, ModalOptions),
     resolver: zodResolver(ModalOptions),
   });
 
@@ -416,7 +369,7 @@ function ModalForm() {
               <Grid gap={"8px"} padding={"8px"}>
                 <GridItem w="100%" colSpan={2}>
                   <InsertScript
-                    alreadyInserted={scriptInserted}
+                    alreadyInserted={getValues().scriptInserted}
                     ElementType={Modal}
                   />
                 </GridItem>

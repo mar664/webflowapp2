@@ -2,7 +2,7 @@ import { CompatibleElement } from "../elements/CompatibleElement";
 import { CookieConsentCompatibleElement } from "../elements/CookieConsentCompatibleElement";
 import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
-import { ElementModel } from "../models/ElementModel";
+import { z } from "zod";
 import {
   TimeUnits,
   days,
@@ -15,6 +15,7 @@ import {
 } from "../types";
 import { INIT_COMPATIBLE_COMPONENTS } from "../constants";
 import { LoaderFunction, LoaderFunctionArgs } from "react-router-dom";
+import { ElementModel } from "../models/ElementModel";
 
 export function removeChars(str: string) {
   return str
@@ -175,3 +176,52 @@ export function loaderFactory(ElementType: typeof CompatibleElement) {
     throw new Error(`Compatible ${ElementType.name} element not found`);
   };
 }
+
+const obj = z.object({ scriptInserted: z.boolean().default(false) });
+export type Options = z.infer<typeof obj>;
+
+const obj2 = z
+  .object({ scriptInserted: z.boolean().default(false) })
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  .refine(() => {});
+export type Options2 = z.infer<typeof obj2>;
+
+export const fetchDefaultFormValues = <T extends Options>(
+  element: CompatibleElement,
+  ElementType: typeof ElementModel,
+  ElementTypeOptions: typeof obj | typeof obj2,
+) => {
+  return async () => {
+    const allElements = await webflow.getAllElements();
+    const scriptExisting = allElements.filter(
+      (t) =>
+        t.type === "DOM" &&
+        t.getTag() === "script" &&
+        t.getAttribute("src") === ElementModel.SOURCE_URL,
+    );
+
+    if (element) {
+      const parsedElement = ElementType.parse(element) as unknown as T;
+      if (!parsedElement) {
+        throw new Error(`Error parsing ${ElementType.NAME} attributes`);
+      }
+      parsedElement.scriptInserted = scriptExisting.length !== 0;
+      return parsedElement;
+    }
+
+    return ElementTypeOptions.parse({
+      scriptInserted: scriptExisting.length !== 0,
+    }) as T;
+  };
+};
+
+export const isInViewport = (targetElement: HTMLElement) => {
+  const rect = targetElement.getBoundingClientRect();
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <=
+      (window.innerHeight || document.documentElement.clientHeight) &&
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+  );
+};

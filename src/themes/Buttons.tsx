@@ -92,6 +92,17 @@ const inputElementButton = defineStyle({
   },
 });
 
+const leftInputButton = defineStyle({
+  color: "rgb(255,255,255)",
+  borderRadius: "2px",
+  height: "24px",
+  width: "35px",
+  minWidth: "unset",
+  fontSize: "11px",
+  backgroundColor: "rgb(94, 94, 94)",
+  transition: "none",
+});
+
 export const buttonTheme = defineStyleConfig({
   baseStyle: buttonBase,
   variants: {
@@ -102,6 +113,7 @@ export const buttonTheme = defineStyleConfig({
     headerIcon: iconButtonHeader,
     select: selectButton,
     inputElement: inputElementButton,
+    leftInputElement: leftInputButton,
   },
   defaultProps: {
     size: "md",

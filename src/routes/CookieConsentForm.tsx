@@ -57,7 +57,11 @@ import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { loaderFactory, timeUnitToNumberValue } from "../utils";
+import {
+  fetchDefaultFormValues,
+  loaderFactory,
+  timeUnitToNumberValue,
+} from "../utils";
 import { TimeUnits, TimeUnitsEnum } from "../types";
 import {
   useDidMountEffect,
@@ -73,8 +77,6 @@ type loaderData = Awaited<ReturnType<typeof loader>>;
 function CookieConsentForm() {
   const { setIsPageLoading } = useIsPageLoading();
 
-  const [scriptInserted, setScriptInserted] = useState(false);
-
   const { element: cookieConsentElement } = useLoaderData() as loaderData as {
     element: CookieConsentCompatibleElement;
   };
@@ -83,28 +85,6 @@ function CookieConsentForm() {
 
   useSelectedElementChangeRedirect(cookieConsentElement);
 
-  const fetchDefaultValues = async () => {
-    const allElements = await webflow.getAllElements();
-    const scriptExisting = allElements.filter(
-      (t) =>
-        t.type === "DOM" &&
-        t.getTag() === "script" &&
-        t.getAttribute("src") === CookieConsent.SOURCE_URL,
-    );
-
-    setScriptInserted(scriptExisting.length !== 0);
-
-    if (cookieConsentElement) {
-      const parsedElement = CookieConsent.parse(cookieConsentElement);
-      if (!parsedElement) {
-        throw new Error("Error parsing cookie consent attributes");
-      }
-      return parsedElement;
-    }
-
-    return CookieConsentOptions.parse({});
-  };
-
   const {
     handleSubmit,
     setValue,
@@ -112,7 +92,11 @@ function CookieConsentForm() {
     watch,
     formState: { isLoading, errors },
   } = useForm<CookieConsentOptions>({
-    defaultValues: fetchDefaultValues,
+    defaultValues: fetchDefaultFormValues<CookieConsentOptions>(
+      cookieConsentElement,
+      CookieConsent,
+      CookieConsentOptions,
+    ),
     resolver: zodResolver(CookieConsentOptions),
   });
 
@@ -350,7 +334,7 @@ function CookieConsentForm() {
               <Grid gap={"8px"} padding={"8px"}>
                 <GridItem w="100%" colSpan={2}>
                   <InsertScript
-                    alreadyInserted={scriptInserted}
+                    alreadyInserted={getValues().scriptInserted}
                     ElementType={CookieConsent}
                   />
                 </GridItem>

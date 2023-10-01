@@ -14,8 +14,9 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import Downshift, { UseSelectStateChangeTypes, useSelect } from "downshift";
-import React, { useState } from "react";
-import { Combolist, CombolistItem } from "./Combolist";
+import React, { useState, useRef } from "react";
+import { Combolist, CombolistContainer, CombolistItem } from "./Combolist";
+import { isInViewport } from "../../utils";
 
 type Option = { label: string; value: string };
 
@@ -43,6 +44,8 @@ export default function Combobox({
   disabled = false,
 }: Props) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const parentRef = useRef<HTMLDivElement>(null);
+
   const {
     isOpen,
     selectedItem,
@@ -60,6 +63,16 @@ export default function Combobox({
         return;
       }
       onChange(selectedItem);
+    },
+    onIsOpenChange: (changes) => {
+      if (changes.isOpen) {
+        if (
+          parentRef.current &&
+          !isInViewport(parentRef.current as HTMLElement)
+        ) {
+          parentRef.current.scrollIntoView();
+        }
+      }
     },
     id,
   });
@@ -108,29 +121,31 @@ export default function Combobox({
           {selectedItem ? selectedItem.label : "Select"}
         </Button>
         <Portal>
-          <Combolist
-            display={isOpen ? undefined : "none"}
-            {...getMenuProps({ ref: ulRef })}
+          <CombolistContainer
             left={`${position.x}px`}
             top={`${position.y}px`}
             size={"lg"}
+            display={isOpen ? undefined : "none"}
+            ref={parentRef}
           >
-            {options.map((option, index) => (
-              <CombolistItem
-                {...getItemProps({ item: option, index })}
-                itemIndex={index}
-                highlightedIndex={highlightedIndex}
-                variant={highlightedIndex === index ? "selected" : undefined}
-                key={index}
-                aria-selected={selectedItem?.value === option.value}
-              >
-                <Box margin={"3px"} width={"13px"}>
-                  {selectedItem?.value === option.value && <CheckIcon />}
-                </Box>
-                {option.label}
-              </CombolistItem>
-            ))}
-          </Combolist>
+            <Combolist {...getMenuProps({ ref: ulRef })}>
+              {options.map((option, index) => (
+                <CombolistItem
+                  {...getItemProps({ item: option, index })}
+                  itemIndex={index}
+                  highlightedIndex={highlightedIndex}
+                  variant={highlightedIndex === index ? "selected" : undefined}
+                  key={index}
+                  aria-selected={selectedItem?.value === option.value}
+                >
+                  <Box margin={"3px"} width={"13px"}>
+                    {selectedItem?.value === option.value && <CheckIcon />}
+                  </Box>
+                  {option.label}
+                </CombolistItem>
+              ))}
+            </Combolist>
+          </CombolistContainer>
         </Portal>
       </GridItem>
     </>

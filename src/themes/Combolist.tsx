@@ -1,11 +1,16 @@
 import { createMultiStyleConfigHelpers } from "@chakra-ui/styled-system";
 
 // This function creates a set of function that helps us create multipart component styles.
-const helpers = createMultiStyleConfigHelpers(["combolist", "item"]);
+const helpers = createMultiStyleConfigHelpers([
+  "container",
+  "heading",
+  "combolist",
+  "item",
+]);
 
 const combolistTheme = helpers.defineMultiStyleConfig({
   baseStyle: {
-    combolist: {
+    container: {
       fontSize: "11px",
       color: "rgb(217, 217, 217)",
       backgroundColor: "rgb(77, 77, 77)",
@@ -14,10 +19,21 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       borderWidth: "1px",
       borderStyle: "solid",
       boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 10px",
+      position: "absolute",
+      marginTop: "10px",
+      marginBottom: "10px",
+    },
+    heading: {
+      background: "rgb(64, 64, 64)",
+      fontWeight: "bold",
+      paddingLeft: "6px",
+      paddingTop: "4px",
+      paddingBottom: "4px",
+    },
+    combolist: {
       flex: 1,
       overflowY: "auto",
       mt: 0,
-      position: "absolute",
     },
     item: {
       paddingTop: "4px",
@@ -30,12 +46,13 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       flexDir: "row",
       color: "rgb(235, 235, 235)",
       backgroundColor: "rgb(77, 77, 77)",
-      _hover: {
+      /*_hover: {
         bg: "rgb(94, 94, 94)",
       },
       _focus: {
         bg: "rgb(94, 94, 94)",
       },
+      */
     },
   },
   variants: {

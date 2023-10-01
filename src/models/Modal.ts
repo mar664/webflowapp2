@@ -71,6 +71,7 @@ export const ModalOptions = z.object({
   closeEffectType: CloseEffectTypesEnum.default(CloseEffectTypesEnum.enum.Fade),
   closeDuration: TimeUnits.default("1000ms"),
   closeOnClickOverlay: Boolean,
+  scriptInserted: z.boolean().default(false),
 });
 export type ModalOptions = z.infer<typeof ModalOptions>;
 

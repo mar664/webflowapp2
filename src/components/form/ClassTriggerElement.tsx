@@ -32,6 +32,7 @@ import { removeChars } from "../../utils";
 import { useStyles } from "../../contexts/AppContext";
 import { CloseIcon } from "@chakra-ui/icons";
 import { FilterOptionOption } from "react-select/dist/declarations/src/filters";
+import { ComboSearchBox } from "../dropdown/ComboSearchBox";
 
 interface FormProps {
   setSelectedClass: any;
@@ -152,57 +153,8 @@ const customComponents: SelectComponentsConfig<
   },
 };
 
-const formatCreateLabel = (inputValue: string) => {
-  return (
-    <>
-      <Box as="span" marginRight={2}>
-        Create
-      </Box>
-      <Tag>{inputValue}</Tag>
-    </>
-  );
-};
-
-const formatOptionLabel = (
-  data: IStyleItem,
-  formatOptionLabelMeta: FormatOptionLabelMeta<IStyleItem>,
-) => {
-  if (!data.__isNew__) {
-    const letters = [];
-    if (formatOptionLabelMeta.inputValue !== "") {
-      const inputChars = formatOptionLabelMeta.inputValue
-        .toLowerCase()
-        .split("");
-
-      const iterator = data.label[Symbol.iterator]();
-      let theChar = iterator.next();
-
-      while (!theChar.done) {
-        if (inputChars.includes(theChar.value.toLowerCase())) {
-          letters.push(
-            <Text as={"b"}>
-              <Text as={"u"}>
-                {theChar.value !== " " ? theChar.value : " "}
-              </Text>
-            </Text>,
-          );
-        } else {
-          letters.push(theChar.value);
-        }
-        theChar = iterator.next();
-      }
-
-      return <Tag>{letters}</Tag>;
-    }
-    return <Tag>{data.label}</Tag>;
-  }
-  return data.label;
-};
-
-const filterStyles = (inputValue: string, styles: IStyleItem[]) => {
-  return styles.filter((i) =>
-    i.label.toLowerCase().includes(inputValue.toLowerCase()),
-  );
+const filterStyle = (item: IStyleItem, inputValue: string) => {
+  return item.label.toLowerCase().includes(inputValue);
 };
 
 function ClassTriggerElement({
@@ -216,8 +168,7 @@ function ClassTriggerElement({
   );
 
   const handleSelectedItemsChange = (
-    newValue: SingleValue<IStyleItem> | MultiValue<IStyleItem>,
-    actionMeta: ActionMeta<IStyleItem>,
+    newValue: IStyleItem | null | undefined,
   ) => {
     if (
       newValue &&
@@ -228,21 +179,21 @@ function ClassTriggerElement({
       setSelectedClass(newValue.value);
       setValue(newValue);
     }
-    if (actionMeta.action === "clear") {
+    if (newValue === undefined) {
       setSelectedClass(undefined);
       setValue(undefined);
     }
   };
 
-  const handleCreate = (inputValue: string) => {
+  const handleCreate = (newLabel: string) => {
     setIsLoading(true);
     (async () => {
-      const newStyle = webflow.createStyle(inputValue);
+      const newStyle = webflow.createStyle(newLabel);
       await newStyle.save();
 
       const newOption = {
-        value: `.${removeChars(inputValue)}`,
-        label: inputValue,
+        value: `.${removeChars(newLabel)}`,
+        label: newLabel,
       };
 
       setStyles((prev) =>
@@ -256,7 +207,7 @@ function ClassTriggerElement({
     })();
   };
 
-  const getOptions = (
+  /*   const getOptions = (
     inputValue: string,
     callback: (options: IStyleItem[]) => void,
   ) => {
@@ -265,9 +216,22 @@ function ClassTriggerElement({
     } else {
       callback(filterStyles(inputValue, styles));
     }
-  };
+  }; */
 
   return (
+    <ComboSearchBox
+      placeholder="Select a class or type new class"
+      options={styles}
+      value={value}
+      onCreateOption={handleCreate}
+      handleSelectedItemChange={handleSelectedItemsChange}
+      handleFilter={filterStyle}
+      id={id}
+      label={"Style selector"}
+      tooltip={"Select a style"}
+    />
+  );
+  /* return (
     <FormControl>
       <FormLabel htmlFor={id} mb="1">
         <Tooltip label="The class to open the modal on click">
@@ -293,7 +257,7 @@ function ClassTriggerElement({
         defaultOptions
       />
     </FormControl>
-  );
+  ); */
 }
 
 export default ClassTriggerElement;

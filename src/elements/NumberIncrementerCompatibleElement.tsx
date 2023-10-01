@@ -45,6 +45,7 @@ export class NumberIncrementerCompatibleElement
   }
 
   static isCompatible(element: AnyElement | CompatibleElement) {
+    console.log(element);
     const compatibleElement =
       element instanceof CompatibleElement
         ? element
@@ -52,7 +53,10 @@ export class NumberIncrementerCompatibleElement
 
     if (compatibleElement === null) {
       return false;
-      // modal can only be applied to a compatible element that can have children
+      // number incrementer can not be applied to Body
+    } else if (compatibleElement.element.type === "Body") {
+      return false;
+      // number incrementer can only be applied to a compatible element that can have children
     } else if (compatibleElement.element.children) {
       return true;
     }

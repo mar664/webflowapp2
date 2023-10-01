@@ -1,44 +1,11 @@
-import React, { SyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, SubmitHandler, get } from "react-hook-form";
-import {
-  LoaderFunctionArgs,
-  ParamParseKey,
-  Params,
-  useLoaderData,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
-import {
-  useIsPageLoading,
-  useIsSelectingElement,
-  useSelectedElement,
-  useSetPrevElementId,
-} from "../contexts/AppContext";
+import { useLoaderData, useParams } from "react-router-dom";
+import { useIsPageLoading } from "../contexts/AppContext";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  Accordion,
-  Box,
-  Button,
-  ButtonGroup,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Grid,
-  GridItem,
-  Tooltip,
-  Input,
-} from "@chakra-ui/react";
-import { TriangleDownIcon } from "@chakra-ui/icons";
-import { Switch } from "@chakra-ui/react";
-import { CopyToClipboard } from "react-copy-to-clipboard";
-import { IconButton } from "@chakra-ui/react";
+import { Accordion, Box, Grid, GridItem } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-regular-svg-icons";
-import {
-  faCheck,
-  faCircleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
-import { CompatibleElement } from "../elements/CompatibleElement";
+import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { useElementRemoval } from "../hooks/element";
 import Header from "../components/Header";
 import NumberFormElement from "../components/form/NumberFormElement";
@@ -47,17 +14,17 @@ import {
   NumberIncrementerOptions,
 } from "../models/NumberIncrementer";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
-import { Paths } from "../paths";
 import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionItem from "../components/accordion/AccordionItem";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { loaderFactory, timeUnitToNumberValue } from "../utils";
-import { TimeUnits, TimeUnitsEnum } from "../types";
 import {
-  useDidMountEffect,
-  useSelectedElementChangeRedirect,
-} from "../hooks/utils";
+  fetchDefaultFormValues,
+  loaderFactory,
+  timeUnitToNumberValue,
+} from "../utils";
+import { TimeUnits, TimeUnitsEnum } from "../types";
+import { useSelectedElementChangeRedirect } from "../hooks/utils";
 import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
 import { InsertScript } from "../components/InsertScript";
 
@@ -67,8 +34,6 @@ type loaderData = Awaited<ReturnType<typeof loader>>;
 
 function NumberIncrementerForm() {
   const { setIsPageLoading } = useIsPageLoading();
-
-  const [scriptInserted, setScriptInserted] = useState(false);
 
   const params = useParams();
 
@@ -84,28 +49,6 @@ function NumberIncrementerForm() {
 
   useSelectedElementChangeRedirect(numberIncrementerElement);
 
-  const fetchDefaultValues = async () => {
-    const allElements = await webflow.getAllElements();
-    const scriptExisting = allElements.filter(
-      (t) =>
-        t.type === "DOM" &&
-        t.getTag() === "script" &&
-        t.getAttribute("src") === NumberIncrementer.SOURCE_URL,
-    );
-
-    setScriptInserted(scriptExisting.length !== 0);
-
-    if (numberIncrementerElement && params && params.exists) {
-      const parsedElement = NumberIncrementer.parse(numberIncrementerElement);
-      if (!parsedElement) {
-        throw new Error("Error parsing number incrementer attributes");
-      }
-      return parsedElement;
-    }
-
-    return NumberIncrementerOptions.parse({});
-  };
-
   const {
     handleSubmit,
     setValue,
@@ -113,7 +56,11 @@ function NumberIncrementerForm() {
     watch,
     formState: { isLoading, errors },
   } = useForm<NumberIncrementerOptions>({
-    defaultValues: fetchDefaultValues,
+    defaultValues: fetchDefaultFormValues<NumberIncrementerOptions>(
+      numberIncrementerElement,
+      NumberIncrementer,
+      NumberIncrementerOptions,
+    ),
     resolver: zodResolver(NumberIncrementerOptions),
   });
   const onSubmit: SubmitHandler<NumberIncrementerOptions> = async (data) => {
@@ -227,7 +174,7 @@ function NumberIncrementerForm() {
               >
                 <GridItem w="100%" colSpan={4}>
                   <InsertScript
-                    alreadyInserted={scriptInserted}
+                    alreadyInserted={getValues().scriptInserted}
                     ElementType={NumberIncrementer}
                   />
                 </GridItem>
