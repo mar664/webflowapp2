@@ -27,6 +27,7 @@ const defaultStyle = definePartsStyle({
     boxShadow: "rgba(0, 0, 0, 0.15) 0px 0px 0px 1px",
     overflow: "hidden",
     color: "rgb(255, 255, 255)",
+    minHeight: "unset",
   },
 });
 

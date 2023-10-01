@@ -64,9 +64,9 @@ const combolistTheme = helpers.defineMultiStyleConfig({
     },
   },
   sizes: {
-    sm: { item: { minWidth: "80px" } },
-    md: { item: { minWidth: "140px" } },
-    lg: { item: { minWidth: "180px" } },
+    sm: { container: { minWidth: "80px" } },
+    md: { container: { minWidth: "140px" } },
+    lg: { container: { minWidth: "180px" } },
   },
   defaultProps: {
     size: "lg",

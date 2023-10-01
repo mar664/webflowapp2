@@ -117,8 +117,9 @@ export default function InputAddon({
           top={`${position.y}px`}
           display={isOpen ? undefined : "none"}
           ref={parentRef}
+          size={"sm"}
         >
-          <Combolist {...getMenuProps({ ref: ulRef })} size={"sm"}>
+          <Combolist {...getMenuProps({ ref: ulRef })}>
             {options.map((option, index) => (
               <CombolistItem
                 {...getItemProps({ item: option, index })}

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCombobox } from "downshift";
 import {
@@ -94,14 +94,14 @@ export const ComboSearchBox = <T extends Option>({
   label,
   tooltip,
 }: ComboSearchBoxProps<T>) => {
-  const _options = [
+  const _options = useMemo(() =>([
     {
       canCreate: false,
       value: "Create",
       label: "Create",
       __isNew__: true,
     } as T,
-  ].concat(options);
+  ].concat(options)), [options]);
   const [items, setItems] = useState(_options);
   const listRef = useRef(null);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -112,7 +112,7 @@ export const ComboSearchBox = <T extends Option>({
     count: items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: (i) => (i === 0 || i === 1 ? 54 : 30),
-    overscan: 5,
+    overscan: 10,
   });
 
   const debounced = useDebouncedCallback((inputValue) => {
@@ -169,6 +169,7 @@ export const ComboSearchBox = <T extends Option>({
     setInputValue,
     selectItem,
     openMenu,
+    toggleMenu,
   } = useCombobox({
     id,
     items,
@@ -197,6 +198,8 @@ export const ComboSearchBox = <T extends Option>({
     },
     onIsOpenChange: (changes) => {
       if (changes.isOpen) {
+        onOpenCombobox();
+
         rowVirtualizer.scrollToOffset(0);
 
         if (
@@ -235,6 +238,7 @@ export const ComboSearchBox = <T extends Option>({
     }
   };
 
+  
   return (
     <Box width={"100%"}>
       <FormLabel {...getLabelProps()} fontSize={"label.fontSize"} mb={0}>
@@ -245,9 +249,10 @@ export const ComboSearchBox = <T extends Option>({
         display={"flex"}
         flexDirection={"row"}
         alignItems={"center"}
-        onClick={() => {
-          onOpenCombobox();
-          openMenu();
+        onClick={(event) => {
+          if (!isOpen) {
+            openMenu();
+          }
         }}
         background="rgb(43, 43, 43)"
         borderColor="rgb(33, 33, 33)"
@@ -265,7 +270,7 @@ export const ComboSearchBox = <T extends Option>({
           icon={<FontAwesomeIcon icon={faLaptop} />}
           aria-label="open combobox"
           {...getToggleButtonProps()}
-          background={isOpen ? "rgb(0, 115, 230)" : "rgb(94, 94, 94)"}
+          background={isOpen ? "rgb(94, 94, 94)" : "rgb(0, 115, 230)"}
           variant={"leftInputElement"}
           flex={"1 1 40px"}
         />
@@ -273,6 +278,7 @@ export const ComboSearchBox = <T extends Option>({
           padding={"4px"}
           width={"100%"}
           flex={selectedItem ? "1 1 100%" : "1 1 0%"}
+          display="flex"
         >
           {selectedItem && <Tag>{selectedItem?.label}</Tag>}
         </Box>
@@ -299,6 +305,7 @@ export const ComboSearchBox = <T extends Option>({
               selectItem(null);
             }}
             size={"xs"}
+            variant={"closeInputElement"}
           />
         )}
       </Box>
@@ -327,7 +334,7 @@ export const ComboSearchBox = <T extends Option>({
               <>
                 {rowVirtualizer.getVirtualItems().map((virtualRow, index) => (
                   <>
-                    {virtualRow.index === 0 && (
+                    {virtualRow.index === 0 && items[0].__isNew__ && (
                       <Box
                         style={{
                           position: "absolute",
@@ -375,8 +382,9 @@ export const ComboSearchBox = <T extends Option>({
                         )}
                       </Box>
                     )}
-                    {rowVirtualizer.getVirtualItems().length > 1 &&
-                    virtualRow.index > 0 ? (
+                    {((rowVirtualizer.getVirtualItems().length > 1 &&
+                      virtualRow.index > 0) ||
+                      !items[0]?.__isNew__) && (
                       <Box
                         style={{
                           position: "absolute",
@@ -411,7 +419,7 @@ export const ComboSearchBox = <T extends Option>({
                           )}
                         </CombolistItem>
                       </Box>
-                    ) : null}
+                    )}
                   </>
                 ))}
               </>

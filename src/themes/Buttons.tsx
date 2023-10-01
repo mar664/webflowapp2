@@ -103,6 +103,20 @@ const leftInputButton = defineStyle({
   transition: "none",
 });
 
+const closeInputButton = defineStyle({
+  borderWidth: "button.borderWidth",
+  borderColor: "transparent",
+  borderRadius: "button.borderRadius",
+  backgroundColor: "inherit",
+  color: "button.color",
+  width: "20px",
+  height: "20px",
+  minWidth: "unset",
+  _hover: {
+    backgroundColor: "button._hover.background",
+  },
+});
+
 export const buttonTheme = defineStyleConfig({
   baseStyle: buttonBase,
   variants: {
@@ -114,6 +128,7 @@ export const buttonTheme = defineStyleConfig({
     select: selectButton,
     inputElement: inputElementButton,
     leftInputElement: leftInputButton,
+    closeInputElement: closeInputButton,
   },
   defaultProps: {
     size: "md",
