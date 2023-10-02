@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useLayoutEffect } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCombobox } from "downshift";
 import {
@@ -22,6 +22,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { faLaptop, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { isInViewport } from "../../utils";
+import { useCombolistPosition } from "../../hooks/combolist";
 
 const formatOptionLabel = (data: any, formatOptionLabelMeta: any) => {
   if (!data.__isNew__) {
@@ -94,23 +95,24 @@ export const ComboSearchBox = <T extends Option>({
   label,
   tooltip,
 }: ComboSearchBoxProps<T>) => {
-  const _options = useMemo(() =>([
-    {
-      canCreate: false,
-      value: "Create",
-      label: "Create",
-      __isNew__: true,
-    } as T,
-  ].concat(options)), [options]);
+  const _options = useMemo(
+    () =>
+      [
+        {
+          canCreate: false,
+          value: "Create",
+          label: "Create",
+          __isNew__: true,
+        } as T,
+      ].concat(options),
+    [options],
+  );
   const [items, setItems] = useState(_options);
-  const listRef = useRef(null);
-  const parentRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [loading, setLoading] = useState(true);
+  const combolistRef = useRef(null);
 
   const rowVirtualizer = useVirtualizer({
     count: items.length,
-    getScrollElement: () => parentRef.current,
+    getScrollElement: () => combolistRef.current,
     estimateSize: (i) => (i === 0 || i === 1 ? 54 : 30),
     overscan: 10,
   });
@@ -196,61 +198,23 @@ export const ComboSearchBox = <T extends Option>({
         rowVirtualizer.scrollToIndex(highlightedIndex as number);
       }
     },
-    onIsOpenChange: (changes) => {
-      if (changes.isOpen) {
-        onOpenCombobox();
-
-        rowVirtualizer.scrollToOffset(0);
-
-        if (
-          parentRef.current &&
-          !isInViewport(parentRef.current as HTMLElement)
-        ) {
-          parentRef.current.scrollIntoView();
-        }
-      }
-    },
   });
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { position, containerRef, positionByRef, isShown } =
+    useCombolistPosition({ isOpen, combolistRef });
 
-  const onOpenCombobox = () => {
-    if (!isOpen) {
-      const margin = 10;
-      if (inputRef && inputRef.current && parentRef && parentRef.current) {
-        const bodyRect = document.body.getBoundingClientRect();
-        parentRef.current.style.display = "";
-        const ulRect = parentRef.current.getBoundingClientRect();
-
-        const buttonRect = inputRef.current.getBoundingClientRect();
-        let { x, bottom: y } = buttonRect;
-        if (buttonRect.x + ulRect.width + margin > bodyRect.right) {
-          x = x - (bodyRect.right - (buttonRect.x + ulRect.width + margin));
-        }
-        if (buttonRect.y + ulRect.height > bodyRect.bottom) {
-          y = y - (bodyRect.bottom - (buttonRect.y + ulRect.height + margin));
-        }
-        x += window.scrollX;
-        y += window.scrollY;
-        setPosition({ x, y });
-        console.log(x, y);
-      }
-    }
-  };
-
-  
   return (
     <Box width={"100%"}>
       <FormLabel {...getLabelProps()} fontSize={"label.fontSize"} mb={0}>
         <Tooltip label={tooltip}>{label}</Tooltip>
       </FormLabel>
       <Box
-        ref={inputRef}
+        ref={containerRef}
         display={"flex"}
         flexDirection={"row"}
         alignItems={"center"}
         onClick={(event) => {
-          if (!isOpen) {
+          if (!isShown) {
             openMenu();
           }
         }}
@@ -259,7 +223,7 @@ export const ComboSearchBox = <T extends Option>({
         borderRadius="2px"
         borderStyle="solid"
         borderWidth="1px"
-        boxShadow={isOpen ? "rgb(36, 150, 255) 0px 0px 0px 1px" : "none"}
+        boxShadow={isShown ? "rgb(36, 150, 255) 0px 0px 0px 1px" : "none"}
         width={"100%"}
         paddingLeft={"3px"}
         paddingRight={"3px"}
@@ -269,8 +233,8 @@ export const ComboSearchBox = <T extends Option>({
         <IconButton
           icon={<FontAwesomeIcon icon={faLaptop} />}
           aria-label="open combobox"
-          {...getToggleButtonProps()}
-          background={isOpen ? "rgb(94, 94, 94)" : "rgb(0, 115, 230)"}
+          {...getToggleButtonProps({ ref: positionByRef })}
+          background={isShown ? "rgb(94, 94, 94)" : "rgb(0, 115, 230)"}
           variant={"leftInputElement"}
           flex={"1 1 40px"}
         />
@@ -286,7 +250,7 @@ export const ComboSearchBox = <T extends Option>({
           size="md"
           maxW={"full"}
           {...getInputProps()}
-          placeholder={isOpen ? "" : placeholder}
+          placeholder={isShown ? "" : placeholder}
           variant={"unstyled"}
           flex={selectedItem ? "1 1 0%" : "1 1 100%"}
           minHeight="28px"
@@ -316,21 +280,20 @@ export const ComboSearchBox = <T extends Option>({
             width: `95%`,
             overflow: "auto",
           }}
-          ref={parentRef}
-          display={isOpen ? "block" : "none"}
-          left={`${position.x}px`}
-          top={`${position.y}px`}
+          ref={combolistRef}
+          display={isShown ? "block" : "none"}
+          {...position}
           position="absolute"
         >
           <Combolist
-            {...getMenuProps({ ref: listRef })}
+            {...getMenuProps()}
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
               width: "100%",
               position: "relative",
             }}
           >
-            {isOpen && (
+            {isShown && (
               <>
                 {rowVirtualizer.getVirtualItems().map((virtualRow, index) => (
                   <>

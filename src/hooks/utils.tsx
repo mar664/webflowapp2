@@ -6,6 +6,7 @@ import {
 import { CompatibleElement } from "../elements/CompatibleElement";
 import { Paths } from "../paths";
 import { useNavigate } from "react-router-dom";
+import { getAllChildren } from "../utils";
 
 export const useDidMountEffect = (func: any, deps: any[]) => {
   const didMount = useRef(false);
@@ -31,8 +32,11 @@ export const useSelectedElementChangeRedirect = (
       !isSelectingElement &&
       element &&
       selectedElement &&
-      selectedElement.id !== element.id
+      selectedElement.id !== element.id &&
+      !getAllChildren(element.element).includes(selectedElement.id)
     ) {
+      console.log(getAllChildren(element.element));
+      console.log(selectedElement.id);
       console.log("redirecting");
       navigate(Paths.app, { replace: true });
     }

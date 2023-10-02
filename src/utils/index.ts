@@ -225,3 +225,14 @@ export const isInViewport = (targetElement: HTMLElement) => {
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   );
 };
+
+export function getAllChildren(element: AnyElement, output = [] as string[]) {
+  if (element.children) {
+    element.getChildren().forEach((c) => {
+      getAllChildren(c, output);
+    });
+  }
+  output.push(element.id);
+
+  return output;
+}

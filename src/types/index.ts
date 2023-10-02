@@ -95,3 +95,8 @@ export const TimeUnitsEnum = z.nativeEnum(TimeUnitsNativeEnum);
 export type TimeUnitsEnum = z.infer<typeof TimeUnitsEnum>; // Fruits
 
 export type TimeUnits = z.infer<typeof TimeUnits>;
+
+export enum CombolistPosition {
+  Above,
+  Below,
+}

@@ -174,12 +174,12 @@ function ClassTriggerElement({
       newValue &&
       typeof newValue === "object" &&
       "value" in newValue &&
-      "label" in newValue
+      "label" in newValue &&
+      !newValue.__isNew__
     ) {
       setSelectedClass(newValue.value);
       setValue(newValue);
-    }
-    if (newValue === undefined) {
+    } else if ((newValue && newValue?.__isNew__) || newValue === undefined) {
       setSelectedClass(undefined);
       setValue(undefined);
     }
