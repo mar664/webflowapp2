@@ -19,7 +19,7 @@ export const useCombolistPosition = ({
   margin = 10,
 }: Props) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isShown, setIsShown] = useState(false);
+  const [isShown, setIsShown] = useState<boolean>(false);
 
   const _positionByRef = positionByRef ? positionByRef : useRef<any>(null);
   const _combolistRef = combolistRef ? combolistRef : useRef<any>(null);

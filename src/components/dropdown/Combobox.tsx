@@ -84,7 +84,7 @@ export default function Combobox({
           <CombolistContainer
             {...position}
             size={"lg"}
-            display={isShown ? undefined : "none"}
+            data-hidden={!isShown ? true : undefined}
             ref={combolistRef}
           >
             <Combolist {...getMenuProps()}>

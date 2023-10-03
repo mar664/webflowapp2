@@ -22,6 +22,7 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       position: "absolute",
       marginTop: "10px",
       marginBottom: "10px",
+      _hidden: { display: "none" },
     },
     heading: {
       background: "rgb(64, 64, 64)",

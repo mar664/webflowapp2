@@ -188,6 +188,11 @@ export const ComboSearchBox = <T extends Option>({
       setInputValue("");
       if (changes.selectedItem?.__isNew__ && changes.selectedItem.canCreate) {
         onCreateOption(changes.selectedItem.label);
+      } else if (
+        changes.selectedItem?.__isNew__ &&
+        !changes.selectedItem.canCreate
+      ) {
+        selectItem(null);
       } else {
         handleSelectedItemChange(changes.selectedItem);
       }
@@ -248,7 +253,7 @@ export const ComboSearchBox = <T extends Option>({
           flex={selectedItem ? "1 1 100%" : "1 1 0%"}
           display="flex"
         >
-          {selectedItem && <Tag>{selectedItem?.label}</Tag>}
+          {selectedItem && !selectedItem.__isNew__ && (<Tag>{selectedItem?.label}</Tag>)}
         </Box>
         <Input
           size="md"
@@ -279,7 +284,7 @@ export const ComboSearchBox = <T extends Option>({
             overflow: "auto",
           }}
           ref={combolistRef}
-          display={isShown ? "block" : "none"}
+          data-hidden={!isShown ? true : undefined}
           {...position}
         >
           <Combolist

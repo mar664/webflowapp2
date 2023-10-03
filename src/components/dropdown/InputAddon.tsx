@@ -86,7 +86,7 @@ export default function InputAddon({
       <Portal>
         <CombolistContainer
           {...position}
-          display={isShown ? undefined : "none"}
+          data-hidden={!isShown ? true : undefined}
           ref={combolistRef}
           size={"sm"}
         >
