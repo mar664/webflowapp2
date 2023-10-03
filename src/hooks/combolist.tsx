@@ -14,13 +14,11 @@ interface Props {
 export const useCombolistPosition = ({
   isOpen,
   positionType = CombolistPosition.Below,
-  containerRef,
   positionByRef,
   combolistRef,
   margin = 10,
 }: Props) => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const _containerRef = containerRef ? containerRef : useRef<any>(null);
   const [isShown, setIsShown] = useState(false);
 
   const _positionByRef = positionByRef ? positionByRef : useRef<any>(null);
@@ -36,10 +34,10 @@ export const useCombolistPosition = ({
   useEffect(() => {
     if (isShown) {
       if (
-        _containerRef.current &&
-        !isInViewport(_containerRef.current as HTMLElement)
+        _combolistRef.current &&
+        !isInViewport(_combolistRef.current as HTMLElement)
       ) {
-        _containerRef.current.scrollIntoView();
+        _combolistRef.current.scrollIntoView();
       }
     }
   }, [isShown]);
@@ -77,7 +75,6 @@ export const useCombolistPosition = ({
 
   return {
     position: { left: `${position.x}px`, top: `${position.y}px` },
-    containerRef: _containerRef,
     positionByRef: _positionByRef,
     combolistRef: _combolistRef,
     isShown,

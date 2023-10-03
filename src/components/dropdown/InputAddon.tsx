@@ -64,11 +64,11 @@ export default function InputAddon({
     id,
   });
 
-  const { position, containerRef, combolistRef, positionByRef, isShown } =
+  const { position, combolistRef, positionByRef, isShown } =
     useCombolistPosition({ isOpen, positionType: CombolistPosition.Above });
 
   return (
-    <Box ref={containerRef}>
+    <Box>
       <Button
         {...getToggleButtonProps({
           ref: positionByRef,

@@ -66,7 +66,7 @@ export default function Combobox({
     id,
   });
 
-  const { position, containerRef, positionByRef, combolistRef, isShown } =
+  const { position, positionByRef, combolistRef, isShown } =
     useCombolistPosition({ isOpen, positionType: CombolistPosition.Above });
 
   return (
@@ -80,7 +80,6 @@ export default function Combobox({
         colSpan={3}
         display="flex"
         alignItems="center"
-        ref={containerRef}
       >
         <Button
           {...getToggleButtonProps({

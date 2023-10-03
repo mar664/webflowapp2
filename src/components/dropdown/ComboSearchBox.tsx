@@ -200,7 +200,7 @@ export const ComboSearchBox = <T extends Option>({
     },
   });
 
-  const { position, containerRef, positionByRef, isShown } =
+  const { position, positionByRef, isShown } =
     useCombolistPosition({ isOpen, combolistRef });
 
   return (
@@ -209,7 +209,6 @@ export const ComboSearchBox = <T extends Option>({
         <Tooltip label={tooltip}>{label}</Tooltip>
       </FormLabel>
       <Box
-        ref={containerRef}
         display={"flex"}
         flexDirection={"row"}
         alignItems={"center"}
