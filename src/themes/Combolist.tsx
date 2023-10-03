@@ -51,6 +51,7 @@ const combolistTheme = helpers.defineMultiStyleConfig({
         color: "rgb(235, 235, 235)",
       },
     },
+    row: { position: "absolute", top: 0, left: 0, width: "100%" },
   },
   variants: {
     selected: {

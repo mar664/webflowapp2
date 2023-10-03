@@ -33,9 +33,23 @@ const defaultStyle = definePartsStyle({
   },
 });
 
+const styleSearchStyle = definePartsStyle({
+  // define the part you're going to style
+  field: {
+    minHeight: "28px",
+    paddingLeft: "0px",
+    fontSize: "11px",
+    color: "rgb(217, 217, 217)",
+    maxW: "full",
+    height: "auto",
+    background: "none",
+    _placeholder: { fontSize: "11px", color: "rgb(117, 117, 117)" },
+  },
+});
+
 export const inputTheme = defineMultiStyleConfig({
   baseStyle,
-  variants: { default: defaultStyle },
+  variants: { default: defaultStyle, styleSearch: styleSearchStyle },
   defaultProps: {
     size: undefined,
     variant: "default",

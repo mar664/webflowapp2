@@ -34,15 +34,13 @@ export const Combolist = forwardRef(({ ...props }, ref) => {
   return <Box as="ul" __css={styles.combolist} {...props} ref={ref} />;
 });
 
+export const CombolistRow = forwardRef(({ ...props }, ref) => {
+  const styles = useStyles();
+  return <Box as="div" __css={styles.row} {...props} ref={ref} />;
+});
+
 export const CombolistItem = forwardRef(({ ...props }, ref) => {
   const styles = useStyles();
 
-  return (
-    <Box
-      as="li"
-      __css={styles.item}
-      {...props}
-      ref={ref}
-    />
-  );
+  return <Box as="li" __css={styles.item} {...props} ref={ref} />;
 });

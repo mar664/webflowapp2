@@ -167,7 +167,7 @@ function ClassTriggerElement({
     styles.find((o) => o.value === defaultValue),
   );
 
-  const handleSelectedItemsChange = (
+  const handleSelectedItemChange = (
     newValue: IStyleItem | null | undefined,
   ) => {
     if (
@@ -179,7 +179,11 @@ function ClassTriggerElement({
     ) {
       setSelectedClass(newValue.value);
       setValue(newValue);
-    } else if ((newValue && newValue?.__isNew__) || newValue === undefined) {
+    } else if (
+      (newValue && newValue?.__isNew__) ||
+      newValue === undefined ||
+      newValue === null
+    ) {
       setSelectedClass(undefined);
       setValue(undefined);
     }
@@ -224,7 +228,7 @@ function ClassTriggerElement({
       options={styles}
       value={value}
       onCreateOption={handleCreate}
-      handleSelectedItemChange={handleSelectedItemsChange}
+      handleSelectedItemChange={handleSelectedItemChange}
       handleFilter={filterStyle}
       id={id}
       label={"Style selector"}

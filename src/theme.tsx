@@ -1,6 +1,5 @@
 import { buttonTheme } from "./themes/Buttons";
 import { combolistTheme } from "./themes/Combolist";
-import { combolistItemTheme } from "./themes/CombolistItem";
 import { formLabelTheme } from "./themes/FormLabel";
 import { inputTheme } from "./themes/Input";
 import { menuTheme } from "./themes/Menu";
@@ -262,7 +261,6 @@ export default {
     Radio: radioTheme,
     Tag: tagTheme,
     Combolist: combolistTheme,
-    CombolistItem: combolistItemTheme,
     Menu: menuTheme,
     Tooltip: tooltipTheme,
     Modal: modalTheme,

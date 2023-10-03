@@ -25,11 +25,11 @@ export const useCombolistPosition = ({
   const _combolistRef = combolistRef ? combolistRef : useRef<any>(null);
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !isShown) {
       setPosition(getPosition());
     }
     setIsShown(isOpen);
-  }, [isOpen]);
+  }, [isOpen, isShown]);
 
   useEffect(() => {
     if (isShown) {

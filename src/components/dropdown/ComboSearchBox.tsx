@@ -16,6 +16,7 @@ import {
   CombolistContainer,
   CombolistHeading,
   CombolistItem,
+  CombolistRow,
 } from "./Combolist";
 import { useDebouncedCallback } from "use-debounce";
 import { faLaptop, faClose } from "@fortawesome/free-solid-svg-icons";
@@ -131,7 +132,8 @@ export const ComboSearchBox = <T extends Option>({
         (item) => item.__isNew__ || handleFilter(item, filterInputValue),
       );
     }
-    console.log(filteredOptions[0].__isNew__);
+
+    // if input value exists and is not already in styles list
     filteredOptions[0].canCreate =
       filterInputValue !== "" &&
       filterInputValue !== undefined &&
@@ -139,7 +141,10 @@ export const ComboSearchBox = <T extends Option>({
         (o) => !o.__isNew__ && o.label.toLowerCase() === filterInputValue,
       );
     filteredOptions[0].label = inputValue;
+
     setItems(filteredOptions);
+
+    // Scroll to existing classes if results are found
     if (filteredOptions.length > 1) {
       try {
         rowVirtualizer.scrollToOffset(74);
@@ -179,6 +184,7 @@ export const ComboSearchBox = <T extends Option>({
     },
     itemToString: (item) => (item ? item.label : ""),
     onSelectedItemChange: (changes) => {
+      console.log(changes);
       setInputValue("");
       if (changes.selectedItem?.__isNew__ && changes.selectedItem.canCreate) {
         onCreateOption(changes.selectedItem.label);
@@ -222,12 +228,12 @@ export const ComboSearchBox = <T extends Option>({
         borderRadius="2px"
         borderStyle="solid"
         borderWidth="1px"
-        boxShadow={isShown ? "rgb(36, 150, 255) 0px 0px 0px 1px" : "none"}
+        _focus={{ boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px" }}
         width={"100%"}
         paddingLeft={"3px"}
         paddingRight={"3px"}
         minHeight={"32px"}
-        onKeyDown={() => console.log("hey")}
+        data-focus={isShown ? true : undefined}
       >
         <IconButton
           icon={<FontAwesomeIcon icon={faLaptop} />}
@@ -246,16 +252,10 @@ export const ComboSearchBox = <T extends Option>({
         </Box>
         <Input
           size="md"
-          maxW={"full"}
           {...getInputProps()}
-          placeholder={isShown ? "" : placeholder}
-          variant={"unstyled"}
+          placeholder={isShown ? undefined : placeholder}
+          variant={"styleSearch"}
           flex={selectedItem ? "1 1 0%" : "1 1 100%"}
-          minHeight="28px"
-          paddingLeft={"0px"}
-          fontSize="11px"
-          color="rgb(217, 217, 217)"
-          _placeholder={{ fontSize: "11px", color: "rgb(117, 117, 117)" }}
         />
         {selectedItem && (
           <IconButton
@@ -281,7 +281,6 @@ export const ComboSearchBox = <T extends Option>({
           ref={combolistRef}
           display={isShown ? "block" : "none"}
           {...position}
-          position="absolute"
         >
           <Combolist
             {...getMenuProps()}
@@ -296,15 +295,9 @@ export const ComboSearchBox = <T extends Option>({
                 {rowVirtualizer.getVirtualItems().map((virtualRow, index) => (
                   <>
                     {virtualRow.index === 0 && items[0].__isNew__ && (
-                      <Box
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                        }}
+                      <CombolistRow
+                        height={`${virtualRow.size}px`}
+                        transform={`translateY(${virtualRow.start}px)`}
                       >
                         <CombolistHeading>New Class</CombolistHeading>
                         {items[0].canCreate ? (
@@ -331,20 +324,14 @@ export const ComboSearchBox = <T extends Option>({
                             Type to create a new class
                           </CombolistItem>
                         )}
-                      </Box>
+                      </CombolistRow>
                     )}
                     {((rowVirtualizer.getVirtualItems().length > 1 &&
                       virtualRow.index > 0) ||
                       !items[0]?.__isNew__) && (
-                      <Box
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                        }}
+                      <CombolistRow
+                        height={`${virtualRow.size}px`}
+                        transform={`translateY(${virtualRow.start}px)`}
                       >
                         {virtualRow.index === 1 && (
                           <CombolistHeading>Existing Classes</CombolistHeading>
@@ -364,7 +351,7 @@ export const ComboSearchBox = <T extends Option>({
                             { inputValue },
                           )}
                         </CombolistItem>
-                      </Box>
+                      </CombolistRow>
                     )}
                   </>
                 ))}
