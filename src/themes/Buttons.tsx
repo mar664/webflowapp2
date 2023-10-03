@@ -99,8 +99,9 @@ const leftInputButton = defineStyle({
   width: "35px",
   minWidth: "unset",
   fontSize: "11px",
-  backgroundColor: "rgb(94, 94, 94)",
+  backgroundColor: "rgb(0, 115, 230)",
   transition: "none",
+  _expanded: { backgroundColor: "rgb(94, 94, 94)" },
 });
 
 const closeInputButton = defineStyle({

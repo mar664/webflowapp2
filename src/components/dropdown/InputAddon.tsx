@@ -13,7 +13,11 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import Downshift, { UseSelectStateChangeTypes, useSelect } from "downshift";
+import Downshift, {
+  UseSelectStateChangeTypes,
+  useSelect,
+  useCombobox,
+} from "downshift";
 import React, { useState, useRef } from "react";
 import { Combolist, CombolistContainer, CombolistItem } from "./Combolist";
 import { isInViewport } from "../../utils";
@@ -50,7 +54,7 @@ export default function InputAddon({
     getMenuProps,
     highlightedIndex,
     getItemProps,
-  } = useSelect({
+  } = useCombobox({
     items: options,
     itemToString,
     selectedItem: defaultValue,
@@ -90,11 +94,7 @@ export default function InputAddon({
             {options.map((option, index) => (
               <CombolistItem
                 {...getItemProps({ item: option, index })}
-                itemIndex={index}
-                highlightedIndex={highlightedIndex}
-                variant={highlightedIndex === index ? "selected" : undefined}
                 key={index}
-                aria-selected={selectedItem?.value === option.value}
               >
                 <Box margin={"3px"} width={"13px"}>
                   {selectedItem?.value === option.value && <CheckIcon />}

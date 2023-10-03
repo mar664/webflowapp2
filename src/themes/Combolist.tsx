@@ -46,13 +46,10 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       flexDir: "row",
       color: "rgb(235, 235, 235)",
       backgroundColor: "rgb(77, 77, 77)",
-      /*_hover: {
-        bg: "rgb(94, 94, 94)",
+      _selected: {
+        backgroundColor: "rgb(94, 94, 94)",
+        color: "rgb(235, 235, 235)",
       },
-      _focus: {
-        bg: "rgb(94, 94, 94)",
-      },
-      */
     },
   },
   variants: {

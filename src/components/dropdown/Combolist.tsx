@@ -34,14 +34,13 @@ export const Combolist = forwardRef(({ ...props }, ref) => {
   return <Box as="ul" __css={styles.combolist} {...props} ref={ref} />;
 });
 
-export const CombolistItem = forwardRef(({ variant, ...props }, ref) => {
+export const CombolistItem = forwardRef(({ ...props }, ref) => {
   const styles = useStyles();
-  const individualStyles = useStyleConfig("CombolistItem", { variant });
 
   return (
     <Box
       as="li"
-      __css={variant ? { ...styles.item, ...individualStyles } : styles.item}
+      __css={styles.item}
       {...props}
       ref={ref}
     />

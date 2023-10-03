@@ -1,10 +1,9 @@
-import { useRef, useState, useMemo, useLayoutEffect } from "react";
+import { useRef, useState, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useCombobox } from "downshift";
 import {
   FormLabel,
   Tooltip,
-  InputGroup,
   Input,
   Portal,
   Box,
@@ -21,7 +20,6 @@ import {
 import { useDebouncedCallback } from "use-debounce";
 import { faLaptop, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { isInViewport } from "../../utils";
 import { useCombolistPosition } from "../../hooks/combolist";
 
 const formatOptionLabel = (data: any, formatOptionLabelMeta: any) => {
@@ -200,8 +198,10 @@ export const ComboSearchBox = <T extends Option>({
     },
   });
 
-  const { position, positionByRef, isShown } =
-    useCombolistPosition({ isOpen, combolistRef });
+  const { position, positionByRef, isShown } = useCombolistPosition({
+    isOpen,
+    combolistRef,
+  });
 
   return (
     <Box width={"100%"}>
@@ -233,7 +233,6 @@ export const ComboSearchBox = <T extends Option>({
           icon={<FontAwesomeIcon icon={faLaptop} />}
           aria-label="open combobox"
           {...getToggleButtonProps({ ref: positionByRef })}
-          background={isShown ? "rgb(94, 94, 94)" : "rgb(0, 115, 230)"}
           variant={"leftInputElement"}
           flex={"1 1 40px"}
         />
@@ -315,11 +314,6 @@ export const ComboSearchBox = <T extends Option>({
                               index: 0,
                               item: items[0],
                             })}
-                            backgroundColor={
-                              highlightedIndex === 0
-                                ? "rgb(94, 94, 94)"
-                                : "inherit"
-                            }
                           >
                             <Box as="span" marginRight={2}>
                               Create
@@ -333,11 +327,6 @@ export const ComboSearchBox = <T extends Option>({
                               index: 0,
                               item: items[0],
                             })}
-                            backgroundColor={
-                              highlightedIndex === 0
-                                ? "rgb(94, 94, 94)"
-                                : "inherit"
-                            }
                           >
                             Type to create a new class
                           </CombolistItem>
@@ -366,11 +355,6 @@ export const ComboSearchBox = <T extends Option>({
                             index: virtualRow.index,
                             item: items[virtualRow.index],
                           })}
-                          backgroundColor={
-                            highlightedIndex === virtualRow.index
-                              ? "rgb(94, 94, 94)"
-                              : "inherit"
-                          }
                         >
                           {formatOptionLabel(
                             {
