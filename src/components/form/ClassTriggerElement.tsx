@@ -33,6 +33,7 @@ import { useStyles } from "../../contexts/AppContext";
 import { CloseIcon } from "@chakra-ui/icons";
 import { FilterOptionOption } from "react-select/dist/declarations/src/filters";
 import { ComboSearchBox } from "../dropdown/ComboSearchBox";
+import { Option } from "../../types";
 
 interface FormProps {
   setSelectedClass: any;
@@ -189,7 +190,10 @@ function ClassTriggerElement({
     }
   };
 
-  const handleCreate = (newLabel: string) => {
+  const handleCreate = (
+    newLabel: string,
+    callback: (option: Option) => void,
+  ) => {
     setIsLoading(true);
     (async () => {
       const newStyle = webflow.createStyle(newLabel);
@@ -207,6 +211,7 @@ function ClassTriggerElement({
       );
       setValue(newOption);
       setSelectedClass(newOption.value);
+      callback(newOption);
       setIsLoading(false);
     })();
   };

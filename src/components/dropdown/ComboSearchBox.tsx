@@ -10,6 +10,7 @@ import {
   Tag,
   Text,
   IconButton,
+  Spinner,
 } from "@chakra-ui/react";
 import {
   Combolist,
@@ -69,7 +70,10 @@ export interface Option {
 
 export interface ComboSearchBoxProps<T extends Option> {
   placeholder: string;
-  onCreateOption: (newLabel: string) => Promise<void> | void;
+  onCreateOption: (
+    newLabel: string,
+    callback: (option: T) => void,
+  ) => Promise<void> | void;
   options: T[];
   value: T | undefined;
   handleSelectedItemChange: (newValue: T | null | undefined) => void;
@@ -108,6 +112,7 @@ export const ComboSearchBox = <T extends Option>({
   );
   const [items, setItems] = useState(_options);
   const combolistRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const rowVirtualizer = useVirtualizer({
     count: items.length,
@@ -187,12 +192,11 @@ export const ComboSearchBox = <T extends Option>({
       console.log(changes);
       setInputValue("");
       if (changes.selectedItem?.__isNew__ && changes.selectedItem.canCreate) {
-        onCreateOption(changes.selectedItem.label);
-      } else if (
-        changes.selectedItem?.__isNew__ &&
-        !changes.selectedItem.canCreate
-      ) {
-        selectItem(null);
+        setIsLoading(true);
+        onCreateOption(changes.selectedItem.label, (item: T) => {
+          selectItem(item);
+          setIsLoading(false);
+        });
       } else {
         handleSelectedItemChange(changes.selectedItem);
       }
@@ -205,6 +209,22 @@ export const ComboSearchBox = <T extends Option>({
         type !== useCombobox.stateChangeTypes.MenuMouseLeave
       ) {
         rowVirtualizer.scrollToIndex(highlightedIndex as number);
+      }
+    },
+    stateReducer: (state, actionAndChanges) => {
+      const { type, changes } = actionAndChanges;
+      switch (type) {
+        case useCombobox.stateChangeTypes.ItemClick:
+        case useCombobox.stateChangeTypes.InputKeyDownEnter:
+          if (
+            changes.selectedItem?.__isNew__ &&
+            !changes.selectedItem.canCreate
+          ) {
+            return { ...changes, selectedItem: value };
+          }
+          return changes;
+        default:
+          return changes;
       }
     },
   });
@@ -253,7 +273,9 @@ export const ComboSearchBox = <T extends Option>({
           flex={selectedItem ? "1 1 100%" : "1 1 0%"}
           display="flex"
         >
-          {selectedItem && !selectedItem.__isNew__ && (<Tag>{selectedItem?.label}</Tag>)}
+          {selectedItem && !selectedItem.__isNew__ && (
+            <Tag>{selectedItem?.label}</Tag>
+          )}
         </Box>
         <Input
           size="md"
@@ -262,7 +284,7 @@ export const ComboSearchBox = <T extends Option>({
           variant={"styleSearch"}
           flex={selectedItem ? "1 1 0%" : "1 1 100%"}
         />
-        {selectedItem && (
+        {selectedItem && !isLoading && (
           <IconButton
             icon={<FontAwesomeIcon icon={faClose} />}
             aria-label="close combobox"
@@ -275,6 +297,7 @@ export const ComboSearchBox = <T extends Option>({
             variant={"closeInputElement"}
           />
         )}
+        {isLoading && <Spinner size="sm" />}
       </Box>
       <Portal>
         <CombolistContainer
