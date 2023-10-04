@@ -7,7 +7,7 @@ import {
   Portal,
   Tooltip,
 } from "@chakra-ui/react";
-import { useCombobox } from "downshift";
+import { useSelect } from "downshift";
 import { Combolist, CombolistContainer, CombolistItem } from "./Combolist";
 import { useCombolistPosition } from "../../hooks/combolist";
 import { CombolistPosition } from "../../types";
@@ -45,7 +45,7 @@ export default function Combobox({
     getMenuProps,
     highlightedIndex,
     getItemProps,
-  } = useCombobox({
+  } = useSelect({
     items: options,
     itemToString,
     selectedItem: defaultValue,
@@ -54,6 +54,9 @@ export default function Combobox({
         return;
       }
       onChange(selectedItem);
+    },
+    onHighlightedIndexChange: (changes) => {
+      console.log(changes);
     },
     id,
   });
@@ -88,17 +91,21 @@ export default function Combobox({
             ref={combolistRef}
           >
             <Combolist {...getMenuProps()}>
-              {options.map((option, index) => (
-                <CombolistItem
-                  {...getItemProps({ item: option, index })}
-                  key={index}
-                >
-                  <Box margin={"3px"} width={"13px"}>
-                    {selectedItem?.value === option.value && <CheckIcon />}
-                  </Box>
-                  {option.label}
-                </CombolistItem>
-              ))}
+              {isOpen &&
+                options.map((option, index) => (
+                  <CombolistItem
+                    key={index}
+                    {...getItemProps({ item: option, index })}
+                    data-highlighted={
+                      highlightedIndex === index ? true : undefined
+                    }
+                  >
+                    <Box margin={"3px"} width={"13px"}>
+                      {selectedItem?.value === option.value && <CheckIcon />}
+                    </Box>
+                    {option.label}
+                  </CombolistItem>
+                ))}
             </Combolist>
           </CombolistContainer>
         </Portal>

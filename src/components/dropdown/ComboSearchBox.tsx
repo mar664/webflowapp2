@@ -259,6 +259,7 @@ export const ComboSearchBox = <T extends Option>({
         paddingRight={"3px"}
         minHeight={"32px"}
         data-focus={isShown ? true : undefined}
+        aria-busy={isLoading}
       >
         <IconButton
           icon={<FontAwesomeIcon icon={faLaptop} />}
@@ -272,6 +273,7 @@ export const ComboSearchBox = <T extends Option>({
           width={"100%"}
           flex={selectedItem ? "1 1 100%" : "1 1 0%"}
           display="flex"
+          aria-busy={isLoading}
         >
           {selectedItem && !selectedItem.__isNew__ && (
             <Tag>{selectedItem?.label}</Tag>
@@ -335,6 +337,11 @@ export const ComboSearchBox = <T extends Option>({
                               index: 0,
                               item: items[0],
                             })}
+                            data-highlighted={
+                              highlightedIndex === virtualRow.index
+                                ? true
+                                : undefined
+                            }
                           >
                             <Box as="span" marginRight={2}>
                               Create
@@ -348,6 +355,11 @@ export const ComboSearchBox = <T extends Option>({
                               index: 0,
                               item: items[0],
                             })}
+                            data-highlighted={
+                              highlightedIndex === virtualRow.index
+                                ? true
+                                : undefined
+                            }
                           >
                             Type to create a new class
                           </CombolistItem>
@@ -370,6 +382,11 @@ export const ComboSearchBox = <T extends Option>({
                             index: virtualRow.index,
                             item: items[virtualRow.index],
                           })}
+                          data-highlighted={
+                            highlightedIndex === virtualRow.index
+                              ? true
+                              : undefined
+                          }
                         >
                           {formatOptionLabel(
                             {

@@ -47,20 +47,16 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       flexDir: "row",
       color: "rgb(235, 235, 235)",
       backgroundColor: "rgb(77, 77, 77)",
-      _selected: {
+      /*       _selected: {
+        backgroundColor: "rgb(94, 94, 94)",
+        color: "rgb(235, 235, 235)",
+      }, */
+      _highlighted: {
         backgroundColor: "rgb(94, 94, 94)",
         color: "rgb(235, 235, 235)",
       },
     },
     row: { position: "absolute", top: 0, left: 0, width: "100%" },
-  },
-  variants: {
-    selected: {
-      item: {
-        color: "rgb(235, 235, 235)",
-        backgroundColor: "rgb(94, 94, 94)",
-      },
-    },
   },
   sizes: {
     sm: { container: { minWidth: "80px" } },

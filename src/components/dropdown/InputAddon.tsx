@@ -13,11 +13,7 @@ import {
   Text,
   Tooltip,
 } from "@chakra-ui/react";
-import Downshift, {
-  UseSelectStateChangeTypes,
-  useSelect,
-  useCombobox,
-} from "downshift";
+import Downshift, { useSelect } from "downshift";
 import React, { useState, useRef } from "react";
 import { Combolist, CombolistContainer, CombolistItem } from "./Combolist";
 import { isInViewport } from "../../utils";
@@ -54,7 +50,7 @@ export default function InputAddon({
     getMenuProps,
     highlightedIndex,
     getItemProps,
-  } = useCombobox({
+  } = useSelect({
     items: options,
     itemToString,
     selectedItem: defaultValue,
@@ -91,17 +87,21 @@ export default function InputAddon({
           size={"sm"}
         >
           <Combolist {...getMenuProps()}>
-            {options.map((option, index) => (
-              <CombolistItem
-                {...getItemProps({ item: option, index })}
-                key={index}
-              >
-                <Box margin={"3px"} width={"13px"}>
-                  {selectedItem?.value === option.value && <CheckIcon />}
-                </Box>
-                {option.label}
-              </CombolistItem>
-            ))}
+            {isOpen &&
+              options.map((option, index) => (
+                <CombolistItem
+                  key={index}
+                  {...getItemProps({ item: option, index })}
+                  data-highlighted={
+                    highlightedIndex === index ? true : undefined
+                  }
+                >
+                  <Box margin={"3px"} width={"13px"}>
+                    {selectedItem?.value === option.value && <CheckIcon />}
+                  </Box>
+                  {option.label}
+                </CombolistItem>
+              ))}
           </Combolist>
         </CombolistContainer>
       </Portal>

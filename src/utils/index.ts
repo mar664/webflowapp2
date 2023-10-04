@@ -98,7 +98,7 @@ export function timeUnitToNumberValue(val: string | undefined) {
     if (isMonths.success) {
       return {
         value: Number.parseInt(isMonths.data.slice(0, -3)),
-        unit: "mth",
+        unit: "mo",
       };
     }
     const isYears = years.safeParse(val);

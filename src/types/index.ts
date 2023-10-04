@@ -59,8 +59,8 @@ export const days = z.custom<`${number}d`>((val) => {
 
 export type days = z.infer<typeof days>;
 
-export const months = z.custom<`${number}mth`>((val) => {
-  return typeof val === "string" ? /^\d+mth$/.test(val) : false;
+export const months = z.custom<`${number}mo`>((val) => {
+  return typeof val === "string" ? /^\d+mo$/.test(val) : false;
 });
 
 export type months = z.infer<typeof months>;
@@ -87,7 +87,7 @@ enum TimeUnitsNativeEnum {
   Minutes = "m",
   Hours = "h",
   Days = "d",
-  Months = "mth",
+  Months = "mo",
   Years = "y",
 }
 
