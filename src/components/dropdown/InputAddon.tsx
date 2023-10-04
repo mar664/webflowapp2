@@ -68,7 +68,7 @@ export default function InputAddon({
     useCombolistPosition({ isOpen, positionType: CombolistPosition.Above });
 
   return (
-    <Box>
+    <Box height={"100%"}>
       <Button
         {...getToggleButtonProps({
           ref: positionByRef,

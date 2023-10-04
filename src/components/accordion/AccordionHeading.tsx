@@ -1,5 +1,5 @@
-import { TriangleDownIcon } from "@chakra-ui/icons";
-import { AccordionButton, Box, Heading } from "@chakra-ui/react";
+import { TriangleDownIcon, QuestionIcon } from "@chakra-ui/icons";
+import { AccordionButton, IconButton, Box, Heading } from "@chakra-ui/react";
 
 interface Props {
   headingText: string;
@@ -14,8 +14,14 @@ export default function AccordionHeading({ headingText }: Props) {
       borderBottomColor={"accordion.heading.borderBottomColor"}
       borderBottomWidth={"accordion.heading.borderBottomWidth"}
       padding={"accordion.heading.padding"}
+      display={"flex"}
     >
-      <AccordionButton paddingLeft={"accordion.heading.button.paddingLeft"}>
+      <AccordionButton
+        paddingLeft={"accordion.heading.button.paddingLeft"}
+        _focusVisible={{
+          boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+        }}
+      >
         <TriangleDownIcon boxSize={"9px"} />
         <Box
           as="span"
@@ -28,6 +34,12 @@ export default function AccordionHeading({ headingText }: Props) {
           {headingText}
         </Box>
       </AccordionButton>
+      <IconButton
+        icon={<QuestionIcon />}
+        variant={"headerIcon"}
+        aria-label="Help"
+        size={"sm"}
+      />
     </Heading>
   );
 }

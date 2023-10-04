@@ -31,6 +31,17 @@ const defaultStyle = definePartsStyle({
   },
   body: {
     fontSize: "alertDialog.body.fontSize",
+    paddingInlineStart: "4",
+    paddingInlineEnd: "4",
+  },
+  closeButton: {
+    borderRadius: "3px",
+    _hover: {
+      background: "rgba(255, 255, 255, 0.1)",
+    },
+    _focus: {
+      boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+    },
   },
 });
 

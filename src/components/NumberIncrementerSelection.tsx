@@ -2,6 +2,7 @@ import ComponentSelection from "./ComponentSelection";
 import { NumberIncrementer } from "../models/NumberIncrementer";
 import { Paths } from "../paths";
 import { faArrowDown19 } from "@fortawesome/free-solid-svg-icons";
+import { HelpModal } from "./HelpModal";
 
 interface Props {
   index: number;
@@ -19,6 +20,17 @@ function NumberIncrementerSelection({ index, disabled, editable }: Props) {
       index={index}
       disabled={disabled}
       editable={editable}
+      showHelp={({ isOpen, onClose }) => (
+        <HelpModal
+          title={"Number Incrementer Help"}
+          isOpen={isOpen}
+          onClose={onClose}
+        >
+          Inserts or transforms existing element into a number incrmenter
+          element. The element will count up from the start value to the final
+          value over the set time interval.
+        </HelpModal>
+      )}
     />
   );
 }

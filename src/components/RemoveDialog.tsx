@@ -43,7 +43,6 @@ export function RemoveDialog({
             <Box>Delete {elementType}</Box>
             <AlertDialogCloseButton
               size={"sm"}
-              aria-label="toggle visibility"
               variant={"headerIcon"}
             />
           </AlertDialogHeader>

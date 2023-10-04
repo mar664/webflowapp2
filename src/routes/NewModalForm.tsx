@@ -66,6 +66,7 @@ function NewModalForm() {
           height: "100vh",
           "overflow-x": "hidden",
           "overflow-y": "hidden",
+          display: "none",
         };
         elementStyle.setProperties(properties);
         modalElement.setStyles([elementStyle]);

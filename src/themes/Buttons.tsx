@@ -1,6 +1,13 @@
 import { defineStyle, defineStyleConfig } from "@chakra-ui/react";
 
-const buttonBase = defineStyle({});
+const buttonBase = defineStyle({
+  _focus: {
+    boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+  },
+  _focusVisible: {
+    boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+  },
+});
 
 const buttonDefault = defineStyle({
   borderWidth: "button.borderWidth",
