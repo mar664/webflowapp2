@@ -234,6 +234,8 @@ export const ComboSearchBox = <T extends Option>({
     combolistRef,
   });
 
+  const [hasFocus, setHasFocus] = useState(false);
+
   return (
     <Box width={"100%"}>
       <FormLabel {...getLabelProps()} fontSize={"label.fontSize"} mb={0}>
@@ -258,7 +260,7 @@ export const ComboSearchBox = <T extends Option>({
         paddingLeft={"3px"}
         paddingRight={"3px"}
         minHeight={"32px"}
-        data-focus={isShown ? true : undefined}
+        data-focus={isShown || hasFocus ? true : undefined}
         aria-busy={isLoading}
       >
         <IconButton
@@ -281,7 +283,14 @@ export const ComboSearchBox = <T extends Option>({
         </Box>
         <Input
           size="md"
-          {...getInputProps()}
+          {...getInputProps({
+            onFocus: () => {
+              setHasFocus(true);
+            },
+            onBlur: () => {
+              setHasFocus(false);
+            },
+          })}
           placeholder={isShown ? undefined : placeholder}
           variant={"styleSearch"}
           flex={selectedItem ? "1 1 0%" : "1 1 100%"}
