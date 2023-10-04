@@ -76,7 +76,9 @@ function NumberFormElement({
     <>
       <GridItem display={"flex"} alignItems={"center"}>
         <FormLabel htmlFor={name} fontSize={"label.fontSize"} mb={0}>
-          <Tooltip label={helpText}>{label}</Tooltip>
+          <Tooltip hasArrow label={helpText}>
+            {label}
+          </Tooltip>
         </FormLabel>
       </GridItem>
       <GridItem>

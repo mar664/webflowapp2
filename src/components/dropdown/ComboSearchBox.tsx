@@ -239,7 +239,9 @@ export const ComboSearchBox = <T extends Option>({
   return (
     <Box width={"100%"}>
       <FormLabel {...getLabelProps()} fontSize={"label.fontSize"} mb={0}>
-        <Tooltip label={tooltip}>{label}</Tooltip>
+        <Tooltip hasArrow label={tooltip}>
+          {label}
+        </Tooltip>
       </FormLabel>
       <Box
         display={"flex"}

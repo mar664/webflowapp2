@@ -35,8 +35,6 @@ export const useSelectedElementChangeRedirect = (
       selectedElement.id !== element.id &&
       !getAllChildren(element.element).includes(selectedElement.id)
     ) {
-      console.log(getAllChildren(element.element));
-      console.log(selectedElement.id);
       console.log("redirecting");
       navigate(Paths.app, { replace: true });
     }

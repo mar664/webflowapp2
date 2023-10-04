@@ -31,12 +31,8 @@ export const useElementVisibility = (
     }
   }, []);
 
-  useEffect(() => {
-    console.log(isElementHidden, "isHidden");
-  }, [isElementHidden]);
-
   if (!currentElement) {
-    throw Error("HEre");
+    throw Error("Current element should not be undefined");
   }
 
   const styleElement =

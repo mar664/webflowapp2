@@ -274,7 +274,10 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-header" mb="0">
-            <Tooltip label="Toggles whether to create a header element for the modal">
+            <Tooltip
+              hasArrow
+              label="Toggles whether to create a header element for the modal"
+            >
               Create header element
             </Tooltip>
           </FormLabel>
@@ -292,7 +295,10 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-close" mb="0">
-            <Tooltip label="Toggles whether to create a close button element for the modal">
+            <Tooltip
+              hasArrow
+              label="Toggles whether to create a close button element for the modal"
+            >
               Create close button element
             </Tooltip>
           </FormLabel>
@@ -310,7 +316,10 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-body" mb="0">
-            <Tooltip label="Toggles whether to create a body div element for the modal">
+            <Tooltip
+              hasArrow
+              label="Toggles whether to create a body div element for the modal"
+            >
               Create body div element
             </Tooltip>
           </FormLabel>
@@ -328,7 +337,10 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-footer" mb="0">
-            <Tooltip label="Toggles whether to create a footer div element for the modal">
+            <Tooltip
+              hasArrow
+              label="Toggles whether to create a footer div element for the modal"
+            >
               Create footer element
             </Tooltip>
           </FormLabel>
@@ -345,7 +357,10 @@ function NewModalForm() {
           maxWidth={"full"}
         >
           <FormLabel htmlFor="create-classes" mb="0">
-            <Tooltip label="Toggles whether to create classes for the elements for the modal e.g MR Modal Container, MR Modal Overlay etc">
+            <Tooltip
+              hasArrow
+              label="Toggles whether to create classes for the elements for the modal e.g MR Modal Container, MR Modal Overlay etc"
+            >
               Create classes for each element
             </Tooltip>
           </FormLabel>
@@ -366,7 +381,10 @@ function NewModalForm() {
             maxWidth={"full"}
           >
             <FormLabel htmlFor="use-custom-class-prefix" mb="0">
-              <Tooltip label="Toggles whether to change the default class prefix 'MR Modal'">
+              <Tooltip
+                hasArrow
+                label="Toggles whether to change the default class prefix 'MR Modal'"
+              >
                 Use a custom class prefix
               </Tooltip>
             </FormLabel>
@@ -380,7 +398,10 @@ function NewModalForm() {
         {watch("createClasses") && watch("useCustomPrefix") && (
           <FormControl margin={"2"} w={"auto"}>
             <FormLabel htmlFor="custom-class-prefix" mb="0">
-              <Tooltip label="You can use a custom class prefix e.g My Custom Class Prefix">
+              <Tooltip
+                hasArrow
+                label="You can use a custom class prefix e.g My Custom Class Prefix"
+              >
                 Custom prefix
               </Tooltip>
             </FormLabel>

@@ -57,7 +57,7 @@ export function RemoveDialog({
               <Button ref={cancelRef} onClick={disclosure.onClose} size={"sm"}>
                 Cancel
               </Button>
-              <Tooltip label="Delete the attributes set">
+              <Tooltip hasArrow label="Delete the attributes set">
                 <Button
                   variant={"warning"}
                   onClick={async () => {
@@ -70,7 +70,10 @@ export function RemoveDialog({
                 </Button>
               </Tooltip>
 
-              <Tooltip label="Delete the attributes set and the element from the webflow designer">
+              <Tooltip
+                hasArrow
+                label="Delete the attributes set and the element from the webflow designer"
+              >
                 <Button
                   variant="warning"
                   onClick={async () => {

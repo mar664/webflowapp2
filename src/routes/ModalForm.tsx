@@ -1,10 +1,6 @@
 import { useEffect } from "react";
-import {
-  useLoaderData,
-} from "react-router-dom";
-import {
-  useIsPageLoading,
-} from "../contexts/AppContext";
+import { useLoaderData } from "react-router-dom";
+import { useIsPageLoading } from "../contexts/AppContext";
 import {
   Accordion,
   Tooltip,
@@ -38,11 +34,13 @@ import AccordionHeading from "../components/accordion/AccordionHeading";
 import AccordionPanel from "../components/accordion/AccordionPanel";
 import Combobox from "../components/dropdown/Combobox";
 import { TIME_UNITS_OPTIONS } from "../constants";
-import { fetchDefaultFormValues, loaderFactory, timeUnitToNumberValue } from "../utils";
-import { TimeUnits, TimeUnitsEnum } from "../types";
 import {
-  useSelectedElementChangeRedirect,
-} from "../hooks/utils";
+  fetchDefaultFormValues,
+  loaderFactory,
+  timeUnitToNumberValue,
+} from "../utils";
+import { TimeUnits, TimeUnitsEnum } from "../types";
+import { useSelectedElementChangeRedirect } from "../hooks/utils";
 import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
 import { InsertScript } from "../components/InsertScript";
 
@@ -69,7 +67,11 @@ function ModalForm() {
     watch,
     formState: { isLoading, errors },
   } = useForm<ModalOptions>({
-    defaultValues: fetchDefaultFormValues<ModalOptions>(modalElement, Modal, ModalOptions),
+    defaultValues: fetchDefaultFormValues<ModalOptions>(
+      modalElement,
+      Modal,
+      ModalOptions,
+    ),
     resolver: zodResolver(ModalOptions),
   });
 
@@ -137,7 +139,10 @@ function ModalForm() {
               >
                 <GridItem display={"flex"} alignItems={"center"} colSpan={1}>
                   <FormLabel htmlFor="open-modal-trigger" mb="0">
-                    <Tooltip label="Element or class to trigger the modal opening">
+                    <Tooltip
+                      hasArrow
+                      label="Element or class to trigger the modal opening"
+                    >
                       Trigger
                     </Tooltip>
                   </FormLabel>
@@ -245,7 +250,10 @@ function ModalForm() {
               >
                 <GridItem display="flex" alignItems="center">
                   <FormLabel htmlFor="close-modal-trigger" mb="0">
-                    <Tooltip label="Element or class to trigger the modal closing">
+                    <Tooltip
+                      hasArrow
+                      label="Element or class to trigger the modal closing"
+                    >
                       Trigger
                     </Tooltip>
                   </FormLabel>
@@ -348,7 +356,10 @@ function ModalForm() {
                   alignItems="center"
                 >
                   <FormLabel htmlFor="close-on-click-overlay" mb="0">
-                    <Tooltip label="Toggles whether to close the modal when overlay is clicked">
+                    <Tooltip
+                      hasArrow
+                      label="Toggles whether to close the modal when overlay is clicked"
+                    >
                       Close modal on click overlay
                     </Tooltip>
                   </FormLabel>

@@ -68,7 +68,9 @@ export default function Combobox({
     <>
       <GridItem display={"flex"} alignItems={"center"}>
         <FormLabel {...getLabelProps()}>
-          <Tooltip label={helpText}>{label}</Tooltip>
+          <Tooltip hasArrow label={helpText}>
+            {label}
+          </Tooltip>
         </FormLabel>
       </GridItem>
       <GridItem colSpan={3} display="flex" alignItems="center">

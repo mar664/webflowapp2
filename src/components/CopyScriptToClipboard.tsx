@@ -16,7 +16,10 @@ export const CopyScriptToClipboard = ({ ElementType }: Props) => {
   return (
     <FormControl display="flex" alignItems="center" maxWidth={"full"}>
       <FormLabel htmlFor="copy-script" mb="0">
-        <Tooltip label="Copy the javascript embed code to clipboard so it can be added to webflow">
+        <Tooltip
+          hasArrow
+          label="Copy the javascript embed code to clipboard so it can be added to webflow"
+        >
           Copy script to clipboard
         </Tooltip>
       </FormLabel>

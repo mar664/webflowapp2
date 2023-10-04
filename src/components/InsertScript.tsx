@@ -25,7 +25,10 @@ export const InsertScript = ({ alreadyInserted, ElementType }: Props) => {
   return (
     <FormControl display="flex" alignItems="center" maxWidth={"full"}>
       <FormLabel htmlFor="insert-script" mb="0">
-        <Tooltip label="Toggles whether to embed the javascript code on the page">
+        <Tooltip
+          hasArrow
+          label="Toggles whether to embed the javascript code on the page"
+        >
           Insert script in body?
         </Tooltip>
       </FormLabel>

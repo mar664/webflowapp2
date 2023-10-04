@@ -289,7 +289,7 @@ function CookieConsentForm() {
               >
                 <GridItem>
                   <FormLabel htmlFor="cookie-name">
-                    <Tooltip label="You can use a custom cookie name">
+                    <Tooltip hasArrow label="You can use a custom cookie name">
                       Name
                     </Tooltip>
                   </FormLabel>
@@ -311,7 +311,7 @@ function CookieConsentForm() {
                   onValueChange={(value) =>
                     setValue("cookieExpiry", TimeUnits.parse(value))
                   }
-                  helpText="Days to set the cookie to expire after"
+                  helpText="Time period before cookie set expires"
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>
                       [
