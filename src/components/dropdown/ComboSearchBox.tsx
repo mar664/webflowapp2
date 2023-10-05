@@ -117,7 +117,7 @@ export const ComboSearchBox = <T extends Option>({
   const rowVirtualizer = useVirtualizer({
     count: items.length,
     getScrollElement: () => combolistRef.current,
-    estimateSize: (i) => (i === 0 || i === 1 ? 54 : 30),
+    estimateSize: (i) => (i === 0 || i === 1 ? 48 : 24),
     overscan: 10,
   });
 

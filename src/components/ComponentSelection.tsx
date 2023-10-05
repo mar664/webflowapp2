@@ -1,5 +1,11 @@
-import { Box, Button, Flex, Icon, Link, useDisclosure } from "@chakra-ui/react";
-import { type RemoveHandler } from "../types";
+import {
+  Box,
+  Button,
+  VisuallyHidden,
+  Icon,
+  Link,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
@@ -54,9 +60,21 @@ function ComponentSelection({
   return (
     <>
       <Link
+        tabIndex={0}
         display="flex"
         onMouseEnter={onEnterComponent}
         onMouseLeave={onLeaveComponent}
+        onKeyUp={(event) => {
+          if (event.key === "Enter") {
+            if (!disabled && selectedElement) {
+              if (editable) {
+                clickHandler(existingPath);
+              } else {
+                clickHandler(newPath);
+              }
+            }
+          }
+        }}
         aria-disabled={disabled}
         position={"relative"}
         flexDir={"column"}
@@ -87,6 +105,12 @@ function ComponentSelection({
           backgroundColor: "rgb(77, 77, 77)",
           cursor: disabled ? "not-allowed" : "pointer",
         }}
+        _focus={{
+          boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+        }}
+        _focusVisible={{
+          boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
+        }}
       >
         <Icon
           as={EditIcon}
@@ -96,25 +120,41 @@ function ComponentSelection({
           left={"0.25rem"}
           aria-label="Edit icon"
         />
-        <Button
-          display={isHoveredOrFocused ? "block" : "none"}
-          position={"absolute"}
-          right={"0.25rem"}
-          top={"0.25rem"}
-          size={"xs"}
-          color={"white"}
-          opacity={"0.6"}
-          backgroundColor={"rgb(43, 43, 43)"}
-          _hover={{ opacity: 1 }}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            openModal();
-          }}
-          cursor={"help"}
-        >
-          ?
-        </Button>
+        {isHoveredOrFocused && (
+          <Button
+            position={"absolute"}
+            right={"0.25rem"}
+            top={"0.25rem"}
+            size={"xs"}
+            color={"white"}
+            opacity={"0.6"}
+            backgroundColor={"rgb(43, 43, 43)"}
+            _hover={{ opacity: 1 }}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openModal();
+            }}
+            cursor={"help"}
+          >
+            ?
+          </Button>
+        )}
+        <VisuallyHidden>
+          <Button
+            position={"absolute"}
+            right={"0.25rem"}
+            top={"0.25rem"}
+            size={"xs"}
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              openModal();
+            }}
+          >
+            ?
+          </Button>
+        </VisuallyHidden>
         <Box margin={"auto"} fontSize={"2rem"} padding={"0.5rem"}>
           <FontAwesomeIcon icon={icon} fontSize={"2rem"} />
         </Box>
