@@ -78,7 +78,7 @@ export function timeUnitToNumberValue(val: string | undefined) {
     }
     const isMinutes = minutes.safeParse(val);
     if (isMinutes.success) {
-      return { value: Number.parseInt(isMinutes.data.slice(0, -2)), unit: "m" };
+      return { value: Number.parseInt(isMinutes.data.slice(0, -1)), unit: "m" };
     }
     const isHours = hours.safeParse(val);
     if (isHours.success) {
@@ -97,7 +97,7 @@ export function timeUnitToNumberValue(val: string | undefined) {
     const isMonths = months.safeParse(val);
     if (isMonths.success) {
       return {
-        value: Number.parseInt(isMonths.data.slice(0, -3)),
+        value: Number.parseInt(isMonths.data.slice(0, -2)),
         unit: "mo",
       };
     }

@@ -43,6 +43,7 @@ import { TimeUnits, TimeUnitsEnum } from "../types";
 import { useSelectedElementChangeRedirect } from "../hooks/utils";
 import { CopyScriptToClipboard } from "../components/CopyScriptToClipboard";
 import { InsertScript } from "../components/InsertScript";
+import { HelpModal } from "../components/HelpModal";
 
 export const loader = loaderFactory(ModalCompatibleElement);
 
@@ -130,7 +131,18 @@ function ModalForm() {
       <form>
         <Accordion defaultIndex={[0, 1, 2]} allowMultiple>
           <AccordionItem>
-            <AccordionHeading headingText="Opening Modal" />
+            <AccordionHeading
+              headingText="Opening Modal"
+              showHelp={({ isOpen, onClose }) => (
+                <HelpModal
+                  title={"Opening Modal Help"}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                >
+                  Information about how to set settings for opening the modal
+                </HelpModal>
+              )}
+            />
             <AccordionPanel>
               <Grid
                 templateColumns="60px 1fr 60px 1fr"
@@ -227,6 +239,7 @@ function ModalForm() {
                   disabled={
                     watch("openEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  min={0}
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>
                       [
@@ -339,6 +352,7 @@ function ModalForm() {
                   disabled={
                     watch("closeEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  min={0}
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>
                       [

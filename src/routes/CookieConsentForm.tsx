@@ -214,6 +214,7 @@ function CookieConsentForm() {
                   disabled={
                     watch("openEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  min={0}
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>
                       [
@@ -266,6 +267,7 @@ function CookieConsentForm() {
                   disabled={
                     watch("closeEffectType") === OpenEffectTypesEnum.enum.None
                   }
+                  min={0}
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>
                       [
@@ -311,6 +313,7 @@ function CookieConsentForm() {
                   onValueChange={(value) =>
                     setValue("cookieExpiry", TimeUnits.parse(value))
                   }
+                  min={0}
                   helpText="Time period before cookie set expires"
                   units={{
                     options: TIME_UNITS_OPTIONS.filter((o) =>

@@ -111,6 +111,7 @@ function ComponentSelection({
             event.stopPropagation();
             openModal();
           }}
+          cursor={"help"}
         >
           ?
         </Button>
