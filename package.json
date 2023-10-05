@@ -44,11 +44,14 @@
     "zod": "^3.22.2"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@jest/globals": "^29.7.0",
     "@types/react-beforeunload": "^2.1.1",
     "@types/react-copy-to-clipboard": "^5.0.4",
     "@webflow/designer-extension-typings": "*",
     "@webflow/webflow-cli": "^1.6.3",
-    "concurrently": "*"
+    "concurrently": "*",
+    "jest": "^27.5.1"
   },
   "scripts": {
     "start": "react-scripts start",

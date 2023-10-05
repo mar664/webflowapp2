@@ -4,7 +4,6 @@ import { ModalCompatibleElement } from "../elements/ModalCompatibleElement";
 import { NumberIncrementerCompatibleElement } from "../elements/NumberIncrementerCompatibleElement";
 import { z } from "zod";
 import {
-  TimeUnits,
   days,
   hours,
   milliseconds,
@@ -14,7 +13,6 @@ import {
   years,
 } from "../types";
 import { INIT_COMPATIBLE_COMPONENTS } from "../constants";
-import { LoaderFunction, LoaderFunctionArgs } from "react-router-dom";
 import { ElementModel } from "../models/ElementModel";
 
 export function removeChars(str: string) {
