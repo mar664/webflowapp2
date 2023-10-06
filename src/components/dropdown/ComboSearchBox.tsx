@@ -53,9 +53,9 @@ const formatOptionLabel = (data: any, formatOptionLabelMeta: any) => {
         theChar = iterator.next();
       }
 
-      return <Tag>{letters}</Tag>;
+      return <Tag variant={"option"}>{letters}</Tag>;
     }
-    return <Tag>{data.label}</Tag>;
+    return <Tag variant={"option"}>{data.label}</Tag>;
   }
   return data.label;
 };
@@ -184,6 +184,7 @@ export const ComboSearchBox = <T extends Option>({
     id,
     items,
     initialSelectedItem: value,
+    initialInputValue: "",
     onInputValueChange({ inputValue }) {
       debounced(inputValue?.trim());
     },
@@ -252,9 +253,9 @@ export const ComboSearchBox = <T extends Option>({
             openMenu();
           }
         }}
-        background="rgb(43, 43, 43)"
-        borderColor="rgb(33, 33, 33)"
-        borderRadius="2px"
+        background="rgba(0, 0, 0, 0.15)"
+        borderColor="rgba(255, 255, 255, 0.14)"
+        borderRadius="4px"
         borderStyle="solid"
         borderWidth="1px"
         _focus={{ boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px" }}
@@ -271,15 +272,20 @@ export const ComboSearchBox = <T extends Option>({
           {...getToggleButtonProps({ ref: positionByRef })}
           variant={"leftInputElement"}
           flex={"1 1 40px"}
+          background={
+            selectedItem
+              ? "linear-gradient(rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.1) 100%)"
+              : undefined
+          }
         />
         <Box
           padding={"4px"}
           width={"100%"}
-          flex={selectedItem ? "1 1 100%" : "1 1 0%"}
+          flex={selectedItem && !inputValue ? "1 1 100%" : "1 1 0%"}
           display="flex"
           aria-busy={isLoading}
         >
-          {selectedItem && !selectedItem.__isNew__ && (
+          {selectedItem && !selectedItem.__isNew__ && !inputValue && (
             <Tag>{selectedItem?.label}</Tag>
           )}
         </Box>
@@ -295,7 +301,7 @@ export const ComboSearchBox = <T extends Option>({
           })}
           placeholder={isShown ? undefined : placeholder}
           variant={"styleSearch"}
-          flex={selectedItem ? "1 1 0%" : "1 1 100%"}
+          flex={selectedItem && !inputValue ? "1 1 0%" : "1 1 100%"}
         />
         {selectedItem && !isLoading && (
           <IconButton
@@ -357,7 +363,7 @@ export const ComboSearchBox = <T extends Option>({
                             <Box as="span" marginRight={2}>
                               Create
                             </Box>
-                            <Tag>{items[0].label}</Tag>
+                            <Tag variant={"option"}>{items[0].label}</Tag>
                           </CombolistItem>
                         ) : (
                           <CombolistItem

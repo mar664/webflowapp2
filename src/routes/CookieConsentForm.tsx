@@ -289,7 +289,7 @@ function CookieConsentForm() {
                 gap={"8px"}
                 padding={"8px"}
               >
-                <GridItem>
+                <GridItem display={"flex"} alignItems={"center"}>
                   <FormLabel htmlFor="cookie-name">
                     <Tooltip hasArrow label="You can use a custom cookie name">
                       Name

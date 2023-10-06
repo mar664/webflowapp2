@@ -7,6 +7,8 @@
     "@chakra-ui/react": "^2.8.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fontsource/inter": "^5.0.12",
+    "@fontsource/open-sans": "^5.0.14",
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-regular-svg-icons": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
@@ -45,6 +47,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@chakra-ui/cli": "^2.4.1",
     "@jest/globals": "^29.7.0",
     "@types/react-beforeunload": "^2.1.1",
     "@types/react-copy-to-clipboard": "^5.0.4",
@@ -59,7 +62,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "build:webflow": "react-scripts build && webflow extension bundle",
-    "dev:webflow": "react-scripts build && webflow extension serve"
+    "dev:webflow": "react-scripts build && webflow extension serve",
+    "theme": "chakra-cli tokens src\\theme.tsx",
+    "theme:watch": "chakra-cli tokens src\\theme.tsx --watch"
   },
   "eslintConfig": {
     "extends": [

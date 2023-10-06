@@ -11,14 +11,15 @@ const helpers = createMultiStyleConfigHelpers([
 const combolistTheme = helpers.defineMultiStyleConfig({
   baseStyle: {
     container: {
-      fontSize: "11px",
-      color: "rgb(217, 217, 217)",
-      backgroundColor: "rgb(77, 77, 77)",
-      borderColor: "rgb(54, 54, 54)",
-      borderRadius: "3px",
-      borderWidth: "1px",
+      fontSize: "11.5px",
+      color: "rgb(245, 245, 245)",
+      backgroundColor: "#383838",
+      borderColor: "rgba(255, 255, 255, 0.14)",
+      borderRadius: "4px",
+      borderWidth: "0px",
       borderStyle: "solid",
-      boxShadow: "rgba(0, 0, 0, 0.15) 0px 5px 10px",
+      boxShadow:
+        "rgba(0, 0, 0, 0.08) 0px 12px 24px 8px, rgba(0, 0, 0, 0.08) 0px 8px 16px 4px, rgba(0, 0, 0, 0.08) 0px 4px 8px 2px, rgba(0, 0, 0, 0.08) 0px 2px 6px 0px, rgba(0, 0, 0, 0.12) 0px -0.5px 0.5px 0px inset, rgba(255, 255, 255, 0.12) 0px 0.5px 0.5px 0px inset",
       position: "absolute",
       marginTop: "10px",
       marginBottom: "10px",
@@ -35,6 +36,8 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       flex: 1,
       overflowY: "auto",
       mt: 0,
+      paddingTop: "4px",
+      paddingBottom: "4px",
     },
     item: {
       paddingTop: "4px",
@@ -46,14 +49,14 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       alignItems: "center",
       flexDir: "row",
       color: "rgb(235, 235, 235)",
-      backgroundColor: "rgb(77, 77, 77)",
+      backgroundColor: "#383838",
       /*       _selected: {
         backgroundColor: "rgb(94, 94, 94)",
         color: "rgb(235, 235, 235)",
       }, */
       _highlighted: {
-        backgroundColor: "rgb(94, 94, 94)",
-        color: "rgb(235, 235, 235)",
+        backgroundColor: "#444444",
+        color: "#f5f5f5",
       },
     },
     row: { position: "absolute", top: 0, left: 0, width: "100%" },

@@ -34,7 +34,7 @@ export function Root() {
             <Spinner
               thickness="6px"
               speed="0.65s"
-              color={"#0073E6"}
+              color={"#006acc"}
               size="xl"
             />
           )}
@@ -48,6 +48,7 @@ export function Root() {
         overflow={
           navigation.state === "loading" || isPageLoading ? "hidden" : "inherit"
         }
+        backgroundColor="header.background"
       >
         <Outlet />
       </Box>

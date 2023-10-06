@@ -7,8 +7,9 @@ interface Props {
 export default function AccordionItem({ children }: Props) {
   return (
     <_AccordionItem
-      borderTopColor={"accordion.borderTopColor"}
-      borderBottomColor={"accordion.borderBottomColor"}
+      borderTop={"none"}
+      borderBottomColor={"rgba(255, 255, 255, 0.13)"}
+      borderBottomWidth={"1px"}
       transition={"none"}
     >
       {children}

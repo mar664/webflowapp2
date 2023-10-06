@@ -99,10 +99,10 @@ function ComponentSelection({
         borderBottomWidth={"1px"}
         borderBottomStyle={"solid"}
         borderColor={"border.panelColor"}
-        color={"rgb(235, 235, 235)"}
+        color={"#bdbdbd"}
         opacity={disabled ? "0.5" : "1"}
         _hover={{
-          backgroundColor: "rgb(77, 77, 77)",
+          backgroundColor: "#383838",
           cursor: disabled ? "not-allowed" : "pointer",
         }}
         _focus={{
@@ -111,6 +111,7 @@ function ComponentSelection({
         _focusVisible={{
           boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
         }}
+        fontSize={"14px"}
       >
         <Icon
           as={EditIcon}
@@ -123,12 +124,13 @@ function ComponentSelection({
         {isHoveredOrFocused && (
           <Button
             position={"absolute"}
-            right={"0.25rem"}
-            top={"0.25rem"}
-            size={"xs"}
+            right={"3px"}
+            top={"3px"}
+            height={"16px"}
+            width={"16px"}
             color={"white"}
             opacity={"0.6"}
-            backgroundColor={"rgb(43, 43, 43)"}
+            backgroundColor={"#1e1e1e"}
             _hover={{ opacity: 1 }}
             onClick={(event) => {
               event.preventDefault();
@@ -156,7 +158,7 @@ function ComponentSelection({
           </Button>
         </VisuallyHidden>
         <Box margin={"auto"} fontSize={"2rem"} padding={"0.5rem"}>
-          <FontAwesomeIcon icon={icon} fontSize={"2rem"} />
+          <FontAwesomeIcon icon={icon} fontSize={"2rem"} color="white" />
         </Box>
         <Box textAlign={"center"} fontFamily={"0.8rem"}>
           {elementType}

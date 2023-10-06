@@ -10,7 +10,13 @@ interface Props {
 
 function ElementSelections({ elements }: Props) {
   return (
-    <Flex flexDir={"row"} wrap={"wrap"} alignItems={"stretch"} margin={"1px"}>
+    <Flex
+      flexDir={"row"}
+      wrap={"wrap"}
+      alignItems={"stretch"}
+      margin={"1px"}
+      background={"rgb(30, 30, 30)"}
+    >
       {Object.entries(elements).map(([key, value], index) => {
         const disabled = !value.isApplicable && !value.isAlready;
         const editable = value.isAlready;

@@ -59,8 +59,9 @@ const Header = ({
       paddingLeft={"header.paddingLeft"}
       paddingRight={"header.paddingRight"}
       height={"header.height"}
+      borderBottom="1px solid rgba(255, 255, 255, 0.13)"
     >
-      <Heading as="h1" size={"sm"}>
+      <Heading as="h1" size={"sm"} fontWeight={"header.fontWeight"}>
         {heading}
       </Heading>
       <Stack flexDirection={"row"}>

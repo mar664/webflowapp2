@@ -6,7 +6,10 @@ interface Props {
 
 export default function AccordionPanel({ children }: Props) {
   return (
-    <_AccordionPanel padding={"accordion.panel.padding"}>
+    <_AccordionPanel
+      padding={"accordion.panel.padding"}
+      background={"rgb(30, 30, 30)"}
+    >
       {children}
     </_AccordionPanel>
   );

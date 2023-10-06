@@ -1,4 +1,4 @@
-import { TriangleDownIcon, QuestionIcon } from "@chakra-ui/icons";
+import { QuestionIcon } from "@chakra-ui/icons";
 import {
   AccordionButton,
   IconButton,
@@ -6,6 +6,7 @@ import {
   Heading,
   useDisclosure,
 } from "@chakra-ui/react";
+import { AccordionIcon } from "./AccordionIcon";
 
 interface Props {
   headingText: string;
@@ -25,41 +26,49 @@ export default function AccordionHeading({ headingText, showHelp }: Props) {
     <>
       <Heading
         as="h2"
-        backgroundColor={"accordion.heading.background"}
-        color={"accordion.heading.color"}
+        backgroundColor={"rgb(30, 30, 30)"}
+        color={"rgb(245, 245, 245)"}
         borderBottomColor={"accordion.heading.borderBottomColor"}
-        borderBottomWidth={"accordion.heading.borderBottomWidth"}
+        borderBottomWidth={"0px"}
         padding={"accordion.heading.padding"}
         display={"flex"}
+        height={"40px"}
       >
         <AccordionButton
-          paddingLeft={"accordion.heading.button.paddingLeft"}
+          paddingLeft={"4px"}
           _focusVisible={{
             boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
           }}
+          paddingInlineEnd={"2"}
+          display={"flex"}
+          justifyContent={"space-between"}
         >
-          <TriangleDownIcon boxSize={"9px"} />
           <Box
             as="span"
             flex="1"
             textAlign="left"
             marginLeft={"accordion.heading.button.text.marginLeft"}
-            fontSize={"accordion.heading.button.fontSize"}
-            fontWeight={"accordion.heading.button.fontWeight"}
+            fontSize={"12.5px"}
+            fontWeight={"600"}
           >
             {headingText}
+            {showHelp && (
+              <IconButton
+                icon={<QuestionIcon />}
+                variant={"headerHelpIcon"}
+                aria-label="Help"
+                size={"sm"}
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  openModal();
+                }}
+                cursor={"help"}
+              />
+            )}
           </Box>
+          <AccordionIcon boxSize={"16px"} />
         </AccordionButton>
-        {showHelp && (
-          <IconButton
-            icon={<QuestionIcon />}
-            variant={"headerIcon"}
-            aria-label="Help"
-            size={"sm"}
-            onClick={openModal}
-            cursor={"help"}
-          />
-        )}
       </Heading>
       {showHelp && showHelp({ isOpen, onClose })}
     </>

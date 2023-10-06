@@ -7,16 +7,20 @@ const buttonBase = defineStyle({
   _focusVisible: {
     boxShadow: "rgb(36, 150, 255) 0px 0px 0px 1px",
   },
+  boxShadow:
+    "rgba(0, 0, 0, 0.8) 0px 0.5px 1px, rgba(255, 255, 255, 0.12) 0px 0.5px 0.5px inset",
 });
 
 const buttonDefault = defineStyle({
   borderWidth: "button.borderWidth",
   borderColor: "button.borderColor",
   borderRadius: "button.borderRadius",
-  backgroundColor: "button.background",
+  background:
+    "linear-gradient(rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.1) 100%)",
   color: "button.color",
   _hover: {
-    backgroundColor: "button._hover.background",
+    background:
+      "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
   },
 });
 
@@ -24,11 +28,11 @@ const buttonEnable = defineStyle({
   borderWidth: "button.borderWidth",
   borderColor: "button.borderColor",
   borderRadius: "button.borderRadius",
-  backgroundColor: "rgb(0, 115, 230)",
+  backgroundColor: "#006acc",
   color: "rgb(255, 255, 255)",
   _hover: {
-    backgroundColor: "rgb(0, 132, 255)",
-    color: "rgb(246, 246, 246)",
+    backgroundColor: "#187cd9",
+    color: "#e0e0e0",
   },
 });
 
@@ -58,9 +62,29 @@ const iconButtonDefault = defineStyle({
 const iconButtonHeader = defineStyle({
   margin: "header.button.margin",
   padding: "header.button.padding",
+  background:
+    "linear-gradient(rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.1) 100%)",
+  color: "button.color",
+  borderRadius: "button.borderRadius",
+  _hover: {
+    background:
+      "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
+    color: "button._hover.color",
+    borderRadius: "button._hover.borderRadius",
+  },
+});
+
+const iconButtonHeaderHelp = defineStyle({
+  margin: "4px",
+  padding: "1px",
   backgroundColor: "header.button.background",
   color: "header.button.color",
   borderRadius: "header.button.borderRadius",
+  height: "unset",
+  paddingInlineStart: "0",
+  paddingInlineEnd: "0",
+  minWidth: "unset",
+  fontSize: "inherit",
   _hover: {
     backgroundColor: "header.button._hover.background",
     color: "header.button._hover.color",
@@ -71,32 +95,41 @@ const iconButtonHeader = defineStyle({
 const selectButton = defineStyle({
   borderWidth: "button.borderWidth",
   borderColor: "button.borderColor",
-  borderRadius: "button.borderRadius",
-  backgroundColor: "button.background",
-  color: "button.color",
+  borderRadius: "4px",
+  background:
+    "linear-gradient(rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.1) 100%)",
+
+  color: "#e0e0e0",
   _hover: {
-    backgroundColor: "button._hover.background",
+    background:
+      "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
   },
   fontSize: "11px",
   width: "100%",
   textAlign: "left",
   justifyContent: "space-between",
+  height: "24px",
+  padding: "0px 4px 0px 8px",
+  lineHeight: "unset",
+  fontWeight: "400",
 });
 
 const inputElementButton = defineStyle({
-  color: "rgb(171,171,171)",
+  color: "#a3a3a3",
   borderRadius: "none",
   height: "100%",
   width: "100%",
-  minWidth: "10px",
-  fontSize: "11px",
+  minWidth: "15px",
+  fontSize: "9px",
   paddingInlineStart: "2px",
   paddingInlineEnd: "2px",
   backgroundColor: "inherit",
   _hover: {
-    color: "rgb(246,246,246)",
-    backgroundColor: "rgba(255,255,255,0.02)",
+    color: "#e0e0e0",
+    backgroundColor:
+      "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
   },
+  textTransform: "uppercase",
 });
 
 const leftInputButton = defineStyle({
@@ -106,9 +139,13 @@ const leftInputButton = defineStyle({
   width: "35px",
   minWidth: "unset",
   fontSize: "11px",
-  backgroundColor: "rgb(0, 115, 230)",
+  backgroundColor: "#006acc",
   transition: "none",
-  _expanded: { backgroundColor: "rgb(94, 94, 94)" },
+  _expanded: {
+    background:
+      "linear-gradient(rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.1) 100%)",
+  },
+  boxShadow: "rgba(0, 0, 0, 0.15) 0px 0px 0px 1px",
 });
 
 const closeInputButton = defineStyle({
@@ -121,8 +158,10 @@ const closeInputButton = defineStyle({
   height: "20px",
   minWidth: "unset",
   _hover: {
-    backgroundColor: "button._hover.background",
+    background:
+      "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
   },
+  boxShadow: "none",
 });
 
 export const buttonTheme = defineStyleConfig({
@@ -133,6 +172,7 @@ export const buttonTheme = defineStyleConfig({
     warning: buttonWarning,
     icon: iconButtonDefault,
     headerIcon: iconButtonHeader,
+    headerHelpIcon: iconButtonHeaderHelp,
     select: selectButton,
     inputElement: inputElementButton,
     leftInputElement: leftInputButton,
