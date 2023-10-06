@@ -1,8 +1,8 @@
 import ComponentSelection from "./ComponentSelection";
 import { NumberIncrementer } from "../models/NumberIncrementer";
 import { Paths } from "../paths";
-import { faArrowDown19 } from "@fortawesome/free-solid-svg-icons";
 import { HelpModal } from "./HelpModal";
+import { BsSortNumericUpAlt } from "react-icons/bs";
 
 interface Props {
   index: number;
@@ -16,7 +16,7 @@ function NumberIncrementerSelection({ index, disabled, editable }: Props) {
       elementType={NumberIncrementer.NAME}
       newPath={Paths.newNumberIncrementerForm}
       existingPath={Paths.numberIncrementerForm}
-      icon={faArrowDown19}
+      icon={BsSortNumericUpAlt}
       index={index}
       disabled={disabled}
       editable={editable}

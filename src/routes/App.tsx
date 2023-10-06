@@ -15,7 +15,7 @@ import { useNavigate, generatePath, useParams } from "react-router-dom";
 
 function App() {
   const { isFromBack } = useParams();
-  const [fromBack, setFromBack] =useState(!!isFromBack);
+  const [fromBack, setFromBack] = useState(!!isFromBack);
 
   const { selectedElement } = useSelectedElement();
 
@@ -85,8 +85,8 @@ function App() {
       <Heading
         as="h1"
         size={"md"}
-        backgroundColor={"rgb(43, 43, 43)"}
         padding={"0.3rem"}
+        borderBottom="1px solid rgba(255, 255, 255, 0.13)"
       >
         Elements
       </Heading>

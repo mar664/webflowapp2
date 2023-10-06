@@ -1,8 +1,8 @@
 import ComponentSelection from "./ComponentSelection";
 import { CookieConsent } from "../models/CookieConsent";
 import { Paths } from "../paths";
-import { faCookie } from "@fortawesome/free-solid-svg-icons";
 import { HelpModal } from "./HelpModal";
+import { LiaCookieSolid } from "react-icons/lia";
 
 interface Props {
   index: number;
@@ -18,7 +18,7 @@ function CookieConsentSelection({ index, disabled, editable }: Props) {
         newPath={Paths.newCookieConsentForm}
         existingPath={Paths.cookieConsentForm}
         index={index}
-        icon={faCookie}
+        icon={LiaCookieSolid}
         disabled={disabled}
         editable={editable}
         showHelp={({ isOpen, onClose }) => (

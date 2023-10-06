@@ -26,6 +26,7 @@ export function Root() {
           zIndex={"overlay"}
           margin={0}
           backgroundColor={"rgba(0, 0, 0, 0.4)"}
+          aria-hidden={"false"}
         >
           {reducedMotion ? (
             <Heading>Loading...</Heading>
@@ -50,6 +51,9 @@ export function Root() {
         m={0}
         overflow={
           navigation.state === "loading" || isPageLoading ? "hidden" : "inherit"
+        }
+        aria-hidden={
+          navigation.state === "loading" || isPageLoading ? "true" : undefined
         }
         backgroundColor="header.background"
       >

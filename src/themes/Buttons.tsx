@@ -59,6 +59,24 @@ const iconButtonDefault = defineStyle({
   },
 });
 
+const helpButton = defineStyle({
+  height: "16px",
+  width: "16px",
+  backgroundColor: "#1e1e1e",
+  borderRadius: "3px",
+  opacity: "0.6",
+  _hover: {
+    opacity: "1",
+  },
+  transition: "opacity 150ms ease 0s",
+  minWidth: "unset",
+  lineHeight: "16px",
+  paddingInlineStart: "none",
+  paddingInlineEnd: "none",
+  fontSize: "10.5px",
+  fontWeight: "400",
+});
+
 const iconButtonHeader = defineStyle({
   margin: "header.button.margin",
   padding: "header.button.padding",
@@ -178,6 +196,7 @@ export const buttonTheme = defineStyleConfig({
     inputElement: inputElementButton,
     leftInputElement: leftInputButton,
     closeInputElement: closeInputButton,
+    help: helpButton,
   },
   defaultProps: {
     size: "md",

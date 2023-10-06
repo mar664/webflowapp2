@@ -1,8 +1,8 @@
 import ComponentSelection from "./ComponentSelection";
 import { Modal } from "../models/Modal";
 import { Paths } from "../paths";
-import { faUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { HelpModal } from "./HelpModal";
+import { BsBoxArrowInUpRight } from "react-icons/bs";
 
 interface Props {
   index: number;
@@ -16,7 +16,7 @@ function ModalSelection({ index, disabled, editable }: Props) {
       elementType={Modal.NAME}
       newPath={Paths.newModalForm}
       existingPath={Paths.modalForm}
-      icon={faUpRightFromSquare}
+      icon={BsBoxArrowInUpRight}
       index={index}
       disabled={disabled}
       editable={editable}

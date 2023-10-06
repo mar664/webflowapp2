@@ -6,7 +6,6 @@ import {
   Link,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { EditIcon } from "@chakra-ui/icons";
 import { useSelectedElement } from "../contexts/AppContext";
@@ -126,12 +125,7 @@ function ComponentSelection({
             position={"absolute"}
             right={"3px"}
             top={"3px"}
-            height={"16px"}
-            width={"16px"}
             color={"white"}
-            opacity={"0.6"}
-            backgroundColor={"#1e1e1e"}
-            _hover={{ opacity: 1 }}
             onClick={(event) => {
               event.preventDefault();
               event.stopPropagation();
@@ -158,8 +152,8 @@ function ComponentSelection({
             ?
           </Button>
         </VisuallyHidden>
-        <Box margin={"auto"} fontSize={"2rem"} padding={"0.5rem"}>
-          <FontAwesomeIcon icon={icon} fontSize={"2rem"} color="white" />
+        <Box margin={"auto"} fontSize={"2rem"} padding={"0.5rem"} color="white">
+          {icon()}
         </Box>
         <Box textAlign={"center"} fontFamily={"0.8rem"}>
           {elementType}
