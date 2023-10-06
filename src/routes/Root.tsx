@@ -1,11 +1,11 @@
-import { Box, Flex, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Flex, Heading, usePrefersReducedMotion } from "@chakra-ui/react";
 import { useEffect } from "react";
 import { Outlet, useNavigate, useNavigation } from "react-router-dom";
 import { useIsPageLoading } from "../contexts/AppContext";
 import { Paths } from "../paths";
-import { ComboSearchBox } from "../components/dropdown/ComboSearchBox";
 
 export function Root() {
+  const reducedMotion = usePrefersReducedMotion();
   const navigation = useNavigation();
   const navigate = useNavigate();
   const { isPageLoading, setIsPageLoading } = useIsPageLoading();
@@ -27,16 +27,19 @@ export function Root() {
           margin={0}
           backgroundColor={"rgba(0, 0, 0, 0.4)"}
         >
-          {window.matchMedia("(prefers-reduced-motion: reduce)").matches ===
-          true ? (
+          {reducedMotion ? (
             <Heading>Loading...</Heading>
           ) : (
-            <Spinner
-              thickness="6px"
-              speed="0.65s"
-              color={"#006acc"}
-              size="xl"
-            />
+            <Box width={"50vw"}>
+              <Box className="progress-bar">
+                <Box
+                  className="progress-bar-value"
+                  role="progressbar"
+                  aria-valuenow={0}
+                  aria-valuemax={100}
+                ></Box>
+              </Box>
+            </Box>
           )}
         </Flex>
       ) : (

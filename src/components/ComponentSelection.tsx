@@ -98,7 +98,7 @@ function ComponentSelection({
         borderRightStyle={"solid"}
         borderBottomWidth={"1px"}
         borderBottomStyle={"solid"}
-        borderColor={"border.panelColor"}
+        borderColor={"transparent"}
         color={"#bdbdbd"}
         opacity={disabled ? "0.5" : "1"}
         _hover={{
@@ -138,6 +138,7 @@ function ComponentSelection({
               openModal();
             }}
             cursor={"help"}
+            variant={"help"}
           >
             ?
           </Button>

@@ -1,47 +1,28 @@
-/*
-body {
-  margin: 0;
-  background: #333;
+/* https://codepen.io/tmac/pen/QgVRKb */
+
+.progress-bar {
+  height: 6px;
+  background-color: rgba(0, 125, 240, 0.2);
+  width: 100%;
+  overflow: hidden;
 }
 
-div.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 16px;
-  font-family: sans-serif;
-  text-align: center;
-  color: #fff;
+.progress-bar-value {
+  width: 100%;
+  height: 100%;
+  background-color: #006acc;
+  animation: indeterminateAnimation 1s infinite linear;
+  transform-origin: 0% 50%;
 }
 
-div.row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  font-family: sans-serif;
-  text-align: center;
-  color: #fff;
+@keyframes indeterminateAnimation {
+  0% {
+    transform:  translateX(0) scaleX(0);
+  }
+  40% {
+    transform:  translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform:  translateX(100%) scaleX(0.5);
+  }
 }
-
-button {
-  color: #fff;
-  background: #0073E6;
-  padding: 4px 8px;
-  border: 2px solid #0073E6;
-  border-radius: 4px;
-}
-
-button:focus {
-  outline: none;
-  border-color: #1280EE;
-}
-
-button:hover {
-  background: #105090;
-  cursor: pointer;
-}
-*/

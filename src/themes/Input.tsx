@@ -27,12 +27,14 @@ const defaultStyle = definePartsStyle({
     width: "auto",
     color: "rgb(171,171,171)",
     borderRadius: "none",
-    height: "calc(100% - 2px)",
-    paddingInlineStart: "3px",
-    paddingInlineEnd: "3px",
+    height: "100%",
+    paddingInlineStart: "0px",
+    paddingInlineEnd: "0px",
     minWidth: "15px",
     fontSize: "11px",
     backgroundColor: "inherit",
+    display: "flex",
+    alignItems: "center",
   },
 });
 

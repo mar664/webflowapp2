@@ -119,14 +119,15 @@ const inputElementButton = defineStyle({
   borderRadius: "none",
   height: "100%",
   width: "100%",
+  lineHeight: "9px",
   minWidth: "15px",
   fontSize: "9px",
-  paddingInlineStart: "2px",
-  paddingInlineEnd: "2px",
+  paddingInlineStart: "3px",
+  paddingInlineEnd: "3px",
   backgroundColor: "inherit",
   _hover: {
     color: "#e0e0e0",
-    backgroundColor:
+    background:
       "linear-gradient(rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.16) 100%)",
   },
   textTransform: "uppercase",
