@@ -155,7 +155,7 @@ const leftInputButton = defineStyle({
   color: "rgb(255,255,255)",
   borderRadius: "2px",
   height: "24px",
-  width: "35px",
+  maxWidth: "31px",
   minWidth: "unset",
   fontSize: "11px",
   backgroundColor: "#006acc",

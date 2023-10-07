@@ -262,7 +262,7 @@ export const ComboSearchBox = <T extends Option>({
         width={"100%"}
         paddingLeft={"3px"}
         paddingRight={"3px"}
-        minHeight={"32px"}
+        minHeight={"34px"}
         data-focus={isShown || hasFocus ? true : undefined}
         aria-busy={isLoading}
       >

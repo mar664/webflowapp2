@@ -25,7 +25,7 @@ export function Root() {
           justifyContent={"center"}
           zIndex={"overlay"}
           margin={0}
-          backgroundColor={"rgba(0, 0, 0, 0.4)"}
+          backgroundColor={"header.background"}
           aria-hidden={"false"}
         >
           {reducedMotion ? (
