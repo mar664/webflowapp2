@@ -16,9 +16,11 @@ export const InsertScript = ({ alreadyInserted, ElementType }: Props) => {
     setInsertScript(event.target.checked);
 
     if (event.target.checked) {
-      await ElementType.insertScriptInBody();
+      console.log("inserting script");
+      await ElementType.insertScriptInBody(ElementType);
     } else {
-      await ElementType.removeScriptFromBody();
+      console.log("removing script");
+      await ElementType.removeScriptFromBody(ElementType);
     }
   };
 

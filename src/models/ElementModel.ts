@@ -18,7 +18,38 @@ export abstract class ElementModel {
 
   static async remove(element: CompatibleElement, removeElement = false) {}
 
-  static async insertScriptInBody() {}
+  static async insertScriptInBody(ElementType: typeof ElementModel) {
+    console.log(ElementType.SOURCE_URL);
+    const allElements = await webflow.getAllElements();
+    const body = allElements[0];
 
-  static async removeScriptFromBody() {}
+    const scriptElem = webflow.createDOM("script");
+
+    scriptElem.setAttribute("src", ElementType.SOURCE_URL as string);
+
+    if (body.children) {
+      const children = body.getChildren();
+
+      // add script to body at the end
+      body.setChildren(children.concat(scriptElem));
+
+      await body.save();
+    }
+  }
+
+  static async removeScriptFromBody(ElementType: typeof ElementModel) {
+    const allElements = await webflow.getAllElements();
+    const scriptExisting = allElements.filter(
+      (t) =>
+        t.type === "DOM" &&
+        t.getTag() === "script" &&
+        t.getAttribute("src") === ElementType.SOURCE_URL,
+    );
+
+    if (scriptExisting.length === 1) {
+      const script = scriptExisting[0];
+      await script.detach();
+      await script.destroy();
+    }
+  }
 }

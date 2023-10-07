@@ -31,6 +31,7 @@ const combolistTheme = helpers.defineMultiStyleConfig({
       paddingLeft: "6px",
       paddingTop: "4px",
       paddingBottom: "4px",
+      color: "#bdbdbd",
     },
     combolist: {
       flex: 1,

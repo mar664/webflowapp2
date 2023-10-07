@@ -206,38 +206,4 @@ export class Modal extends ElementModel {
       await element.save();
     }
   }
-
-  static async insertScriptInBody() {
-    const allElements = await webflow.getAllElements();
-    const body = allElements[0];
-
-    const scriptElem = webflow.createDOM("script");
-
-    scriptElem.setAttribute("src", Modal.SOURCE_URL);
-
-    if (body.children) {
-      const children = body.getChildren();
-
-      // add script to body at the end
-      body.setChildren(children.concat(scriptElem));
-
-      await body.save();
-    }
-  }
-
-  static async removeScriptFromBody() {
-    const allElements = await webflow.getAllElements();
-    const scriptExisting = allElements.filter(
-      (t) =>
-        t.type === "DOM" &&
-        t.getTag() === "script" &&
-        t.getAttribute("src") === Modal.SOURCE_URL,
-    );
-
-    if (scriptExisting.length === 1) {
-      const script = scriptExisting[0];
-      await script.detach();
-      await script.destroy();
-    }
-  }
 }

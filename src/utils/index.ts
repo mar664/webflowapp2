@@ -195,7 +195,7 @@ export const fetchDefaultFormValues = <T extends Options>(
       (t) =>
         t.type === "DOM" &&
         t.getTag() === "script" &&
-        t.getAttribute("src") === ElementModel.SOURCE_URL,
+        t.getAttribute("src") === ElementType.SOURCE_URL,
     );
 
     if (element) {

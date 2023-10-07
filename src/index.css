@@ -1,10 +1,11 @@
 /* https://codepen.io/tmac/pen/QgVRKb */
 
 .progress-bar {
-  height: 6px;
+  height: 10px;
   background-color: rgba(0, 125, 240, 0.2);
   width: 100%;
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.8) 0px 0.5px 1px, rgba(255, 255, 255, 0.12) 0px 0.5px 0.5px inset;
 }
 
 .progress-bar-value {
