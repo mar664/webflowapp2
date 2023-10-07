@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelectedElement } from "../contexts/AppContext";
-import { Flex, Heading } from "@chakra-ui/react";
+import {
+  Tab,
+  Heading,
+  Tabs,
+  TabList,
+  TabPanels,
+  TabPanel,
+} from "@chakra-ui/react";
 import { CompatibleElement } from "../elements/CompatibleElement";
 import _ from "lodash";
 import { CompatibleComponents } from "../types";
@@ -81,17 +88,22 @@ function App() {
   }, [selectedElement]);
 
   return (
-    <Flex alignItems="stretch" justify="center" flexDirection={"column"}>
-      <Heading
-        as="h1"
-        size={"md"}
-        padding={"0.3rem"}
-        borderBottom="1px solid rgba(255, 255, 255, 0.13)"
-      >
-        Elements
-      </Heading>
-      <ElementSelections elements={compatibleComponents} />
-    </Flex>
+    <Tabs isLazy>
+      <TabList>
+        <Tab>Elements</Tab>
+        <Tab>Utilities</Tab>
+      </TabList>
+      <TabPanels>
+        {/* initially mounted */}
+        <TabPanel>
+          <ElementSelections elements={compatibleComponents} />
+        </TabPanel>
+        {/* initially not mounted */}
+        <TabPanel>
+          <p>two!</p>
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
   );
 }
 

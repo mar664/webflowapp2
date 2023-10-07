@@ -7,6 +7,7 @@ import { modalTheme } from "./themes/Modal";
 import { numberInputTheme } from "./themes/NumberInput";
 import { radioTheme } from "./themes/Radio";
 import { switchTheme } from "./themes/Switch";
+import { tabsTheme } from "./themes/Tabs";
 import { tagTheme } from "./themes/Tag";
 import { tooltipTheme } from "./themes/Tooltip";
 import { StyleFunctionProps } from "@chakra-ui/react";
@@ -755,5 +756,6 @@ export default {
     Menu: menuTheme,
     Tooltip: tooltipTheme,
     Modal: modalTheme,
+    Tabs: tabsTheme,
   },
 };
