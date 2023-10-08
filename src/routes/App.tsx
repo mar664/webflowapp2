@@ -19,6 +19,7 @@ import { Modal } from "../models/Modal";
 import { CookieConsent } from "../models/CookieConsent";
 import { Paths } from "../paths";
 import { useNavigate, generatePath, useParams } from "react-router-dom";
+import UtilitiesSelections from "../components/UtilitiesSelections";
 
 function App() {
   const { isFromBack } = useParams();
@@ -100,7 +101,7 @@ function App() {
         </TabPanel>
         {/* initially not mounted */}
         <TabPanel>
-          <p>two!</p>
+          <UtilitiesSelections />
         </TabPanel>
       </TabPanels>
     </Tabs>
