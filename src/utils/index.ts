@@ -234,3 +234,42 @@ export function getAllChildren(element: AnyElement, output = [] as string[]) {
 
   return output;
 }
+
+export function iterateChildren(
+  element: HTMLElement,
+  createClasses: boolean,
+): DOMElement | DOMElement[] {
+  const tagName = element.tagName.toLowerCase();
+  const webflowElement = webflow.createDOM(tagName);
+  element.hasAttributes() &&
+    Array.from(element.attributes).forEach((attr) => {
+      webflowElement.setAttribute(attr.name, attr.value);
+    });
+  const webflowChildren: DOMElement[] = [];
+  const children = element.children;
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    webflowChildren.push(
+      iterateChildren(child as HTMLElement, createClasses) as DOMElement,
+    );
+  }
+
+  if (tagName !== "body") webflowElement.setChildren(webflowChildren);
+
+  if (!children.length) {
+    webflowElement.setTextContent(element.textContent as string);
+  }
+
+  return tagName === "body" ? webflowChildren : webflowElement;
+}
+
+export function convertHTMLToWebflowElements(
+  text: string,
+  createClasses = false,
+) {
+  const parser = new DOMParser();
+
+  const doc = parser.parseFromString(text, "text/html");
+
+  return iterateChildren(doc.body, createClasses);
+}

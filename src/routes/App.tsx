@@ -88,6 +88,10 @@ function App() {
     }
   }, [selectedElement]);
 
+  useEffect(() => {
+    (async () => await webflow.setExtensionSize("comfortable"))();
+  }, []);
+
   return (
     <Tabs isLazy>
       <TabList>

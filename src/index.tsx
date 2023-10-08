@@ -30,6 +30,7 @@ import { Paths } from "./paths";
 import NewNumberIncrementerForm from "./routes/NewNumberIncrementerForm";
 import theme from "./theme";
 import NewModalForm from "./routes/NewModalForm";
+import HTMLToWebFlowForm from "./routes/HTMLToWebflowForm";
 
 const _theme = extendTheme(theme);
 
@@ -79,6 +80,10 @@ const router = createHashRouter([
         path: Paths.cookieConsentForm,
         element: <CookieConsentForm />,
         loader: cookieConsentLoader as unknown as LoaderFunction,
+      },
+      {
+        path: Paths.htmlToWebflow,
+        element: <HTMLToWebFlowForm />,
       },
     ],
   },
