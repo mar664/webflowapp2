@@ -31,6 +31,7 @@ import NewNumberIncrementerForm from "./routes/NewNumberIncrementerForm";
 import theme from "./theme";
 import NewModalForm from "./routes/NewModalForm";
 import HTMLToWebFlowForm from "./routes/HTMLToWebflowForm";
+import CSSToWebflowForm from "./routes/CSSToWebflowForm";
 
 const _theme = extendTheme(theme);
 
@@ -84,6 +85,11 @@ const router = createHashRouter([
       {
         path: Paths.htmlToWebflow,
         element: <HTMLToWebFlowForm />,
+      },
+
+      {
+        path: Paths.cssToWebflow,
+        element: <CSSToWebflowForm />,
       },
     ],
   },

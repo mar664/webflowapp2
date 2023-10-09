@@ -9,4 +9,5 @@ export const Paths = {
   newCookieConsentForm: "/new_cookie_consent_form/:elementId",
   cookieConsentForm: "/cookie_consent_form/:elementId/:isNew",
   htmlToWebflow: "/html_to_webflow",
+  cssToWebflow: "/css_to_webflow",
 } as const;

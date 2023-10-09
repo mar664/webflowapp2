@@ -5,20 +5,21 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Header from "../components/Header";
 import { z } from "zod";
-import { convertHTMLToWebflowElements } from "../utils";
+import {
+  convertCSSToWebflowStyles,
+  convertHTMLToWebflowElements,
+} from "../utils";
 import Prism from "prismjs";
 import "prismjs/components/prism-cshtml";
 import "prismjs/themes/prism.css";
 import CodeEditor from "../components/code_editor";
 
-const HTMLToWebflowOptions = z.object({
-  createClasses: z.boolean().default(true),
-  convertStyles: z.boolean().default(true),
-  html: z.string().default(""),
+const CSSToWebflowFormOptions = z.object({
+  css: z.string().default(""),
 });
-export type HTMLToWebflowOptions = z.infer<typeof HTMLToWebflowOptions>;
+export type CSSToWebflowFormOptions = z.infer<typeof CSSToWebflowFormOptions>;
 
-function HTMLToWebFlowForm() {
+function CSSToWebflowForm() {
   const { setIsPageLoading } = useIsPageLoading();
 
   const {
@@ -28,28 +29,15 @@ function HTMLToWebFlowForm() {
     watch,
     register,
     formState: { isLoading, errors },
-  } = useForm<HTMLToWebflowOptions>({
-    defaultValues: HTMLToWebflowOptions.parse({}),
-    resolver: zodResolver(HTMLToWebflowOptions),
+  } = useForm<CSSToWebflowFormOptions>({
+    defaultValues: CSSToWebflowFormOptions.parse({}),
+    resolver: zodResolver(CSSToWebflowFormOptions),
   });
   FormControl;
-  const onSubmit: SubmitHandler<HTMLToWebflowOptions> = async (data) => {
+  const onSubmit: SubmitHandler<CSSToWebflowFormOptions> = async (data) => {
     console.log("Submitting", data);
 
-    const body = (await webflow.getAllElements())[0] as BodyElement;
-
-    body.setChildren(
-      body
-        .getChildren()
-        .concat(
-          await convertHTMLToWebflowElements(
-            data.html,
-            data.createClasses,
-            data.convertStyles,
-          ),
-        ),
-    );
-    await body.save();
+    await convertCSSToWebflowStyles(data.css);
   };
 
   useEffect(() => {
@@ -61,7 +49,7 @@ function HTMLToWebFlowForm() {
 
   return (
     <>
-      <Header heading="HTML Import" />
+      <Header heading="CSS Import" />
       {/*
         <Box textColor={"red"}>
           <ul>
@@ -86,27 +74,13 @@ function HTMLToWebFlowForm() {
         */}
 
       <Box as="form" onSubmit={handleSubmit(onSubmit)} margin={"10px"}>
-        <FormControl display="flex" alignItems="center" maxWidth={"full"}>
-          <FormLabel>Convert style tags to a class</FormLabel>
-          <Switch
-            defaultChecked={getValues().convertStyles}
-            onChange={(e) => setValue("convertStyles", e.target.checked)}
-          />
-        </FormControl>
-        <FormControl display="flex" alignItems="center" maxWidth={"full"}>
-          <FormLabel>Create classes if not exists</FormLabel>
-          <Switch
-            defaultChecked={getValues().createClasses}
-            onChange={(e) => setValue("createClasses", e.target.checked)}
-          />
-        </FormControl>
         <FormControl>
-          <FormLabel>HTML</FormLabel>
+          <FormLabel>CSS</FormLabel>
           <CodeEditor
-            value={watch("html")}
-            onValueChange={(code) => setValue("html", code)}
+            value={watch("css")}
+            onValueChange={(code) => setValue("css", code)}
             highlight={(code) =>
-              Prism.highlight(code, Prism.languages.html, "html")
+              Prism.highlight(code, Prism.languages.css, "css")
             }
             style={{
               fontFamily: '"Fira code", "Fira Mono", monospace',
@@ -120,4 +94,4 @@ function HTMLToWebFlowForm() {
   );
 }
 
-export default HTMLToWebFlowForm;
+export default CSSToWebflowForm;

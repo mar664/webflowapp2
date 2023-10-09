@@ -14,7 +14,8 @@ import {
 } from "../types";
 import { INIT_COMPATIBLE_COMPONENTS, svgElementsMap } from "../constants";
 import { ElementModel } from "../models/ElementModel";
-import tinycolor from "tinycolor2";
+import cssJS from "./cssJS";
+import parseSides from 'parse-css-sides';
 
 export function removeChars(str: string) {
   return str
@@ -244,10 +245,16 @@ async function getValidClassName(tagName: string, i = 1): Promise<string> {
   return `${tagName} ${i}`;
 }
 
+interface CssRules {
+  selector: string;
+  rules: { directive: string; value: string }[];
+}
+
 export async function iterateChildren(
   element: HTMLElement,
   createClasses: boolean,
   convertStylesToClass: boolean,
+  parsedStyles: CssRules[] | null,
 ): Promise<DOMElement | DOMElement[]> {
   // get tag name and convert to correct case for svgs
   const tagName =
@@ -285,7 +292,16 @@ export async function iterateChildren(
       for (const className of Array.from(element.classList)) {
         const classExists = await webflow.getStyleByName(className);
         if (!classExists) {
+          const resultMap: PropertyMap = {};
           const newStyle = webflow.createStyle(className);
+          parsedStyles?.forEach((style) => {
+            if (style?.selector === `.${className}`) {
+              style.rules.forEach((rule) => {
+                resultMap[rule.directive as StyleProperty] = rule.value;
+              });
+            }
+          });
+          newStyle.setProperties(resultMap);
           await newStyle.save();
           webflowElement.setStyles([
             ...(await webflowElement.getStyles()),
@@ -312,6 +328,7 @@ export async function iterateChildren(
         child as HTMLElement,
         createClasses,
         convertStylesToClass,
+        parsedStyles,
       )) as DOMElement,
     );
   }
@@ -334,5 +351,59 @@ export async function convertHTMLToWebflowElements(
 
   const doc = parser.parseFromString(text, "text/html");
 
-  return iterateChildren(doc.body, createClasses, convertStylesToClass);
+  const cssParser = new cssJS();
+  const style = doc.head.querySelector("style");
+  if (style && style.textContent) {
+    const css = cssParser.parseCSS(style.textContent);
+    return iterateChildren(doc.body, createClasses, convertStylesToClass, css);
+  }
+
+  return iterateChildren(doc.body, createClasses, convertStylesToClass, null);
+}
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const border = require("css-border-property");
+
+export async function convertCSSToWebflowStyles(CSS: string) {
+  const cssParser = new cssJS();
+  const css: CssRules[] = cssParser.parseCSS(CSS);
+  console.log(css);
+
+  css.forEach(async (style) => {
+    const pattern = /^\.([0-9\-a-zA-Z_]+)$/;
+    const matches = style.selector.match(pattern);
+    if (matches) {
+      console.log(matches);
+      const existingStyle = await webflow.getStyleByName(matches[1]);
+      if (!existingStyle) {
+        const resultMap: PropertyMap = {};
+
+        const newStyle = webflow.createStyle(matches[1]);
+        style.rules.forEach((rule) => {
+          if (rule.directive === "border") {
+            border.parse(rule.value).forEach((b:{property:string; value: string}) => {
+              ["top", "bottom", "left", "right"].forEach((side) => {
+                resultMap[
+                  b.property.replace(
+                    "border",
+                    `border-${side}`,
+                  ) as StyleProperty
+                ] = b.value;
+              });
+            });
+          } else if(rule.directive === "margin"  || rule.directive === "padding") {
+            Object.entries(parseSides(rule.value)).forEach(([k,v])=>{
+              if(k==="important") return
+              resultMap[`${rule.directive}-${k}`as StyleProperty
+              ] = v;
+            });
+
+          } else {
+            resultMap[rule.directive as StyleProperty] = rule.value;
+          }
+        });
+        newStyle.setProperties(resultMap);
+        await newStyle.save();
+      }
+    }
+  });
 }

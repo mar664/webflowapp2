@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import HTMLToWebflow from "./HTMLToWebflow";
+import CSSToWebflow from "./CSSToWebflow";
 
 function UtilitiesSelections() {
   return (
@@ -11,6 +12,7 @@ function UtilitiesSelections() {
       background={"rgb(30, 30, 30)"}
     >
       <HTMLToWebflow index={0} disabled={false} />
+      <CSSToWebflow index={1} disabled={false} />
     </Flex>
   );
 }
