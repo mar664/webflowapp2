@@ -12,7 +12,8 @@ import "prismjs/themes/prism.css";
 import CodeEditor from "../components/code_editor";
 
 const HTMLToWebflowOptions = z.object({
-  createClasses: z.boolean().default(false),
+  createClasses: z.boolean().default(true),
+  convertStyles: z.boolean().default(true),
   html: z.string().default(""),
 });
 export type HTMLToWebflowOptions = z.infer<typeof HTMLToWebflowOptions>;
@@ -40,7 +41,13 @@ function HTMLToWebFlowForm() {
     body.setChildren(
       body
         .getChildren()
-        .concat(convertHTMLToWebflowElements(data.html, data.createClasses)),
+        .concat(
+          await convertHTMLToWebflowElements(
+            data.html,
+            data.createClasses,
+            data.convertStyles,
+          ),
+        ),
     );
     await body.save();
   };
@@ -80,8 +87,15 @@ function HTMLToWebFlowForm() {
         */}
 
       <Box as="form" onSubmit={handleSubmit(onSubmit)} margin={"10px"}>
-        <FormControl>
-          <FormLabel>Create Classes</FormLabel>
+        <FormControl display="flex" alignItems="center" maxWidth={"full"}>
+          <FormLabel>Convert style tags to a class</FormLabel>
+          <Switch
+            defaultChecked={getValues().convertStyles}
+            onChange={(e) => setValue("convertStyles", e.target.checked)}
+          />
+        </FormControl>
+        <FormControl display="flex" alignItems="center" maxWidth={"full"}>
+          <FormLabel>Create classes if not exists</FormLabel>
           <Switch
             defaultChecked={getValues().createClasses}
             onChange={(e) => setValue("createClasses", e.target.checked)}

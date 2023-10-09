@@ -12,8 +12,9 @@ import {
   seconds,
   years,
 } from "../types";
-import { INIT_COMPATIBLE_COMPONENTS } from "../constants";
+import { INIT_COMPATIBLE_COMPONENTS, svgElementsMap } from "../constants";
 import { ElementModel } from "../models/ElementModel";
+import tinycolor from "tinycolor2";
 
 export function removeChars(str: string) {
   return str
@@ -235,22 +236,83 @@ export function getAllChildren(element: AnyElement, output = [] as string[]) {
   return output;
 }
 
-export function iterateChildren(
+async function getValidClassName(tagName: string, i = 1): Promise<string> {
+  const style = await webflow.getStyleByName(`${tagName} ${i}`);
+  if (style) {
+    return await getValidClassName(tagName, i + 1);
+  }
+  return `${tagName} ${i}`;
+}
+
+export async function iterateChildren(
   element: HTMLElement,
   createClasses: boolean,
-): DOMElement | DOMElement[] {
-  const tagName = element.tagName.toLowerCase();
+  convertStylesToClass: boolean,
+): Promise<DOMElement | DOMElement[]> {
+  // get tag name and convert to correct case for svgs
+  const tagName =
+    element.tagName.toLowerCase() in svgElementsMap
+      ? svgElementsMap[element.tagName.toLowerCase()]
+      : element.tagName.toLowerCase() === "body"
+      ? "body"
+      : element.tagName.toLowerCase();
+
+  if (!tagName) {
+    throw new Error(`Tagname ${element.tagName.toLowerCase()} is not valid`);
+  }
+
   const webflowElement = webflow.createDOM(tagName);
-  element.hasAttributes() &&
-    Array.from(element.attributes).forEach((attr) => {
+
+  for (const attr of Array.from(element.attributes)) {
+    if (attr.name.toLowerCase() === "style" && convertStylesToClass) {
+      const newStyle = webflow.createStyle(await getValidClassName(tagName));
+      // convert styles tag to a class
+      const resultMap: PropertyMap = {};
+      attr.value
+        .split(";")
+        .filter((v) => v !== "")
+        .forEach((v) => {
+          const [name, val] = v.split(":");
+          resultMap[name.trim() as StyleProperty] = val.trim();
+        });
+      newStyle.setProperties(resultMap);
+      await newStyle.save();
+      webflowElement.setStyles([
+        ...(await webflowElement.getStyles()),
+        newStyle,
+      ]);
+    } else if (attr.name.toLowerCase() === "class" && createClasses) {
+      for (const className of Array.from(element.classList)) {
+        const classExists = await webflow.getStyleByName(className);
+        if (!classExists) {
+          const newStyle = webflow.createStyle(className);
+          await newStyle.save();
+          webflowElement.setStyles([
+            ...(await webflowElement.getStyles()),
+            newStyle,
+          ]);
+        } else {
+          webflowElement.setStyles([
+            ...(await webflowElement.getStyles()),
+            classExists,
+          ]);
+        }
+      }
+    } else {
       webflowElement.setAttribute(attr.name, attr.value);
-    });
+    }
+  }
+
   const webflowChildren: DOMElement[] = [];
   const children = element.children;
   for (let i = 0; i < children.length; i++) {
     const child = children[i];
     webflowChildren.push(
-      iterateChildren(child as HTMLElement, createClasses) as DOMElement,
+      (await iterateChildren(
+        child as HTMLElement,
+        createClasses,
+        convertStylesToClass,
+      )) as DOMElement,
     );
   }
 
@@ -263,13 +325,14 @@ export function iterateChildren(
   return tagName === "body" ? webflowChildren : webflowElement;
 }
 
-export function convertHTMLToWebflowElements(
+export async function convertHTMLToWebflowElements(
   text: string,
-  createClasses = false,
+  createClasses = true,
+  convertStylesToClass = true,
 ) {
   const parser = new DOMParser();
 
   const doc = parser.parseFromString(text, "text/html");
 
-  return iterateChildren(doc.body, createClasses);
+  return iterateChildren(doc.body, createClasses, convertStylesToClass);
 }
